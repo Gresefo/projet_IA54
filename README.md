@@ -1,4 +1,4 @@
-# Boids demonstration with AWT graphical user interface
+# Ants demonstration with AWT graphical user interface
 
 ## Launching the demonstration
 
