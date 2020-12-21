@@ -1,0 +1,44 @@
+
+
+package io.sarl.demos.ants
+
+import java.awt.Color
+
+/**
+ * 
+ * The main class configuring the various boids populations and launching the simulation
+ * 
+ * @author Nicolas Gaud
+ */
+class BoidsSimulationLauncher {
+
+	/**
+	 * @param args command line arguments
+	 */
+	static def main(args : String*) {
+		
+		// 3 populations of boids (Red, Green and Blue)
+		var simu = new Simulation
+		var pRed = new Population(Color::RED)
+		var pGreen = new Population(Color::GREEN)
+		var pBlue = new Population(Color::BLUE)
+		
+		//Initialization of the Red population
+		for (var i = 0; i < pRed.popSize; i++) {
+			simu.addBoid(pRed)
+		}
+
+		// Initialization of the Green population
+		for (var i = 0; i < pGreen.popSize; i++) {
+			simu.addBoid(pGreen)
+		}
+
+		// Initialization of the Blue population
+		for (var i = 0; i < pBlue.popSize; i++) {
+			simu.addBoid(pBlue);
+		}
+		
+		simu.start
+	}
+
+}
