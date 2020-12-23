@@ -12,6 +12,9 @@ import java.util.Map
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import org.arakhne.afc.math.geometry.d2.d.Vector2d
+import java.util.ArrayList
+import java.io.File
+import java.util.Scanner
 
 /** 
  * The boids simulation launching the SARL environment with the corresponding agent and ensuring the communication between agents and the GUI
@@ -77,9 +80,13 @@ class Simulation implements EventListener {
 		boidsToLaunch = newHashMap
 	}
 
-	def start : void {
-		launchAllAgents
-		isSimulationStarted = true
+	def start : void 
+	{
+		var test = parsor(getPath("berlin52.txt"))
+		printCoord(test)
+		var test2 = getDistMatrix(test)
+//		launchAllAgents
+//		isSimulationStarted = true
 	}
 
 	def stop : void {
@@ -169,5 +176,68 @@ class Simulation implements EventListener {
 			this.myGUI.repaint
 		}
 	}
-
+	
+	/**
+	 * Returns the path to get the file
+	 * @param file : String, the file to get
+	 * @return String : the complete path to get this file
+	 */
+	 public def getPath(file : String) : String
+	 {
+		var fileSep : String = System.getProperty("file.separator")
+		var path : String = System.getProperty("user.dir") + fileSep + "TSP" + fileSep + "berlin52.txt"
+	 	return path
+	 }
+	
+	/**
+	 * TSP parsor
+	 * @param path : String, the file path to parse
+	 * @return ArrayList<Float[]> : the coordonates of each town
+	 */
+	public def parsor(path : String) : ArrayList<Float[]>
+	{
+		var file : File = new File(path)
+		var sc : Scanner = new Scanner(file)
+		var storing : ArrayList<Float[]> = new ArrayList <Float[]> ()
+		while (sc.hasNextLine()) 
+		{
+			var line : String = sc.nextLine();
+			if ("NODE_COORD_SECTION".equals(line)) 
+			{
+                while (sc.hasNextLine()) 
+                {
+                	var next : String = sc.next()
+                	if(next != "EOF")
+                	{
+						var list : Float[] = #{next as float, sc.next() as float, sc.next() as float};
+						storing.add(list);
+                	}
+				}
+			}
+		}
+        sc.close();
+        return storing;
+	}
+	
+	/**
+	 * Prints the coordinates of each town
+	 * @param coord : ArrayList<Float[]> the list of coordinates
+	 */
+	public def printCoord(coord : ArrayList<Float[]>) : void
+	{
+		for(f : coord)
+		{
+			System.out.println("Town n°: " + f.get(0) + " | x=" + f.get(1) + " | y=" + f.get(2))
+		}
+	}
+	
+	/**
+	 * Return the distance matrix computed from the coordinates list
+	 * @param coord : ArrayList<Float[]>, the list of coordinates
+	 * @return ArrayList<ArrayList<Integer>>, the distance matrix
+	 */
+	 public def getDistMatrix(coordList : ArrayList<Float[]>) : ArrayList<ArrayList<Integer>>
+	 {
+	 	
+	 }
 }

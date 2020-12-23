@@ -1,5 +1,6 @@
 package io.sarl.demos.ants;
 
+import com.google.common.base.Objects;
 import io.sarl.bootstrap.SRE;
 import io.sarl.bootstrap.SREBootstrap;
 import io.sarl.core.OpenEventSpace;
@@ -18,13 +19,18 @@ import io.sarl.lang.core.AgentContext;
 import io.sarl.lang.core.Event;
 import io.sarl.lang.core.EventListener;
 import io.sarl.lang.core.EventSpace;
+import io.sarl.lang.scoping.extensions.cast.PrimitiveCastExtensions;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import org.arakhne.afc.math.geometry.d2.d.Vector2d;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
+import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Pure;
 
@@ -94,8 +100,9 @@ public class Simulation implements EventListener {
   }
   
   public void start() {
-    this.launchAllAgents();
-    this.isSimulationStarted = true;
+    ArrayList<Float[]> test = this.parsor(this.getPath("berlin52.txt"));
+    this.printCoord(test);
+    ArrayList<ArrayList<Integer>> test2 = this.getDistMatrix(test);
   }
   
   public void stop() {
@@ -197,6 +204,79 @@ public class Simulation implements EventListener {
     }
   }
   
+  /**
+   * Returns the path to get the file
+   * @param file : String, the file to get
+   * @return String : the complete path to get this file
+   */
+  @Pure
+  public String getPath(final String file) {
+    String fileSep = System.getProperty("file.separator");
+    String _property = System.getProperty("user.dir");
+    String path = ((((_property + fileSep) + "TSP") + fileSep) + "berlin52.txt");
+    return path;
+  }
+  
+  /**
+   * TSP parsor
+   * @param path : String, the file path to parse
+   * @return ArrayList<Float[]> : the coordonates of each town
+   */
+  public ArrayList<Float[]> parsor(final String path) {
+    try {
+      File file = new File(path);
+      Scanner sc = new Scanner(file);
+      ArrayList<Float[]> storing = new ArrayList<Float[]>();
+      while (sc.hasNextLine()) {
+        {
+          String line = sc.nextLine();
+          boolean _equals = "NODE_COORD_SECTION".equals(line);
+          if (_equals) {
+            while (sc.hasNextLine()) {
+              {
+                String next = sc.next();
+                boolean _notEquals = (!Objects.equal(next, "EOF"));
+                if (_notEquals) {
+                  String _next = sc.next();
+                  String _next_1 = sc.next();
+                  Float[] list = ((Float[])Conversions.unwrapArray(Collections.<Float>unmodifiableSet(CollectionLiterals.<Float>newHashSet(Float.valueOf((next == null ? 0 : PrimitiveCastExtensions.floatValue(next))), Float.valueOf((_next == null ? 0 : PrimitiveCastExtensions.floatValue(_next))), Float.valueOf((_next_1 == null ? 0 : PrimitiveCastExtensions.floatValue(_next_1))))), Float.class));
+                  storing.add(list);
+                }
+              }
+            }
+          }
+        }
+      }
+      sc.close();
+      return storing;
+    } catch (Throwable _e) {
+      throw Exceptions.sneakyThrow(_e);
+    }
+  }
+  
+  /**
+   * Prints the coordinates of each town
+   * @param coord : ArrayList<Float[]> the list of coordinates
+   */
+  public void printCoord(final ArrayList<Float[]> coord) {
+    for (final Float[] f : coord) {
+      Object _get = f[0];
+      Object _get_1 = f[1];
+      Object _get_2 = f[2];
+      System.out.println(((((("Town n°: " + _get) + " | x=") + _get_1) + " | y=") + _get_2));
+    }
+  }
+  
+  /**
+   * Return the distance matrix computed from the coordinates list
+   * @param coord : ArrayList<Float[]>, the list of coordinates
+   * @return ArrayList<ArrayList<Integer>>, the distance matrix
+   */
+  @Pure
+  public ArrayList<ArrayList<Integer>> getDistMatrix(final ArrayList<Float[]> coordList) {
+    return null;
+  }
+  
   @Override
   @Pure
   @SyntheticMember
@@ -208,7 +288,7 @@ public class Simulation implements EventListener {
     if (getClass() != obj.getClass())
       return false;
     Simulation other = (Simulation) obj;
-    if (!Objects.equals(this.environment, other.environment))
+    if (!java.util.Objects.equals(this.environment, other.environment))
       return false;
     if (other.width != this.width)
       return false;
@@ -227,7 +307,7 @@ public class Simulation implements EventListener {
   public int hashCode() {
     int result = super.hashCode();
     final int prime = 31;
-    result = prime * result + Objects.hashCode(this.environment);
+    result = prime * result + java.util.Objects.hashCode(this.environment);
     result = prime * result + Integer.hashCode(this.width);
     result = prime * result + Integer.hashCode(this.height);
     result = prime * result + Integer.hashCode(this.boidsCount);
