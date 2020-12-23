@@ -209,7 +209,10 @@ class Simulation implements EventListener {
                 	var next : String = sc.next()
                 	if(next != "EOF")
                 	{
-						var list : Float[] = #{next as float, sc.next() as float, sc.next() as float};
+						var list : Float[] = newArrayOfSize(3)
+						list.set(0, next as float)
+						list.set(1, sc.next() as float)
+						list.set(2, sc.next() as float)
 						storing.add(list);
                 	}
 				}

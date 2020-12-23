@@ -22,7 +22,6 @@ import io.sarl.lang.core.EventSpace;
 import io.sarl.lang.scoping.extensions.cast.PrimitiveCastExtensions;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -30,7 +29,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import org.arakhne.afc.math.geometry.d2.d.Vector2d;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
-import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Pure;
 
@@ -237,9 +235,12 @@ public class Simulation implements EventListener {
                 String next = sc.next();
                 boolean _notEquals = (!Objects.equal(next, "EOF"));
                 if (_notEquals) {
+                  Float[] list = new Float[3];
+                  list[0] = Float.valueOf((next == null ? 0 : PrimitiveCastExtensions.floatValue(next)));
                   String _next = sc.next();
+                  list[1] = Float.valueOf((_next == null ? 0 : PrimitiveCastExtensions.floatValue(_next)));
                   String _next_1 = sc.next();
-                  Float[] list = ((Float[])Conversions.unwrapArray(Collections.<Float>unmodifiableSet(CollectionLiterals.<Float>newHashSet(Float.valueOf((next == null ? 0 : PrimitiveCastExtensions.floatValue(next))), Float.valueOf((_next == null ? 0 : PrimitiveCastExtensions.floatValue(_next))), Float.valueOf((_next_1 == null ? 0 : PrimitiveCastExtensions.floatValue(_next_1))))), Float.class));
+                  list[2] = Float.valueOf((_next_1 == null ? 0 : PrimitiveCastExtensions.floatValue(_next_1)));
                   storing.add(list);
                 }
               }
