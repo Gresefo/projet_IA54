@@ -22,6 +22,7 @@ import io.sarl.lang.core.EventSpace;
 import io.sarl.lang.scoping.extensions.cast.PrimitiveCastExtensions;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -29,6 +30,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import org.arakhne.afc.math.geometry.d2.d.Vector2d;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
+import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Pure;
 
@@ -100,7 +102,8 @@ public class Simulation implements EventListener {
   public void start() {
     ArrayList<Float[]> test = this.parsor(this.getPath("berlin52.txt"));
     this.printCoord(test);
-    ArrayList<ArrayList<Integer>> test2 = this.getDistMatrix(test);
+    float[][] test2 = this.getDistMatrix(test);
+    this.printDistMatrix(test2, 60);
   }
   
   public void stop() {
@@ -270,12 +273,77 @@ public class Simulation implements EventListener {
   
   /**
    * Return the distance matrix computed from the coordinates list
-   * @param coord : ArrayList<Float[]>, the list of coordinates
-   * @return ArrayList<ArrayList<Integer>>, the distance matrix
+   * @param coord : ArrayList<float[]>, the list of coordinates
+   * @return float[][], the distance matrix
    */
   @Pure
-  public ArrayList<ArrayList<Integer>> getDistMatrix(final ArrayList<Float[]> coordList) {
-    return null;
+  public float[][] getDistMatrix(final ArrayList<Float[]> coordList) {
+    int size = coordList.size();
+    float[][] distMatrix = new float[size][size];
+    for (int i = 0; (i < size); i++) {
+      {
+        float[] distLine = new float[size];
+        for (int j = 0; (j < size); j++) {
+          {
+            Float _get = coordList.get(i)[1];
+            Float _get_1 = coordList.get(j)[1];
+            double dist = Math.pow((((_get) == null ? 0 : (_get).floatValue()) - ((_get_1) == null ? 0 : (_get_1).floatValue())), 2);
+            Float _get_2 = coordList.get(i)[2];
+            Float _get_3 = coordList.get(j)[2];
+            double _pow = Math.pow((((_get_2) == null ? 0 : (_get_2).floatValue()) - ((_get_3) == null ? 0 : (_get_3).floatValue())), 2);
+            dist = (dist + _pow);
+            dist = Math.pow(dist, 0.5);
+            distLine[j] = ((float) dist);
+          }
+        }
+        distMatrix[i] = distLine;
+      }
+    }
+    return distMatrix;
+  }
+  
+  /**
+   * Prints the distance matrix
+   * @param distMatrix : the distance matrix to print
+   * @param maxSize : the maximum size of value to print. If maxSize = 5, it will only print the 5x5 matrix (the top left corner)
+   */
+  public void printDistMatrix(final float[][] distMatrix, final int maxSize) {
+    int maxSize2 = maxSize;
+    int _size = ((List<float[]>)Conversions.doWrapArray(distMatrix)).size();
+    if ((maxSize > _size)) {
+      maxSize2 = ((List<float[]>)Conversions.doWrapArray(distMatrix)).size();
+    }
+    System.out.println((("Distance Matrix (size printed: " + Integer.valueOf(maxSize2)) + "):"));
+    for (int i = 0; (i < maxSize2); i++) {
+      {
+        for (int j = 0; (j < maxSize2); j++) {
+          {
+            float _get = distMatrix[i][j];
+            System.out.print((" " + Integer.valueOf(((int) _get))));
+            float _get_1 = distMatrix[i][j];
+            if ((_get_1 < 10)) {
+              System.out.print("    ");
+            } else {
+              float _get_2 = distMatrix[i][j];
+              if ((_get_2 < 100)) {
+                System.out.print("   ");
+              } else {
+                float _get_3 = distMatrix[i][j];
+                if ((_get_3 < 1000)) {
+                  System.out.print("  ");
+                } else {
+                  float _get_4 = distMatrix[i][j];
+                  if ((_get_4 < 10000)) {
+                    System.out.print(" ");
+                  }
+                }
+              }
+            }
+          }
+        }
+        System.out.println();
+      }
+    }
   }
   
   @Override

@@ -85,6 +85,7 @@ class Simulation implements EventListener {
 		var test = parsor(getPath("berlin52.txt"))
 		printCoord(test)
 		var test2 = getDistMatrix(test)
+		printDistMatrix(test2, 60)
 //		launchAllAgents
 //		isSimulationStarted = true
 	}
@@ -236,11 +237,55 @@ class Simulation implements EventListener {
 	
 	/**
 	 * Return the distance matrix computed from the coordinates list
-	 * @param coord : ArrayList<Float[]>, the list of coordinates
-	 * @return ArrayList<ArrayList<Integer>>, the distance matrix
+	 * @param coord : ArrayList<float[]>, the list of coordinates
+	 * @return float[][], the distance matrix
 	 */
-	 public def getDistMatrix(coordList : ArrayList<Float[]>) : ArrayList<ArrayList<Integer>>
+	 public def getDistMatrix(coordList : ArrayList<Float[]>) : float[][]
 	 {
-	 	
+	 	var size : int = coordList.size
+	 	var distMatrix : float[][] = newFloatArrayOfSize(size, size)
+	 	for(var i = 0; i < size; i++)
+	 	{
+	 		var distLine : float[] = newFloatArrayOfSize(size)
+	 		for(var j = 0; j < size; j++)
+	 		{
+	 			var dist : double = Math.pow((coordList.get(i).get(1) - coordList.get(j).get(1)), 2) 
+	 			dist += Math.pow((coordList.get(i).get(2) - coordList.get(j).get(2)), 2) 
+	 			dist = Math.pow(dist, 0.5)
+	 			distLine.set(j, dist as float)
+	 		}
+	 		distMatrix.set(i, distLine)
+	 	}
+	 	return distMatrix
 	 }
+	 
+	 /**
+	  * Prints the distance matrix
+	  * @param distMatrix : the distance matrix to print
+	  * @param maxSize : the maximum size of value to print. If maxSize = 5, it will only print the 5x5 matrix (the top left corner)
+	  */
+	 public def printDistMatrix(distMatrix : float[][], maxSize : int) : void
+	 {
+	 	var maxSize2 : int = maxSize
+	 	if(maxSize > distMatrix.size)
+	 		maxSize2 = distMatrix.size
+	 		
+		System.out.println("Distance Matrix (size printed: " + maxSize2 + "):")
+		for (var i : int = 0; i < maxSize2; i++) 
+		{
+			for (var j : int = 0; j < maxSize2; j++)
+			{
+				System.out.print(" " + distMatrix.get(i).get(j) as int)
+				if (distMatrix.get(i).get(j) < 10)
+					System.out.print("    ")
+				else if (distMatrix.get(i).get(j) < 100)
+					System.out.print("   ")
+				else if (distMatrix.get(i).get(j) < 1000)
+					System.out.print("  ")
+				else if (distMatrix.get(i).get(j) < 10000)
+					System.out.print(" ")
+			}
+			System.out.println()
+		}
+	}
 }
