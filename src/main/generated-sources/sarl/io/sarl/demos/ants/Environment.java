@@ -95,8 +95,17 @@ public class Environment extends Agent {
     Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
     _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER.info("ENV STARTED");
     this.nnTourLength = this.nearestNeighbour(this.distMatrix);
-    Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
-    _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1.info(Double.valueOf(this.nnTourLength));
+    int size = this.distMatrix.length;
+    this.pheromons = new double[size][size];
+    for (int i = 0; (i < size); i++) {
+      for (int j = 0; (j < size); j++) {
+        if ((i == j)) {
+          this.pheromons[i][j] = 0.0;
+        } else {
+          this.pheromons[i][j] = (this.numberAnts / this.nnTourLength);
+        }
+      }
+    }
   }
   
   private void $behaviorUnit$Action$2(final Action occurrence) {

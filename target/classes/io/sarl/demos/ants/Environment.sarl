@@ -74,7 +74,20 @@ agent Environment {
 		info("ENV STARTED")
 		
 		this.nnTourLength = nearestNeighbour(this.distMatrix)
-		info(this.nnTourLength)
+
+		var size = this.distMatrix.length
+		pheromons = newDoubleArrayOfSize(size, size)
+		for (var i = 0; i < size; i++) {
+			for (var j = 0; j < size; j++) {
+				if (i == j) {
+					this.pheromons.set(i, j, 0.0)
+				}
+				else {
+					this.pheromons.set(i, j, this.numberAnts / this.nnTourLength)
+				}
+			}
+		}
+		
 	}
 
 	on Action 
