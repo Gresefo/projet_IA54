@@ -11,7 +11,7 @@ import io.sarl.core.OpenEventSpace
 import java.util.Map
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
-import org.arakhne.afc.math.geometry.d2.d.Vector2d
+
 import java.util.ArrayList
 import java.io.File
 import java.util.Scanner
@@ -35,6 +35,21 @@ class Simulation implements EventListener {
 	var defaultSARLContext : AgentContext
 
 	/** 
+	 * The list with the position of every town
+	 */
+	var posList : ArrayList<double[]>
+
+	/** 
+	 * The distance matrix
+	 */
+	var distMatrix : double[][]
+
+	/** 
+	 * The name of the file to open
+	 */
+	var fileName : String
+
+	/** 
 	 * Identifier of the environment
 	 */
 	var environment : UUID
@@ -43,17 +58,7 @@ class Simulation implements EventListener {
 
 	var height = Settings::EnvtHeight
 
-	/** 
-	 * Map buffering boids before launch/start
-	 */
-	var boidsToLaunch : Map<Population, Integer>
-
-	/** 
-	 * Map buffering boids' bodies before launch/start
-	 */
-	var boidBodies : ConcurrentHashMap<UUID, PerceivedAntBody>
-
-	var boidsCount : int
+	var antsCount : int
 
 	/** 
 	 * Boolean specifying id the simulation is started or not.
@@ -72,47 +77,36 @@ class Simulation implements EventListener {
 	 */
 	var myGUI : EnvironmentGui
 
-	new {
-		boidsCount = 0
+	new (fileName : String) {
+		antsCount = 0
+		
+		this.fileName = fileName 
+	}
 
-		this.boidBodies = new ConcurrentHashMap
-
-		boidsToLaunch = newHashMap
+	/** 
+	 * Sets the file name to open
+	 * @param _fileName : String, the file name to open
+	 */
+	def setFileName(fileName : String) : void {
+		this.fileName = fileName
 	}
 
 	def start : void 
 	{
-		var test = parsor(getPath("berlin52.txt"))
-		printCoord(test)
-		var test2 = getDistMatrix(test)
-		printDistMatrix(test2, 60)
-//		launchAllAgents
-//		isSimulationStarted = true
+		this.posList = parsor(getPath(fileName))
+		this.antsCount = this.posList.length
+		 
+		printCoord(this.posList)
+		this.distMatrix = getDistMatrix(this.posList)
+		printDistMatrix(this.distMatrix, 20)
+
+		launchAllAgents
+		isSimulationStarted = true
 	}
 
 	def stop : void {
 		killAllAgents
 		isSimulationStarted = false
-	}
-
-	/** 
-	 * Add the boids of a population to the simulation.
-	 * 
-	 * @param p - the population to add.
-	 */
-	def addBoid(p : Population) : void {
-		boidsCount++
-		if (!isSimulationStarted) {
-			var currentBoidCount = boidsToLaunch.get(p)
-			if (currentBoidCount !== null) {
-				currentBoidCount++
-			} else {
-				currentBoidCount = new Integer(1)
-			}
-			boidsToLaunch.put(p, currentBoidCount)
-		} else {
-			launchBoid(p, "Boid" + boidsCount)
-		}
 	}
 
 	private def launchAllAgents : void {
@@ -122,42 +116,39 @@ class Simulation implements EventListener {
 		defaultSARLContext = kernel.startWithoutAgent
 
 		environment = UUID::randomUUID
-		kernel.startAgentWithID(typeof(Environment), environment, height, width)
+		kernel.startAgentWithID(typeof(Environment), environment, height, width, distMatrix)
 
-		launchAllBoids
+		//
+		launchAllAnts
 		^space = defaultSARLContext.defaultSpace as OpenEventSpace
-
-		this.myGUI = new EnvironmentGui(^space, height, width, this.boidBodies)
+		
+		// No need to send boidBodies
+		this.myGUI = new EnvironmentGui(^space, height, width, this.fileName, posList)
 
 		//Registering to receive GUIRepaint events
 		^space.register(this)
 		// Sending start to Environment
-		^space.emit(id, new Start(this.boidBodies))
+		^space.emit(id, new StartEnvironment())
 	}
 
-	private def launchAllBoids : void {
-		var boidNum = 0
-		for (e : boidsToLaunch.entrySet) {
-			for (var i = 0; i < e.value; i++) {
-				boidNum++
-				e.key.launchBoid("Boid" + boidNum)
-			}
+	private def launchAllAnts : void {
+		var antNum = 0
+		for (var i = 0; i < antsCount; i++) {
+			antNum++
+			launchAnt("Ant" + antNum)
 		}
 	}
 
 	@SuppressWarnings("constant_condition", "discouraged_reference")
-	private def launchBoid(p : Population, boidName : String) : void {
-		var initialPosition = new Vector2d((Math::random - 0.5) * width, (Math::random - 0.5) * height)
-		var initialVitesse = new Vector2d(Math::random - 0.5, Math::random - 0.5)
+	private def launchAnt(antName : String) : void {
 
-		var b = UUID::randomUUID
-		kernel.startAgentWithID(typeof(Boid), b, environment, p, initialPosition, initialVitesse, boidName)
-		this.boidBodies.put(b, new PerceivedAntBody(p, b, initialPosition, initialVitesse))
+		var id_a = UUID::randomUUID
+		kernel.startAgentWithID(typeof(Ant), id_a, environment, antName, distMatrix)
 
-		if (Settings::isLogActivated) {
+		/*if (Settings::isLogActivated) {
 			System.out.println("Lancement d'un boid à la position " + initialPosition + " et avec une vitesse de " +
 				initialVitesse)
-		}
+		}*/
 	}
 
 	private def killAllAgents : void {
@@ -173,7 +164,7 @@ class Simulation implements EventListener {
 	 */
 	override receiveEvent(^event : Event) {
 		if (^event instanceof GuiRepaint) { // event from the environment, GUI must be refreshed
-			this.myGUI.boids = ^event.perceivedAgentBody
+			this.myGUI.boids = BestTour // arrayList //^event.TourFound
 			this.myGUI.repaint
 		}
 	}
@@ -193,14 +184,14 @@ class Simulation implements EventListener {
 	/**
 	 * TSP parsor
 	 * @param path : String, the file path to parse
-	 * @return ArrayList<Float[]> : the coordonates of each town
+	 * @return ArrayList<double[]> : the coordonates of each town
 	 */
-	public def parsor(path : String) : ArrayList<Float[]>
+	public def parsor(path : String) : ArrayList<double[]>
 	{
 		var file : File = new File(path)
 		var sc : Scanner = new Scanner(file)
-		var storing : ArrayList<Float[]> = new ArrayList <Float[]> ()
-		while (sc.hasNextLine()) 
+		var storing : ArrayList<double[]> = new ArrayList <double[]> ()
+		while (sc.hasNextLine())
 		{
 			var line : String = sc.nextLine();
 			if ("NODE_COORD_SECTION".equals(line)) 
@@ -210,10 +201,10 @@ class Simulation implements EventListener {
                 	var next : String = sc.next()
                 	if(next != "EOF")
                 	{
-						var list : Float[] = newArrayOfSize(3)
-						list.set(0, next as float)
-						list.set(1, sc.next() as float)
-						list.set(2, sc.next() as float)
+						var list : double[] = newDoubleArrayOfSize(3)
+						list.set(0, next as double)
+						list.set(1, sc.next() as double)
+						list.set(2, sc.next() as double)
 						storing.add(list);
                 	}
 				}
@@ -225,9 +216,9 @@ class Simulation implements EventListener {
 	
 	/**
 	 * Prints the coordinates of each town
-	 * @param coord : ArrayList<Float[]> the list of coordinates
+	 * @param coord : ArrayList<Double[]> the list of coordinates
 	 */
-	public def printCoord(coord : ArrayList<Float[]>) : void
+	public def printCoord(coord : ArrayList<double[]>) : void
 	{
 		for(f : coord)
 		{
@@ -237,22 +228,22 @@ class Simulation implements EventListener {
 	
 	/**
 	 * Return the distance matrix computed from the coordinates list
-	 * @param coord : ArrayList<float[]>, the list of coordinates
-	 * @return float[][], the distance matrix
+	 * @param coord : ArrayList<double[]>, the list of coordinates
+	 * @return double[][], the distance matrix
 	 */
-	 public def getDistMatrix(coordList : ArrayList<Float[]>) : float[][]
+	 public def getDistMatrix(coordList : ArrayList<double[]>) : double[][]
 	 {
 	 	var size : int = coordList.size
-	 	var distMatrix : float[][] = newFloatArrayOfSize(size, size)
+	 	var distMatrix : double[][] = newDoubleArrayOfSize(size, size)
 	 	for(var i = 0; i < size; i++)
 	 	{
-	 		var distLine : float[] = newFloatArrayOfSize(size)
+	 		var distLine : double[] = newDoubleArrayOfSize(size)
 	 		for(var j = 0; j < size; j++)
 	 		{
 	 			var dist : double = Math.pow((coordList.get(i).get(1) - coordList.get(j).get(1)), 2) 
 	 			dist += Math.pow((coordList.get(i).get(2) - coordList.get(j).get(2)), 2) 
 	 			dist = Math.pow(dist, 0.5)
-	 			distLine.set(j, dist as float)
+	 			distLine.set(j, dist)
 	 		}
 	 		distMatrix.set(i, distLine)
 	 	}
@@ -264,7 +255,7 @@ class Simulation implements EventListener {
 	  * @param distMatrix : the distance matrix to print
 	  * @param maxSize : the maximum size of value to print. If maxSize = 5, it will only print the 5x5 matrix (the top left corner)
 	  */
-	 public def printDistMatrix(distMatrix : float[][], maxSize : int) : void
+	 public def printDistMatrix(distMatrix : double[][], maxSize : int) : void
 	 {
 	 	var maxSize2 : int = maxSize
 	 	if(maxSize > distMatrix.size)

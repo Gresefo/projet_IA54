@@ -16,7 +16,8 @@ class BoidsSimulationLauncher {
 	static def main(args : String*) {
 		
 		// 3 populations of boids (Red, Green and Blue)
-		var simu = new Simulation
+		var fileName = "berlin52.txt"
+		var simu = new Simulation(fileName)
 //		var pRed = new Population(Color::RED)
 //		var pGreen = new Population(Color::GREEN)
 //		var pBlue = new Population(Color::BLUE)

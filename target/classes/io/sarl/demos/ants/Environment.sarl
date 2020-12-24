@@ -25,12 +25,14 @@ agent Environment {
 	@Accessors
 	var height : int
 
-	@Accessors
-	var ants : ConcurrentHashMap<UUID, PerceivedAntBody>
+	//@Accessors
+	//var ants : ConcurrentHashMap<UUID, PerceivedAntBody>
 
 	// Set of ants ID who has sent their influence in the current time step
 	@Accessors
 	var influences : ConcurrentSkipListSet<UUID>
+	
+	var distMatrix : Double[][]
 
 	on Initialize 
 	{
@@ -44,7 +46,10 @@ agent Environment {
 			if (occurrence.parameters.get(1) instanceof Integer) {
 				width = occurrence.parameters.get(1) as Integer
 			}
-			ants = null
+			if (occurrence.parameters.get(2) instanceof Double[][]) {
+				distMatrix = occurrence.parameters.get(2) as Double[][]
+			}
+			//ants = null
 			influences = new ConcurrentSkipListSet
 		}
 	}

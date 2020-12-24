@@ -1,7 +1,6 @@
 package io.sarl.demos.ants.gui;
 
 import io.sarl.core.OpenEventSpace;
-import io.sarl.demos.ants.PerceivedAntBody;
 import io.sarl.demos.ants.gui.Closer;
 import io.sarl.demos.ants.gui.EnvironmentGuiPanel;
 import io.sarl.lang.annotation.SarlElementType;
@@ -9,6 +8,7 @@ import io.sarl.lang.annotation.SarlSpecification;
 import io.sarl.lang.annotation.SyntheticMember;
 import java.awt.Frame;
 import java.awt.Graphics;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
 import org.eclipse.xtext.xbase.lib.Pure;
@@ -24,21 +24,22 @@ public class EnvironmentGui extends Frame {
   
   private EnvironmentGuiPanel panel;
   
-  public EnvironmentGui(final OpenEventSpace comspace, final int iheight, final int iwidth, final Map<UUID, PerceivedAntBody> iboids) {
+  public EnvironmentGui(final OpenEventSpace comspace, final int iheight, final int iwidth, final String fileName, final ArrayList<double[]> posList) {
     super();
     Closer _closer = new Closer(this, comspace);
     this.handler = _closer;
-    EnvironmentGuiPanel _environmentGuiPanel = new EnvironmentGuiPanel(iheight, iwidth, iboids);
+    EnvironmentGuiPanel _environmentGuiPanel = new EnvironmentGuiPanel(iheight, iwidth, posList);
     this.panel = _environmentGuiPanel;
-    this.setTitle("Boids Simulation");
+    this.setTitle(("TSP Simulation : " + fileName));
     this.setSize(iwidth, iheight);
     this.addWindowListener(this.handler);
     this.add("Center", this.panel);
     this.setVisible(true);
   }
   
-  public void setBoids(final Map<UUID, PerceivedAntBody> boids) {
-    this.panel.setBoids(boids);
+  public void setBoids(final /* Map<UUID, PerceivedAntBody> */Object boids) {
+    throw new Error("Unresolved compilation problems:"
+      + "\nThe method setBoids(Map<UUID, PerceivedAntBody>) from the type EnvironmentGuiPanel refers to the missing type PerceivedAntBody");
   }
   
   @Override
@@ -63,5 +64,5 @@ public class EnvironmentGui extends Frame {
   }
   
   @SyntheticMember
-  private static final long serialVersionUID = -518052431L;
+  private static final long serialVersionUID = 1419251547L;
 }

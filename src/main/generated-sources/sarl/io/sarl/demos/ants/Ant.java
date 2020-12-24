@@ -38,14 +38,14 @@ import org.eclipse.xtext.xbase.lib.Pure;
 @SuppressWarnings("potential_field_synchronization_problem")
 @SarlSpecification("0.10")
 @SarlElementType(19)
-public class Boid extends Agent {
+public class Ant extends Agent {
   private UUID environment;
   
   private Float[][] distance;
   
   private void $behaviorUnit$Initialize$0(final Initialize occurrence) {
     int _size = ((List<Object>)Conversions.doWrapArray(occurrence.parameters)).size();
-    if ((_size > 4)) {
+    if ((_size > 2)) {
       Object _get = occurrence.parameters[0];
       if ((_get instanceof UUID)) {
         Object _get_1 = occurrence.parameters[0];
@@ -70,7 +70,7 @@ public class Boid extends Agent {
   }
   
   private void $behaviorUnit$StartAnt$1(final StartAnt occurrence) {
-    Double[][] pheromons = occurrence.pheromons;
+    double[][] pheromons = occurrence.pheromons;
     int size = this.distance.length;
     double tourLength = 0.0;
     ArrayList<Integer> memory = new ArrayList<Integer>();
@@ -85,14 +85,14 @@ public class Boid extends Agent {
       {
         double sum = 0.0;
         for (final Integer i : citiesToVisit) {
-          double _pow = Math.pow(((pheromons[currentCity][((i) == null ? 0 : (i).intValue())]) == null ? 0 : (pheromons[currentCity][((i) == null ? 0 : (i).intValue())]).doubleValue()), Settings.alpha);
+          double _pow = Math.pow(pheromons[currentCity][((i) == null ? 0 : (i).intValue())], Settings.alpha);
           Float _get = this.distance[currentCity][((i) == null ? 0 : (i).intValue())];
           double _pow_1 = Math.pow((1 / ((_get) == null ? 0 : (_get).floatValue())), Settings.beta);
           sum = (sum + (_pow * _pow_1));
         }
         for (final Integer i_1 : citiesToVisit) {
           {
-            double _pow_2 = Math.pow(((pheromons[currentCity][((i_1) == null ? 0 : (i_1).intValue())]) == null ? 0 : (pheromons[currentCity][((i_1) == null ? 0 : (i_1).intValue())]).doubleValue()), Settings.alpha);
+            double _pow_2 = Math.pow(pheromons[currentCity][((i_1) == null ? 0 : (i_1).intValue())], Settings.alpha);
             Float _get_1 = this.distance[currentCity][((i_1) == null ? 0 : (i_1).intValue())];
             double _pow_3 = Math.pow((1 / ((_get_1) == null ? 0 : (_get_1).floatValue())), Settings.beta);
             double probabilty = ((_pow_2 * _pow_3) / sum);
@@ -136,13 +136,13 @@ public class Boid extends Agent {
       @Override
       public boolean matches(final Address it) {
         UUID _uUID = it.getUUID();
-        return Objects.equal(_uUID, Boid.this.environment);
+        return Objects.equal(_uUID, Ant.this.environment);
       }
       private Object writeReplace() throws ObjectStreamException {
-        return new SerializableProxy($SerializableClosureProxy.class, Boid.this.environment);
+        return new SerializableProxy($SerializableClosureProxy.class, Ant.this.environment);
       }
     };
-    _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER.emit(new TourFound(memory, Double.valueOf(tourLength)), _function);
+    _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER.emit(new TourFound(memory, tourLength), _function);
   }
   
   private void $behaviorUnit$Die$2(final Die occurrence) {
@@ -244,7 +244,7 @@ public class Boid extends Agent {
       return false;
     if (getClass() != obj.getClass())
       return false;
-    Boid other = (Boid) obj;
+    Ant other = (Ant) obj;
     if (!java.util.Objects.equals(this.environment, other.environment)) {
       return false;
     }
@@ -262,20 +262,20 @@ public class Boid extends Agent {
   }
   
   @SyntheticMember
-  public Boid(final UUID parentID, final UUID agentID) {
+  public Ant(final UUID parentID, final UUID agentID) {
     super(parentID, agentID);
   }
   
   @SyntheticMember
   @Inject
   @Deprecated
-  public Boid(final BuiltinCapacitiesProvider provider, final UUID parentID, final UUID agentID) {
+  public Ant(final BuiltinCapacitiesProvider provider, final UUID parentID, final UUID agentID) {
     super(provider, parentID, agentID);
   }
   
   @SyntheticMember
   @Inject
-  public Boid(final UUID parentID, final UUID agentID, final DynamicSkillProvider skillProvider) {
+  public Ant(final UUID parentID, final UUID agentID, final DynamicSkillProvider skillProvider) {
     super(parentID, agentID, skillProvider);
   }
 }

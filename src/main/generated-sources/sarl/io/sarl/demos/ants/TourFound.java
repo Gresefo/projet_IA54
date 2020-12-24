@@ -14,9 +14,9 @@ import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
 public class TourFound extends Event {
   public final ArrayList<Integer> tour;
   
-  public final Double length;
+  public final double length;
   
-  public TourFound(final ArrayList<Integer> tour, final Double length) {
+  public TourFound(final ArrayList<Integer> tour, final double length) {
     this.tour = tour;
     this.length = length;
   }
@@ -59,5 +59,5 @@ public class TourFound extends Event {
   }
   
   @SyntheticMember
-  private static final long serialVersionUID = -897268461L;
+  private static final long serialVersionUID = -3264611693L;
 }

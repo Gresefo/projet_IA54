@@ -1,6 +1,5 @@
 package io.sarl.demos.ants;
 
-import io.sarl.demos.ants.PerceivedAntBody;
 import io.sarl.lang.annotation.SarlElementType;
 import io.sarl.lang.annotation.SarlSpecification;
 import io.sarl.lang.annotation.SyntheticMember;
@@ -18,11 +17,12 @@ import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
 @SarlElementType(15)
 @SuppressWarnings("all")
 public class GuiRepaint extends Event {
-  public final ConcurrentHashMap<UUID, PerceivedAntBody> perceivedAgentBody;
+  public final /* ConcurrentHashMap<UUID, PerceivedAntBody> */Object perceivedAgentBody;
   
-  public GuiRepaint(final ConcurrentHashMap<UUID, PerceivedAntBody> bodies) {
-    ConcurrentHashMap<UUID, PerceivedAntBody> _concurrentHashMap = new ConcurrentHashMap<UUID, PerceivedAntBody>(bodies);
-    this.perceivedAgentBody = _concurrentHashMap;
+  public GuiRepaint(final /* ConcurrentHashMap<UUID, PerceivedAntBody> */Object bodies) {
+    throw new Error("Unresolved compilation problems:"
+      + "\nPerceivedAntBody cannot be resolved to a type."
+      + "\nThe field GuiRepaint.perceivedAgentBody refers to the missing type PerceivedAntBody");
   }
   
   @Override
@@ -51,5 +51,5 @@ public class GuiRepaint extends Event {
   }
   
   @SyntheticMember
-  private static final long serialVersionUID = 2599714945L;
+  private static final long serialVersionUID = 1048280001L;
 }

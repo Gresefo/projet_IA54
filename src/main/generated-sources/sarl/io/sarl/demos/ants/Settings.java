@@ -35,17 +35,17 @@ public interface Settings {
   /**
    * Environmental grid default width
    */
-  public static final int EnvtWidth = 800;
+  public static final int EnvtWidth = 1500;
   
   /**
    * Environmental grid default height
    */
-  public static final int EnvtHeight = 600;
+  public static final int EnvtHeight = 1000;
   
   /**
    * Boolean specifying whether message logs are activated or not
    */
-  public static final boolean isLogActivated = false;
+  public static final boolean isLogActivated = true;
   
   /**
    * Specify a pause delay before each boids sends his influence to the environment, and respectively before the environment sends perceptions to boids

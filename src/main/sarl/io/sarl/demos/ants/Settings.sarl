@@ -31,17 +31,17 @@ interface Settings {
     /**
      * Environmental grid default width
      */
-    public static val EnvtWidth = 800
+    public static val EnvtWidth = 1500
     
     /**
 	 * Environmental grid default height
      */
-    public static val EnvtHeight = 600
+    public static val EnvtHeight = 1000
     
     /**
      * Boolean specifying whether message logs are activated or not
      */
-    public static val isLogActivated = false
+    public static val isLogActivated = true
     
     /**
      * Specify a pause delay before each boids sends his influence to the environment, and respectively before the environment sends perceptions to boids

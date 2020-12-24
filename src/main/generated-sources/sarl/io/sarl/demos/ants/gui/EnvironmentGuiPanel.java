@@ -1,14 +1,16 @@
 package io.sarl.demos.ants.gui;
 
-import io.sarl.demos.ants.PerceivedAntBody;
 import io.sarl.lang.annotation.SarlElementType;
 import io.sarl.lang.annotation.SarlSpecification;
 import io.sarl.lang.annotation.SyntheticMember;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Panel;
-import java.util.Collection;
+import java.awt.Shape;
+import java.awt.geom.Ellipse2D;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
 import org.eclipse.xtext.xbase.lib.Pure;
@@ -41,17 +43,20 @@ class EnvironmentGuiPanel extends Panel {
   
   private int height;
   
-  private Map<UUID, PerceivedAntBody> boids;
+  private ArrayList<double[]> posList;
   
-  public void setBoids(final Map<UUID, PerceivedAntBody> boids) {
-    this.boids = boids;
+  private /* Map<UUID, PerceivedAntBody> */Object boids;
+  
+  public void setBoids(final /* Map<UUID, PerceivedAntBody> */Object boids) {
+    throw new Error("Unresolved compilation problems:"
+      + "\nThe field EnvironmentGuiPanel.boids refers to the missing type PerceivedAntBody");
   }
   
-  public EnvironmentGuiPanel(final int iheight, final int iwidth, final Map<UUID, PerceivedAntBody> iboids) {
+  public EnvironmentGuiPanel(final int iheight, final int iwidth, final ArrayList<double[]> _posList) {
     super();
     this.width = iwidth;
     this.height = iheight;
-    this.boids = iboids;
+    this.posList = _posList;
   }
   
   @Override
@@ -62,9 +67,8 @@ class EnvironmentGuiPanel extends Panel {
       this.myCanvas.fillRect(0, 0, ((this.width * 2) - 1), ((this.height * 2) - 1));
       this.myCanvas.setColor(Color.BLACK);
       this.myCanvas.drawRect(0, 0, ((this.width * 2) - 1), ((this.height * 2) - 1));
-      Collection<PerceivedAntBody> _values = this.boids.values();
-      for (final PerceivedAntBody boid : _values) {
-        this.paintBoid(this.myCanvas, boid);
+      for (final double[] pos : this.posList) {
+        this.paintBoid(((Graphics2D) this.myCanvas), pos);
       }
       this.myGraphics.drawImage(this.myImage, 0, 0, this);
     }
@@ -84,46 +88,15 @@ class EnvironmentGuiPanel extends Panel {
     this.myGraphics = this.getGraphics();
   }
   
-  public void paintBoid(final Graphics g, final PerceivedAntBody boid) {
-    throw new Error("Unresolved compilation problems:"
-      + "\nCannot cast from Object to int"
-      + "\nThe method getPosition() from the type PerceivedAntBody refers to the missing type Vector2d"
-      + "\nCannot cast from Object to int"
-      + "\nThe method getPosition() from the type PerceivedAntBody refers to the missing type Vector2d"
-      + "\nThe method getVitesse() from the type PerceivedAntBody refers to the missing type Vector2d"
-      + "\nx cannot be resolved"
-      + "\ny cannot be resolved"
-      + "\nangle cannot be resolved"
-      + "\ncos cannot be resolved"
-      + "\nsin cannot be resolved");
-  }
-  
-  @Pure
-  private static double getAngle(final /* Vector2d */Object v) {
-    throw new Error("Unresolved compilation problems:"
-      + "\nx cannot be resolved"
-      + "\n* cannot be resolved"
-      + "\nx cannot be resolved"
-      + "\n< cannot be resolved"
-      + "\ny cannot be resolved"
-      + "\n>= cannot be resolved"
-      + "\nx cannot be resolved"
-      + "\n>= cannot be resolved"
-      + "\ny cannot be resolved"
-      + "\n/ cannot be resolved"
-      + "\nx cannot be resolved"
-      + "\natan cannot be resolved"
-      + "\ny cannot be resolved"
-      + "\n>= cannot be resolved"
-      + "\ny cannot be resolved"
-      + "\n/ cannot be resolved"
-      + "\nx cannot be resolved"
-      + "\natan cannot be resolved"
-      + "\ny cannot be resolved"
-      + "\n/ cannot be resolved"
-      + "\nx cannot be resolved"
-      + "\natan cannot be resolved"
-      + "\n- cannot be resolved");
+  public void paintBoid(final Graphics2D g, final double[] pos) {
+    double _get = pos[1];
+    int posX = ((int) _get);
+    double _get_1 = pos[2];
+    int posY = ((int) _get_1);
+    Shape circle = new Ellipse2D.Double(posX, posY, 15, 15);
+    g.setColor(Color.RED);
+    g.fill(circle);
+    g.draw(circle);
   }
   
   @Override
@@ -156,5 +129,5 @@ class EnvironmentGuiPanel extends Panel {
   }
   
   @SyntheticMember
-  private static final long serialVersionUID = -2836111295L;
+  private static final long serialVersionUID = -3710425576L;
 }

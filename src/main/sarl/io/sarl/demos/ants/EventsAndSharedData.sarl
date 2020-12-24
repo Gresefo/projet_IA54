@@ -36,24 +36,17 @@ event Perception {
  * Event informing the environment from the real startup of the simulation with the corresponding boids inside
  * @author Nicolas Gaud
  */
-event Start {
-	val perceivedAgentBody : ConcurrentHashMap<UUID, PerceivedAntBody>
-
-	new (bodies : ConcurrentHashMap<UUID, PerceivedAntBody>) {
-		perceivedAgentBody = new ConcurrentHashMap<UUID, PerceivedAntBody>(bodies);
-	}
-	
-}
+event StartEnvironment
 
 event StartAnt {
-	var pheromons : Double[][]
+	var pheromons : double[][]
 }
 
 event TourFound {
 	val tour : ArrayList<Integer>
-	val length : Double
+	val length : double
 	
-	new (tour : ArrayList<Integer>, length : Double) {
+	new (tour : ArrayList<Integer>, length : double) {
 		this.tour = tour
 		this.length = length
 	}
@@ -68,43 +61,6 @@ event GuiRepaint {
 
 	new (bodies : ConcurrentHashMap<UUID, PerceivedAntBody>) {
 		perceivedAgentBody = new ConcurrentHashMap<UUID, PerceivedAntBody>(bodies);
-	}
-
-}
-
-/** 
- * The representation of a boid in the environment : his physical body
- *
- * @author Nicolas Gaud 
- */
-class PerceivedAntBody {
-
-	// Position of the body
-	@Accessors
-	var position : Vector2d
-
-	// Address of the body's owner
-	@Accessors
-	var owner : UUID
-
-	// Agent's speed
-	@Accessors
-	var vitesse : Vector2d
-
-	// Acceleration
-	@Accessors
-	var acceleration : Vector2d
-
-	// Population of the agent
-	@Accessors
-	var group : Population
-
-	new (igroup : Population, iowner : UUID, iposition : Vector2d, ispeed : Vector2d) {
-		position = iposition
-		owner = iowner
-		vitesse = ispeed
-		acceleration = new Vector2d
-		group = igroup
 	}
 
 }

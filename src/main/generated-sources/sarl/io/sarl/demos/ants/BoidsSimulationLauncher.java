@@ -20,7 +20,8 @@ public class BoidsSimulationLauncher {
    */
   @Pure
   public static void main(final String... args) {
-    Simulation simu = new Simulation();
+    String fileName = "berlin52.txt";
+    Simulation simu = new Simulation(fileName);
     simu.start();
   }
   

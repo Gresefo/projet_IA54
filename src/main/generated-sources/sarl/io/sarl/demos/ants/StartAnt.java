@@ -12,7 +12,7 @@ import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
 @SarlElementType(15)
 @SuppressWarnings("all")
 public class StartAnt extends Event {
-  public Double[][] pheromons;
+  public double[][] pheromons;
   
   @SyntheticMember
   public StartAnt() {
@@ -50,5 +50,5 @@ public class StartAnt extends Event {
   }
   
   @SyntheticMember
-  private static final long serialVersionUID = -549103992L;
+  private static final long serialVersionUID = 177719860L;
 }

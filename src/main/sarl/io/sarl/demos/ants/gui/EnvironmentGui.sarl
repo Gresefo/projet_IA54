@@ -11,10 +11,13 @@ import java.awt.^event.WindowAdapter
 import java.awt.^event.WindowEvent
 import java.util.Map
 import java.util.UUID
-import org.arakhne.afc.math.geometry.d2.d.Vector2d
 
 import static extension java.lang.Math.*
 import io.sarl.demos.ants.PerceivedAntBody
+import java.util.ArrayList
+import java.awt.geom.Ellipse2D
+import java.awt.Shape
+import java.awt.Graphics2D
 
 /** 
  * Graphical user interface for ants.
@@ -25,12 +28,13 @@ class EnvironmentGui extends Frame {
 
 	var panel : EnvironmentGuiPanel
 
-	new (comspace : OpenEventSpace, iheight : int, iwidth : int, iboids : Map<UUID, PerceivedAntBody>) {
+	new (comspace : OpenEventSpace, iheight : int, iwidth : int,
+		fileName : String, posList : ArrayList<double[]>) {
 		super()
 		handler = new Closer(this, comspace)
-		panel = new EnvironmentGuiPanel(iheight, iwidth, iboids)
+		panel = new EnvironmentGuiPanel(iheight, iwidth, posList)
 
-		this.title = "Boids Simulation"
+		this.title = "TSP Simulation : " + fileName
 		this.setSize(iwidth, iheight)
 		addWindowListener(handler)
 
@@ -58,12 +62,12 @@ package class Closer extends WindowAdapter {
 		iframe = parent
 	}
 
-	/**
+	/** 
 	 * Clean the simulation asking the agents to die before disposing the window
 	 */
 	override windowClosing(^event : WindowEvent) {
 		^space.emit(UUID.randomUUID, new Die)
-		iframe.dispose();		
+		iframe.dispose();
 	}
 
 }
@@ -79,7 +83,6 @@ package class EnvironmentGuiPanel extends Panel {
 		 * Double buffering management.
 		 */
 	var myGraphics : Graphics
-
 	/** 
 	 * Double buffering management.
 	 */
@@ -94,17 +97,19 @@ package class EnvironmentGuiPanel extends Panel {
 
 	var height : int
 
+	var posList : ArrayList<double[]>
+
 	var boids : Map<UUID, PerceivedAntBody>
 
 	def setBoids(boids : Map<UUID, PerceivedAntBody>) {
 		this.boids = boids
 	}
 
-	new (iheight : int, iwidth : int, iboids : Map<UUID, PerceivedAntBody>) {
+	new (iheight : int, iwidth : int, _posList : ArrayList<double[]>) {
 		super()
 		width = iwidth
 		height = iheight
-		boids = iboids
+		this.posList = _posList
 	}
 
 	override paint(g : Graphics) {
@@ -115,8 +120,11 @@ package class EnvironmentGuiPanel extends Panel {
 			myCanvas.setColor(Color::BLACK)
 			myCanvas.drawRect(0, 0, width * 2 - 1, height * 2 - 1)
 
-			for (boid : boids.values) {
-				paintBoid(myCanvas, boid)
+//			for (boid : boids.values) {
+			// paintBoid(myCanvas, boid)
+			// }
+			for (pos : posList) {
+				paintBoid(myCanvas as Graphics2D, pos)
 			}
 
 			myGraphics.drawImage(myImage, 0, 0, this)
@@ -138,32 +146,38 @@ package class EnvironmentGuiPanel extends Panel {
 		myGraphics = this.graphics
 	}
 
-	def paintBoid(g : Graphics, boid : PerceivedAntBody) {
-		var posX = width + boid.position.x as int
-		var posY = height + boid.position.y as int
-		var direction = boid.vitesse.angle
-		var cos = direction.cos
-		var sin = direction.sin
+	//	def paintBoid(g : Graphics, boid : PerceivedAntBody)
+	def paintBoid(g : Graphics2D, pos : double[]) {
+		// var posX = width + boid.position.x as int
+		// var posY = height + boid.position.y as int
+		// var direction = boid.vitesse.angle
+		var posX = pos.get(1) as int
+		var posY = pos.get(2) as int
+		// var direction = 1
+		// var cos = direction.cos
+		// var sin = direction.sin
+		var circle : Shape = new Ellipse2D.Double(posX, posY, 15, 15);
 
-		g.color = boid.group.color
+		g.color = Color.RED
+		g.fill(circle)
+		g.draw(circle)
 
-		g.drawLine(posX + ( 5 * cos ) as int, posY + ( 5 * sin ) as int, posX - ( 2 * cos + 2 * sin ) as int,
-			posY - ( 2 * sin - 2 * cos ) as int)
-		g.drawLine(posX + ( 5 * cos ) as int, posY + ( 5 * sin ) as int, posX - ( 2 * cos - 2 * sin ) as int,
-			posY - ( 2 * sin + 2 * cos ) as int)
-		g.drawLine(posX - ( 2 * cos + 2 * sin ) as int, posY - ( 2 * sin - 2 * cos ) as int,
-			posX - ( 2 * cos - 2 * sin ) as int, posY - ( 2 * sin + 2 * cos ) as int)
+		// g.drawLine(posX + ( 5 * cos ) as int, posY + ( 5 * sin ) as int, posX - ( 2 * cos + 2 * sin ) as int,
+		// posY - ( 2 * sin - 2 * cos ) as int)
+		// g.drawLine(posX + ( 5 * cos ) as int, posY + ( 5 * sin ) as int, posX - ( 2 * cos - 2 * sin ) as int,
+		// posY - ( 2 * sin + 2 * cos ) as int)
+		// g.drawLine(posX - ( 2 * cos + 2 * sin ) as int, posY - ( 2 * sin - 2 * cos ) as int,
+		// posX - ( 2 * cos - 2 * sin ) as int, posY - ( 2 * sin + 2 * cos ) as int)
 	}
 
-	private static def getAngle(v : Vector2d) : double {
-		var zero = 1E-9
-		if ((v.x * v.x) < zero) {
-			if(v.y >= 0) return (PI / 2)
-			return (-1 * PI / 2)
-		}
-		if(v.x >= 0) return (v.y / v.x).atan
-		if(v.y >= 0) return ( PI + (v.y / v.x).atan )
-		return ( (v.y / v.x).atan - PI )
-	}
-
+	//	private static def getAngle(v : Vector2d) : double {
+	// var zero = 1E-9
+	// if ((v.x * v.x) < zero) {
+	// if(v.y >= 0) return (PI / 2)
+	// return (-1 * PI / 2)
+	// }
+	// if(v.x >= 0) return (v.y / v.x).atan
+	// if(v.y >= 0) return ( PI + (v.y / v.x).atan )
+	// return ( (v.y / v.x).atan - PI )
+	//	}
 }

@@ -7,10 +7,6 @@ import io.sarl.core.Logging;
 import io.sarl.core.Schedules;
 import io.sarl.demos.ants.Action;
 import io.sarl.demos.ants.Die;
-import io.sarl.demos.ants.GuiRepaint;
-import io.sarl.demos.ants.PerceivedAntBody;
-import io.sarl.demos.ants.Perception;
-import io.sarl.demos.ants.Start;
 import io.sarl.lang.annotation.ImportedCapacityFeature;
 import io.sarl.lang.annotation.PerceptGuardEvaluator;
 import io.sarl.lang.annotation.SarlElementType;
@@ -24,7 +20,6 @@ import io.sarl.lang.util.ClearableReference;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import javax.inject.Inject;
 import org.eclipse.xtend.lib.annotations.Accessors;
@@ -47,10 +42,9 @@ public class Environment extends Agent {
   private int height;
   
   @Accessors
-  private ConcurrentHashMap<UUID, PerceivedAntBody> ants;
-  
-  @Accessors
   private ConcurrentSkipListSet<UUID> influences;
+  
+  private Double[][] distMatrix;
   
   private void $behaviorUnit$Initialize$0(final Initialize occurrence) {
     Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
@@ -67,24 +61,41 @@ public class Environment extends Agent {
         Object _get_3 = occurrence.parameters[1];
         this.width = ((((Integer) _get_3)) == null ? 0 : (((Integer) _get_3)).intValue());
       }
-      this.ants = null;
+      Object _get_4 = occurrence.parameters[2];
+      if ((_get_4 instanceof Double[][])) {
+        Object _get_5 = occurrence.parameters[2];
+        this.distMatrix = ((Double[][]) _get_5);
+      }
       ConcurrentSkipListSet<UUID> _concurrentSkipListSet = new ConcurrentSkipListSet<UUID>();
       this.influences = _concurrentSkipListSet;
     }
   }
   
-  private void $behaviorUnit$Start$1(final Start occurrence) {
-    this.ants = occurrence.perceivedAgentBody;
-    DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER = this.$castSkill(DefaultContextInteractions.class, (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = this.$getSkill(DefaultContextInteractions.class)) : this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS);
-    _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER.emit(new GuiRepaint(this.ants));
-    DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_1 = this.$castSkill(DefaultContextInteractions.class, (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = this.$getSkill(DefaultContextInteractions.class)) : this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS);
-    _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_1.emit(new Perception(this.ants));
+  private void $behaviorUnit$void$1(final /* Start */Object occurrence) {
+    throw new Error("Unresolved compilation problems:"
+      + "\nThe method ants(Object) is undefined for the type Environment"
+      + "\nThe method or field ants is undefined"
+      + "\nThe method or field ants is undefined"
+      + "\nThe constructor GuiRepaint(ConcurrentHashMap<UUID, PerceivedAntBody>) refers to the missing type PerceivedAntBody"
+      + "\nThe constructor Perception(ConcurrentHashMap<UUID, PerceivedAntBody>) refers to the missing type PerceivedAntBody"
+      + "\nperceivedAgentBody cannot be resolved");
   }
   
   private void $behaviorUnit$Action$2(final Action occurrence) {
     throw new Error("Unresolved compilation problems:"
-      + "\nThe method applyForce(Vector2d, PerceivedAntBody) from the type Environment refers to the missing type Vector2d"
-      + "\nThe field Action.influence refers to the missing type Vector2d");
+      + "\nThe method or field ants is undefined"
+      + "\nThe method or field ants is undefined"
+      + "\nThe method or field ants is undefined"
+      + "\nThe method or field ants is undefined for the type Environment"
+      + "\nThe method or field ants is undefined"
+      + "\nThe method or field ants is undefined"
+      + "\nThe method applyForce(Vector2d, PerceivedAntBody) from the type Environment refers to the missing type Object"
+      + "\nThe field Action.influence refers to the missing type Vector2d"
+      + "\nThe constructor GuiRepaint(ConcurrentHashMap<UUID, PerceivedAntBody>) refers to the missing type PerceivedAntBody"
+      + "\nThe constructor Perception(ConcurrentHashMap<UUID, PerceivedAntBody>) refers to the missing type PerceivedAntBody"
+      + "\ncontainsKey cannot be resolved"
+      + "\nget cannot be resolved"
+      + "\nsize cannot be resolved");
   }
   
   private void $behaviorUnit$Die$3(final Die occurrence) {
@@ -92,35 +103,47 @@ public class Environment extends Agent {
     _$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER.killMe();
   }
   
-  protected void applyForce(final /* Vector2d */Object force, final PerceivedAntBody b) {
+  protected Object applyForce(final /* Vector2d */Object force, final /* PerceivedAntBody */Object b) {
     throw new Error("Unresolved compilation problems:"
-      + "\nThe method getAcceleration() from the type PerceivedAntBody refers to the missing type Vector2d"
-      + "\nThe method getVitesse() from the type PerceivedAntBody refers to the missing type Vector2d"
-      + "\nThe method getPosition() from the type PerceivedAntBody refers to the missing type Vector2d"
-      + "\nThe method setAcceleration(Vector2d) from the type PerceivedAntBody refers to the missing type Vector2d"
-      + "\nThe method setVitesse(Vector2d) from the type PerceivedAntBody refers to the missing type Vector2d"
-      + "\nThe method setPosition(Vector2d) from the type PerceivedAntBody refers to the missing type Vector2d"
+      + "\nThe method or field ants is undefined"
       + "\nlength cannot be resolved"
       + "\n> cannot be resolved"
+      + "\ngroup cannot be resolved"
+      + "\nmaxForce cannot be resolved"
       + "\nlength cannot be resolved"
+      + "\ngroup cannot be resolved"
+      + "\nmaxForce cannot be resolved"
+      + "\nacceleration cannot be resolved"
       + "\nset cannot be resolved"
+      + "\nvitesse cannot be resolved"
       + "\n+= cannot be resolved"
       + "\nlength cannot be resolved"
       + "\n> cannot be resolved"
+      + "\ngroup cannot be resolved"
+      + "\nmaxSpeed cannot be resolved"
       + "\nlength cannot be resolved"
-      + "\n+= cannot be resolved");
+      + "\ngroup cannot be resolved"
+      + "\nmaxSpeed cannot be resolved"
+      + "\nposition cannot be resolved"
+      + "\n+= cannot be resolved"
+      + "\nget cannot be resolved"
+      + "\nowner cannot be resolved"
+      + "\nacceleration cannot be resolved"
+      + "\nvitesse cannot be resolved"
+      + "\nposition cannot be resolved"
+      + "\nclampToWorld cannot be resolved");
   }
   
   /**
    * The world is circular, this function clamps coordinates to stay within the frame
    */
-  protected void clampToWorld(final PerceivedAntBody b) {
+  protected Object clampToWorld(final /* PerceivedAntBody */Object b) {
     throw new Error("Unresolved compilation problems:"
+      + "\nThe method or field ants is undefined"
       + "\nVector2d cannot be resolved."
-      + "\nThe method getPosition() from the type PerceivedAntBody refers to the missing type Vector2d"
-      + "\nThe method getPosition() from the type PerceivedAntBody refers to the missing type Vector2d"
-      + "\nThe method setPosition(Vector2d) from the type PerceivedAntBody refers to the missing type Vector2d"
+      + "\nposition cannot be resolved"
       + "\nx cannot be resolved"
+      + "\nposition cannot be resolved"
       + "\ny cannot be resolved"
       + "\n> cannot be resolved"
       + "\n-= cannot be resolved"
@@ -129,7 +152,10 @@ public class Environment extends Agent {
       + "\n> cannot be resolved"
       + "\n-= cannot be resolved"
       + "\n< cannot be resolved"
-      + "\n+= cannot be resolved");
+      + "\n+= cannot be resolved"
+      + "\nget cannot be resolved"
+      + "\nowner cannot be resolved"
+      + "\nposition cannot be resolved");
   }
   
   @Extension
@@ -202,10 +228,9 @@ public class Environment extends Agent {
   
   @SyntheticMember
   @PerceptGuardEvaluator
-  private void $guardEvaluator$Start(final Start occurrence, final Collection<Runnable> ___SARLlocal_runnableCollection) {
-    assert occurrence != null;
-    assert ___SARLlocal_runnableCollection != null;
-    ___SARLlocal_runnableCollection.add(() -> $behaviorUnit$Start$1(occurrence));
+  private void $guardEvaluator$void(final /* Start */Object occurrence, final Collection<Runnable> ___SARLlocal_runnableCollection) {
+    throw new Error("Unresolved compilation problems:"
+      + "\nStart cannot be resolved to a type.");
   }
   
   @SyntheticMember
@@ -287,15 +312,6 @@ public class Environment extends Agent {
   
   protected void setHeight(final int height) {
     this.height = height;
-  }
-  
-  @Pure
-  protected ConcurrentHashMap<UUID, PerceivedAntBody> getAnts() {
-    return this.ants;
-  }
-  
-  protected void setAnts(final ConcurrentHashMap<UUID, PerceivedAntBody> ants) {
-    this.ants = ants;
   }
   
   @Pure
