@@ -6,7 +6,6 @@ import io.sarl.lang.annotation.SarlSpecification;
 import io.sarl.lang.annotation.SyntheticMember;
 import java.util.Objects;
 import java.util.UUID;
-import org.arakhne.afc.math.geometry.d2.d.Vector2d;
 import org.eclipse.xtend.lib.annotations.Accessors;
 import org.eclipse.xtext.xbase.lib.Pure;
 
@@ -15,32 +14,31 @@ import org.eclipse.xtext.xbase.lib.Pure;
  * 
  * @author Nicolas Gaud
  */
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(10)
 @SuppressWarnings("all")
 public class PerceivedAntBody {
   @Accessors
-  private Vector2d position;
+  private /* Vector2d */Object position;
   
   @Accessors
   private UUID owner;
   
   @Accessors
-  private Vector2d vitesse;
+  private /* Vector2d */Object vitesse;
   
   @Accessors
-  private Vector2d acceleration;
+  private /* Vector2d */Object acceleration;
   
   @Accessors
   private Population group;
   
-  public PerceivedAntBody(final Population igroup, final UUID iowner, final Vector2d iposition, final Vector2d ispeed) {
-    this.position = iposition;
-    this.owner = iowner;
-    this.vitesse = ispeed;
-    Vector2d _vector2d = new Vector2d();
-    this.acceleration = _vector2d;
-    this.group = igroup;
+  public PerceivedAntBody(final Population igroup, final UUID iowner, final /* Vector2d */Object iposition, final /* Vector2d */Object ispeed) {
+    throw new Error("Unresolved compilation problems:"
+      + "\nVector2d cannot be resolved."
+      + "\nThe field PerceivedAntBody.position refers to the missing type Vector2d"
+      + "\nThe field PerceivedAntBody.vitesse refers to the missing type Vector2d"
+      + "\nThe field PerceivedAntBody.acceleration refers to the missing type Vector2d");
   }
   
   @Override
@@ -54,8 +52,9 @@ public class PerceivedAntBody {
     if (getClass() != obj.getClass())
       return false;
     PerceivedAntBody other = (PerceivedAntBody) obj;
-    if (!Objects.equals(this.owner, other.owner))
+    if (!Objects.equals(this.owner, other.owner)) {
       return false;
+    }
     return super.equals(obj);
   }
   

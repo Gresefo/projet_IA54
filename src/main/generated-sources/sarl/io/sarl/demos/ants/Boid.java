@@ -6,12 +6,10 @@ import io.sarl.core.Initialize;
 import io.sarl.core.Lifecycle;
 import io.sarl.core.Logging;
 import io.sarl.core.Schedules;
-import io.sarl.demos.ants.Action;
 import io.sarl.demos.ants.Die;
-import io.sarl.demos.ants.PerceivedAntBody;
-import io.sarl.demos.ants.Perception;
-import io.sarl.demos.ants.Population;
 import io.sarl.demos.ants.Settings;
+import io.sarl.demos.ants.StartAnt;
+import io.sarl.demos.ants.TourFound;
 import io.sarl.lang.annotation.ImportedCapacityFeature;
 import io.sarl.lang.annotation.PerceptGuardEvaluator;
 import io.sarl.lang.annotation.SarlElementType;
@@ -19,35 +17,31 @@ import io.sarl.lang.annotation.SarlSpecification;
 import io.sarl.lang.annotation.SyntheticMember;
 import io.sarl.lang.core.Address;
 import io.sarl.lang.core.Agent;
-import io.sarl.lang.core.AtomicSkillReference;
 import io.sarl.lang.core.BuiltinCapacitiesProvider;
 import io.sarl.lang.core.DynamicSkillProvider;
 import io.sarl.lang.core.Scope;
+import io.sarl.lang.core.Skill;
+import io.sarl.lang.util.ClearableReference;
 import io.sarl.lang.util.SerializableProxy;
 import java.io.ObjectStreamException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import javax.inject.Inject;
-import org.arakhne.afc.math.geometry.d2.d.Vector2d;
 import org.eclipse.xtext.xbase.lib.Conversions;
+import org.eclipse.xtext.xbase.lib.DoubleExtensions;
 import org.eclipse.xtext.xbase.lib.Extension;
-import org.eclipse.xtext.xbase.lib.ObjectExtensions;
-import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
+import org.eclipse.xtext.xbase.lib.Inline;
 import org.eclipse.xtext.xbase.lib.Pure;
 
 @SuppressWarnings("potential_field_synchronization_problem")
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(19)
 public class Boid extends Agent {
   private UUID environment;
   
-  private Vector2d position;
-  
-  private Vector2d speed;
-  
-  private Population group;
+  private Float[][] distance;
   
   private void $behaviorUnit$Initialize$0(final Initialize occurrence) {
     int _size = ((List<Object>)Conversions.doWrapArray(occurrence.parameters)).size();
@@ -58,236 +52,112 @@ public class Boid extends Agent {
         this.environment = ((UUID) _get_1);
       }
       Object _get_2 = occurrence.parameters[1];
-      if ((_get_2 instanceof Population)) {
+      if ((_get_2 instanceof String)) {
+        Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
         Object _get_3 = occurrence.parameters[1];
-        this.group = ((Population) _get_3);
+        _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER.setLoggingName((_get_3 == null ? null : _get_3.toString()));
       }
       Object _get_4 = occurrence.parameters[2];
-      if ((_get_4 instanceof Vector2d)) {
+      if ((_get_4 instanceof Float[][])) {
         Object _get_5 = occurrence.parameters[2];
-        this.position = ((Vector2d) _get_5);
-      }
-      Object _get_6 = occurrence.parameters[3];
-      if ((_get_6 instanceof Vector2d)) {
-        Object _get_7 = occurrence.parameters[3];
-        this.speed = ((Vector2d) _get_7);
-        this.speed.setLength(0.25);
-        Vector2d _vector2d = new Vector2d(0, 0.75);
-        this.speed.operator_add(_vector2d);
-        this.speed.scale(this.group.maxSpeed);
-      }
-      Object _get_8 = occurrence.parameters[4];
-      if ((_get_8 instanceof String)) {
-        Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
-        Object _get_9 = occurrence.parameters[4];
-        _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER.setLoggingName((_get_9 == null ? null : _get_9.toString()));
+        this.distance = ((Float[][]) _get_5);
       }
     }
     if (Settings.isLogActivated) {
-      Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
+      Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
       _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1.info("Ants activated");
     }
   }
   
-  private void $behaviorUnit$Perception$1(final Perception occurrence) {
-    ConcurrentHashMap<UUID, PerceivedAntBody> boids = occurrence.perceivedAgentBody;
-    PerceivedAntBody myBody = boids.get(this.getID());
-    if (((myBody != null) && Objects.equal(myBody.getOwner(), this.getID()))) {
-      this.position = myBody.getPosition();
-      this.speed = myBody.getVitesse();
+  private void $behaviorUnit$StartAnt$1(final StartAnt occurrence) {
+    Double[][] pheromons = occurrence.pheromons;
+    int size = this.distance.length;
+    double tourLength = 0.0;
+    ArrayList<Integer> memory = new ArrayList<Integer>();
+    ArrayList<Integer> citiesToVisit = new ArrayList<Integer>();
+    for (int i = 1; (i < size); i++) {
+      citiesToVisit.add(Integer.valueOf(i));
     }
-    Schedules _$CAPACITY_USE$IO_SARL_CORE_SCHEDULES$CALLER = this.$CAPACITY_USE$IO_SARL_CORE_SCHEDULES$CALLER();
-    final Procedure1<Agent> _function = (Agent it) -> {
-      DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER = this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER();
-      Action _action = new Action();
-      final Procedure1<Action> _function_1 = (Action it_1) -> {
-        it_1.influence = this.think(boids.values());
-      };
-      Action _doubleArrow = ObjectExtensions.<Action>operator_doubleArrow(_action, _function_1);
-      class $SerializableClosureProxy implements Scope<Address> {
-        
-        private final UUID $_environment;
-        
-        public $SerializableClosureProxy(final UUID $_environment) {
-          this.$_environment = $_environment;
+    ArrayList<Double> prob = new ArrayList<Double>();
+    memory.add(Integer.valueOf(0));
+    int currentCity = 0;
+    while ((memory.size() != size)) {
+      {
+        double sum = 0.0;
+        for (final Integer i : citiesToVisit) {
+          double _pow = Math.pow(((pheromons[currentCity][((i) == null ? 0 : (i).intValue())]) == null ? 0 : (pheromons[currentCity][((i) == null ? 0 : (i).intValue())]).doubleValue()), Settings.alpha);
+          Float _get = this.distance[currentCity][((i) == null ? 0 : (i).intValue())];
+          double _pow_1 = Math.pow((1 / ((_get) == null ? 0 : (_get).floatValue())), Settings.beta);
+          sum = (sum + (_pow * _pow_1));
         }
-        
-        @Override
-        public boolean matches(final Address it) {
-          UUID _uUID = it.getUUID();
-          return Objects.equal(_uUID, $_environment);
+        for (final Integer i_1 : citiesToVisit) {
+          {
+            double _pow_2 = Math.pow(((pheromons[currentCity][((i_1) == null ? 0 : (i_1).intValue())]) == null ? 0 : (pheromons[currentCity][((i_1) == null ? 0 : (i_1).intValue())]).doubleValue()), Settings.alpha);
+            Float _get_1 = this.distance[currentCity][((i_1) == null ? 0 : (i_1).intValue())];
+            double _pow_3 = Math.pow((1 / ((_get_1) == null ? 0 : (_get_1).floatValue())), Settings.beta);
+            double probabilty = ((_pow_2 * _pow_3) / sum);
+            prob.add(Double.valueOf(probabilty));
+          }
         }
+        double cityChosen = Math.random();
+        Double cumul = prob.get(0);
+        int i_2 = 0;
+        while ((cumul.doubleValue() < cityChosen)) {
+          {
+            Double _get_1 = prob.get(i_2);
+            double _plus = DoubleExtensions.operator_plus(cumul, _get_1);
+            cumul = Double.valueOf(_plus);
+            i_2 = (i_2 + 1);
+          }
+        }
+        Float _get_1 = this.distance[currentCity][((citiesToVisit.get((i_2 - 1))) == null ? 0 : (citiesToVisit.get((i_2 - 1))).intValue())];
+        tourLength = (tourLength + (((_get_1 == null ? null : Double.valueOf(_get_1.doubleValue()))) == null ? 0 : ((_get_1 == null ? null : Double.valueOf(_get_1.doubleValue()))).doubleValue()));
+        currentCity = ((citiesToVisit.get((i_2 - 1))) == null ? 0 : (citiesToVisit.get((i_2 - 1))).intValue());
+        memory.add(Integer.valueOf(currentCity));
+        citiesToVisit.remove((i_2 - 1));
       }
-      final Scope<Address> _function_2 = new Scope<Address>() {
-        @Override
-        public boolean matches(final Address it) {
-          UUID _uUID = it.getUUID();
-          return Objects.equal(_uUID, Boid.this.environment);
-        }
-        private Object writeReplace() throws ObjectStreamException {
-          return new SerializableProxy($SerializableClosureProxy.class, Boid.this.environment);
-        }
-      };
-      _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER.emit(_doubleArrow, _function_2);
-      if (Settings.isLogActivated) {
-        Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
-        _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER.info("Sending Influences.");
+    }
+    DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER = this.$castSkill(DefaultContextInteractions.class, (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = this.$getSkill(DefaultContextInteractions.class)) : this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS);
+    class $SerializableClosureProxy implements Scope<Address> {
+      
+      private final UUID $_environment;
+      
+      public $SerializableClosureProxy(final UUID $_environment) {
+        this.$_environment = $_environment;
+      }
+      
+      @Override
+      public boolean matches(final Address it) {
+        UUID _uUID = it.getUUID();
+        return Objects.equal(_uUID, $_environment);
+      }
+    }
+    final Scope<Address> _function = new Scope<Address>() {
+      @Override
+      public boolean matches(final Address it) {
+        UUID _uUID = it.getUUID();
+        return Objects.equal(_uUID, Boid.this.environment);
+      }
+      private Object writeReplace() throws ObjectStreamException {
+        return new SerializableProxy($SerializableClosureProxy.class, Boid.this.environment);
       }
     };
-    _$CAPACITY_USE$IO_SARL_CORE_SCHEDULES$CALLER.in(Settings.pause, _function);
+    _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER.emit(new TourFound(memory, Double.valueOf(tourLength)), _function);
   }
   
   private void $behaviorUnit$Die$2(final Die occurrence) {
-    Lifecycle _$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER = this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER();
+    Lifecycle _$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER = this.$castSkill(Lifecycle.class, (this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE == null || this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE = this.$getSkill(Lifecycle.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE);
     _$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER.killMe();
-  }
-  
-  /**
-   * The core boids behavior : aggregating all forces into a influence
-   */
-  protected Vector2d think(final Collection<PerceivedAntBody> perception) {
-    if ((perception != null)) {
-      Vector2d force = null;
-      Vector2d influence = new Vector2d();
-      influence.set(0, 0);
-      if (this.group.separationOn) {
-        force = this.separation(perception);
-        force.scale(this.group.separationForce);
-        influence.operator_add(force);
-      }
-      if (this.group.cohesionOn) {
-        force = this.cohesion(perception);
-        force.scale(this.group.cohesionForce);
-        influence.operator_add(force);
-      }
-      if (this.group.alignmentOn) {
-        force = this.alignment(perception);
-        force.scale(this.group.alignmentForce);
-        influence.operator_add(force);
-      }
-      if (this.group.repulsionOn) {
-        force = this.repulsion(perception);
-        force.scale(this.group.repulsionForce);
-        influence.operator_add(force);
-      }
-      double _length = influence.getLength();
-      if ((_length > this.group.maxForce)) {
-        influence.setLength(this.group.maxForce);
-      }
-      influence.scale((1 / this.group.mass));
-      return influence;
-    }
-    return null;
-  }
-  
-  /**
-   * Determine whether a body is visible or not according to the perception range
-   */
-  @Pure
-  protected boolean isVisible(final PerceivedAntBody otherBoid, final double distance) {
-    Vector2d _position = otherBoid.getPosition();
-    Vector2d tmp = _position.operator_minus(this.position);
-    double _length = tmp.getLength();
-    if ((_length > distance)) {
-      return false;
-    }
-    Vector2d tmp2 = this.speed.clone();
-    tmp2.normalize();
-    double _multiply = tmp2.operator_multiply(tmp);
-    if ((_multiply < this.group.visibleAngleCos)) {
-      return false;
-    }
-    return true;
-  }
-  
-  /**
-   * Compute the separation force.
-   */
-  protected Vector2d separation(final Collection<PerceivedAntBody> otherBoids) {
-    Vector2d force = new Vector2d();
-    double len = 0.0;
-    for (final PerceivedAntBody otherBoid : otherBoids) {
-      if (((((otherBoid != null) && (!Objects.equal(otherBoid.getOwner(), this.getID()))) && Objects.equal(otherBoid.getGroup(), this.group)) && this.isVisible(otherBoid, this.group.distSeparation))) {
-        Vector2d _position = otherBoid.getPosition();
-        Vector2d tmp = this.position.operator_minus(_position);
-        len = tmp.getLength();
-        double _power = Math.pow(len, 2);
-        tmp.scale((1.0 / _power));
-        force.operator_add(tmp);
-      }
-    }
-    return force;
-  }
-  
-  /**
-   * Compute the cohesion force.
-   */
-  protected Vector2d cohesion(final Collection<PerceivedAntBody> otherBoids) {
-    int nbTot = 0;
-    Vector2d force = new Vector2d();
-    for (final PerceivedAntBody otherBoid : otherBoids) {
-      if (((((otherBoid != null) && (!Objects.equal(otherBoid.getOwner(), this.getID()))) && Objects.equal(otherBoid.getGroup(), this.group)) && this.isVisible(otherBoid, this.group.distCohesion))) {
-        nbTot++;
-        Vector2d _position = otherBoid.getPosition();
-        force.operator_add(_position);
-      }
-    }
-    if ((nbTot > 0)) {
-      force.scale((1.0 / nbTot));
-      force.operator_remove(this.position);
-    }
-    return force;
-  }
-  
-  /**
-   * Compute the alignment force.
-   */
-  protected Vector2d alignment(final Collection<PerceivedAntBody> otherBoids) {
-    int nbTot = 0;
-    Vector2d tmp = new Vector2d();
-    Vector2d force = new Vector2d();
-    for (final PerceivedAntBody otherBoid : otherBoids) {
-      if (((((otherBoid != null) && (!Objects.equal(otherBoid.getOwner(), this.getID()))) && Objects.equal(otherBoid.getGroup(), this.group)) && this.isVisible(otherBoid, this.group.distCohesion))) {
-        nbTot++;
-        tmp.set(otherBoid.getVitesse());
-        double _length = tmp.getLength();
-        tmp.scale((1.0 / _length));
-        force.operator_add(tmp);
-      }
-    }
-    if ((nbTot > 0)) {
-      force.scale((1.0 / nbTot));
-    }
-    return force;
-  }
-  
-  /**
-   * Compute the repulsion force.
-   * Séparation mais avec les autres groupes
-   */
-  protected Vector2d repulsion(final Collection<PerceivedAntBody> otherBoids) {
-    Vector2d force = new Vector2d();
-    double len = 0.0;
-    for (final PerceivedAntBody otherBoid : otherBoids) {
-      if (((((otherBoid != null) && (!Objects.equal(otherBoid.getOwner(), this.getID()))) && (!Objects.equal(otherBoid.getGroup(), this.group))) && this.isVisible(otherBoid, this.group.distCohesion))) {
-        Vector2d _position = otherBoid.getPosition();
-        Vector2d tmp = this.position.operator_minus(_position);
-        len = tmp.getLength();
-        double _power = Math.pow(len, 2);
-        tmp.scale((1.0 / _power));
-        force.operator_add(tmp);
-      }
-    }
-    return force;
   }
   
   @Extension
   @ImportedCapacityFeature(Logging.class)
   @SyntheticMember
-  private transient AtomicSkillReference $CAPACITY_USE$IO_SARL_CORE_LOGGING;
+  private transient ClearableReference<Skill> $CAPACITY_USE$IO_SARL_CORE_LOGGING;
   
   @SyntheticMember
   @Pure
+  @Inline(value = "$castSkill(Logging.class, ($0$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || $0$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? ($0$CAPACITY_USE$IO_SARL_CORE_LOGGING = $0$getSkill(Logging.class)) : $0$CAPACITY_USE$IO_SARL_CORE_LOGGING)", imported = Logging.class)
   private Logging $CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER() {
     if (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) {
       this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = $getSkill(Logging.class);
@@ -298,10 +168,11 @@ public class Boid extends Agent {
   @Extension
   @ImportedCapacityFeature(DefaultContextInteractions.class)
   @SyntheticMember
-  private transient AtomicSkillReference $CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS;
+  private transient ClearableReference<Skill> $CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS;
   
   @SyntheticMember
   @Pure
+  @Inline(value = "$castSkill(DefaultContextInteractions.class, ($0$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || $0$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? ($0$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = $0$getSkill(DefaultContextInteractions.class)) : $0$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS)", imported = DefaultContextInteractions.class)
   private DefaultContextInteractions $CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER() {
     if (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) {
       this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = $getSkill(DefaultContextInteractions.class);
@@ -312,10 +183,11 @@ public class Boid extends Agent {
   @Extension
   @ImportedCapacityFeature(Schedules.class)
   @SyntheticMember
-  private transient AtomicSkillReference $CAPACITY_USE$IO_SARL_CORE_SCHEDULES;
+  private transient ClearableReference<Skill> $CAPACITY_USE$IO_SARL_CORE_SCHEDULES;
   
   @SyntheticMember
   @Pure
+  @Inline(value = "$castSkill(Schedules.class, ($0$CAPACITY_USE$IO_SARL_CORE_SCHEDULES == null || $0$CAPACITY_USE$IO_SARL_CORE_SCHEDULES.get() == null) ? ($0$CAPACITY_USE$IO_SARL_CORE_SCHEDULES = $0$getSkill(Schedules.class)) : $0$CAPACITY_USE$IO_SARL_CORE_SCHEDULES)", imported = Schedules.class)
   private Schedules $CAPACITY_USE$IO_SARL_CORE_SCHEDULES$CALLER() {
     if (this.$CAPACITY_USE$IO_SARL_CORE_SCHEDULES == null || this.$CAPACITY_USE$IO_SARL_CORE_SCHEDULES.get() == null) {
       this.$CAPACITY_USE$IO_SARL_CORE_SCHEDULES = $getSkill(Schedules.class);
@@ -326,10 +198,11 @@ public class Boid extends Agent {
   @Extension
   @ImportedCapacityFeature(Lifecycle.class)
   @SyntheticMember
-  private transient AtomicSkillReference $CAPACITY_USE$IO_SARL_CORE_LIFECYCLE;
+  private transient ClearableReference<Skill> $CAPACITY_USE$IO_SARL_CORE_LIFECYCLE;
   
   @SyntheticMember
   @Pure
+  @Inline(value = "$castSkill(Lifecycle.class, ($0$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE == null || $0$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE.get() == null) ? ($0$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE = $0$getSkill(Lifecycle.class)) : $0$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE)", imported = Lifecycle.class)
   private Lifecycle $CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER() {
     if (this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE == null || this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE.get() == null) {
       this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE = $getSkill(Lifecycle.class);
@@ -355,10 +228,10 @@ public class Boid extends Agent {
   
   @SyntheticMember
   @PerceptGuardEvaluator
-  private void $guardEvaluator$Perception(final Perception occurrence, final Collection<Runnable> ___SARLlocal_runnableCollection) {
+  private void $guardEvaluator$StartAnt(final StartAnt occurrence, final Collection<Runnable> ___SARLlocal_runnableCollection) {
     assert occurrence != null;
     assert ___SARLlocal_runnableCollection != null;
-    ___SARLlocal_runnableCollection.add(() -> $behaviorUnit$Perception$1(occurrence));
+    ___SARLlocal_runnableCollection.add(() -> $behaviorUnit$StartAnt$1(occurrence));
   }
   
   @Override
@@ -372,8 +245,9 @@ public class Boid extends Agent {
     if (getClass() != obj.getClass())
       return false;
     Boid other = (Boid) obj;
-    if (!java.util.Objects.equals(this.environment, other.environment))
+    if (!java.util.Objects.equals(this.environment, other.environment)) {
       return false;
+    }
     return super.equals(obj);
   }
   

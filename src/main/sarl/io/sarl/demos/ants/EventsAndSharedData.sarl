@@ -5,6 +5,7 @@ import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.arakhne.afc.math.geometry.d2.d.Vector2d
+import java.util.ArrayList
 
 /**
  * Event from the GUI to kill each agent to end the simulation before closing the main window
@@ -42,6 +43,20 @@ event Start {
 		perceivedAgentBody = new ConcurrentHashMap<UUID, PerceivedAntBody>(bodies);
 	}
 	
+}
+
+event StartAnt {
+	var pheromons : Double[][]
+}
+
+event TourFound {
+	val tour : ArrayList<Integer>
+	val length : Double
+	
+	new (tour : ArrayList<Integer>, length : Double) {
+		this.tour = tour
+		this.length = length
+	}
 }
 
 /** 

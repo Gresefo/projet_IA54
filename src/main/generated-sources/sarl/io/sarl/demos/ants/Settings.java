@@ -28,7 +28,7 @@ import io.sarl.lang.annotation.SarlSpecification;
  * 
  * @author Nicolas Gaud
  */
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(11)
 @SuppressWarnings("all")
 public interface Settings {
@@ -51,4 +51,8 @@ public interface Settings {
    * Specify a pause delay before each boids sends his influence to the environment, and respectively before the environment sends perceptions to boids
    */
   public static final int pause = 0;
+  
+  public static final int alpha = 1;
+  
+  public static final int beta = 2;
 }

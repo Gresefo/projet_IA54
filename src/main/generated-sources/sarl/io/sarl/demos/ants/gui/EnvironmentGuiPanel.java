@@ -11,7 +11,6 @@ import java.awt.Panel;
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
-import org.arakhne.afc.math.geometry.d2.d.Vector2d;
 import org.eclipse.xtext.xbase.lib.Pure;
 
 /**
@@ -19,7 +18,7 @@ import org.eclipse.xtext.xbase.lib.Pure;
  * 
  * @author Nicolas GAUD
  */
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(10)
 @SuppressWarnings("all")
 class EnvironmentGuiPanel extends Panel {
@@ -86,51 +85,45 @@ class EnvironmentGuiPanel extends Panel {
   }
   
   public void paintBoid(final Graphics g, final PerceivedAntBody boid) {
-    double _x = boid.getPosition().getX();
-    int posX = (this.width + ((int) _x));
-    double _y = boid.getPosition().getY();
-    int posY = (this.height + ((int) _y));
-    double direction = EnvironmentGuiPanel.getAngle(boid.getVitesse());
-    double cos = Math.cos(direction);
-    double sin = Math.sin(direction);
-    g.setColor(boid.getGroup().color);
-    g.drawLine((posX + ((int) (5 * cos))), (posY + ((int) (5 * sin))), (posX - ((int) ((2 * cos) + (2 * sin)))), 
-      (posY - ((int) ((2 * sin) - (2 * cos)))));
-    g.drawLine((posX + ((int) (5 * cos))), (posY + ((int) (5 * sin))), (posX - ((int) ((2 * cos) - (2 * sin)))), 
-      (posY - ((int) ((2 * sin) + (2 * cos)))));
-    g.drawLine((posX - ((int) ((2 * cos) + (2 * sin)))), (posY - ((int) ((2 * sin) - (2 * cos)))), 
-      (posX - ((int) ((2 * cos) - (2 * sin)))), (posY - ((int) ((2 * sin) + (2 * cos)))));
+    throw new Error("Unresolved compilation problems:"
+      + "\nCannot cast from Object to int"
+      + "\nThe method getPosition() from the type PerceivedAntBody refers to the missing type Vector2d"
+      + "\nCannot cast from Object to int"
+      + "\nThe method getPosition() from the type PerceivedAntBody refers to the missing type Vector2d"
+      + "\nThe method getVitesse() from the type PerceivedAntBody refers to the missing type Vector2d"
+      + "\nx cannot be resolved"
+      + "\ny cannot be resolved"
+      + "\nangle cannot be resolved"
+      + "\ncos cannot be resolved"
+      + "\nsin cannot be resolved");
   }
   
   @Pure
-  private static double getAngle(final Vector2d v) {
-    double zero = 1E-9;
-    double _x = v.getX();
-    double _x_1 = v.getX();
-    if (((_x * _x_1) < zero)) {
-      double _y = v.getY();
-      if ((_y >= 0)) {
-        return (Math.PI / 2);
-      }
-      return (((-1) * Math.PI) / 2);
-    }
-    double _x_2 = v.getX();
-    if ((_x_2 >= 0)) {
-      double _y_1 = v.getY();
-      double _x_3 = v.getX();
-      return Math.atan((_y_1 / _x_3));
-    }
-    double _y_2 = v.getY();
-    if ((_y_2 >= 0)) {
-      double _y_3 = v.getY();
-      double _x_4 = v.getX();
-      double _atan = Math.atan((_y_3 / _x_4));
-      return (Math.PI + _atan);
-    }
-    double _y_4 = v.getY();
-    double _x_5 = v.getX();
-    double _atan_1 = Math.atan((_y_4 / _x_5));
-    return (_atan_1 - Math.PI);
+  private static double getAngle(final /* Vector2d */Object v) {
+    throw new Error("Unresolved compilation problems:"
+      + "\nx cannot be resolved"
+      + "\n* cannot be resolved"
+      + "\nx cannot be resolved"
+      + "\n< cannot be resolved"
+      + "\ny cannot be resolved"
+      + "\n>= cannot be resolved"
+      + "\nx cannot be resolved"
+      + "\n>= cannot be resolved"
+      + "\ny cannot be resolved"
+      + "\n/ cannot be resolved"
+      + "\nx cannot be resolved"
+      + "\natan cannot be resolved"
+      + "\ny cannot be resolved"
+      + "\n>= cannot be resolved"
+      + "\ny cannot be resolved"
+      + "\n/ cannot be resolved"
+      + "\nx cannot be resolved"
+      + "\natan cannot be resolved"
+      + "\ny cannot be resolved"
+      + "\n/ cannot be resolved"
+      + "\nx cannot be resolved"
+      + "\natan cannot be resolved"
+      + "\n- cannot be resolved");
   }
   
   @Override
@@ -157,11 +150,11 @@ class EnvironmentGuiPanel extends Panel {
   public int hashCode() {
     int result = super.hashCode();
     final int prime = 31;
-    result = prime * result + Integer.hashCode(this.width);
-    result = prime * result + Integer.hashCode(this.height);
+    result = prime * result + this.width;
+    result = prime * result + this.height;
     return result;
   }
   
   @SyntheticMember
-  private static final long serialVersionUID = -5065322064L;
+  private static final long serialVersionUID = -2836111295L;
 }

@@ -4,7 +4,6 @@ import com.google.common.base.Objects;
 import io.sarl.bootstrap.SRE;
 import io.sarl.bootstrap.SREBootstrap;
 import io.sarl.core.OpenEventSpace;
-import io.sarl.demos.ants.Boid;
 import io.sarl.demos.ants.Environment;
 import io.sarl.demos.ants.GuiRepaint;
 import io.sarl.demos.ants.PerceivedAntBody;
@@ -28,7 +27,6 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import org.arakhne.afc.math.geometry.d2.d.Vector2d;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Exceptions;
@@ -38,7 +36,7 @@ import org.eclipse.xtext.xbase.lib.Pure;
  * The boids simulation launching the SARL environment with the corresponding agent and ensuring the communication between agents and the GUI
  * @author Nicolas Gaud
  */
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(10)
 @SuppressWarnings("all")
 public class Simulation implements EventListener {
@@ -166,25 +164,13 @@ public class Simulation implements EventListener {
   
   @SuppressWarnings({ "constant_condition", "discouraged_reference" })
   private void launchBoid(final Population p, final String boidName) {
-    try {
-      double _random = Math.random();
-      double _random_1 = Math.random();
-      Vector2d initialPosition = new Vector2d(((_random - 0.5) * this.width), ((_random_1 - 0.5) * this.height));
-      double _random_2 = Math.random();
-      double _random_3 = Math.random();
-      Vector2d initialVitesse = new Vector2d((_random_2 - 0.5), (_random_3 - 0.5));
-      UUID b = UUID.randomUUID();
-      this.kernel.startAgentWithID(Boid.class, b, this.environment, p, initialPosition, initialVitesse, boidName);
-      PerceivedAntBody _perceivedAntBody = new PerceivedAntBody(p, b, initialPosition, initialVitesse);
-      this.boidBodies.put(b, _perceivedAntBody);
-      if (Settings.isLogActivated) {
-        System.out.println(((("Lancement d\'un boid à la position " + initialPosition) + " et avec une vitesse de ") + initialVitesse));
-      }
-    } catch (Throwable _e) {
-      throw Exceptions.sneakyThrow(_e);
-    }
+    throw new Error("Unresolved compilation problems:"
+      + "\nVector2d cannot be resolved."
+      + "\nVector2d cannot be resolved."
+      + "\nThe constructor PerceivedAntBody(Population, UUID, Object, Object) refers to the missing type Object");
   }
   
+  @Pure
   private void killAllAgents() {
   }
   
@@ -357,8 +343,9 @@ public class Simulation implements EventListener {
     if (getClass() != obj.getClass())
       return false;
     Simulation other = (Simulation) obj;
-    if (!java.util.Objects.equals(this.environment, other.environment))
+    if (!java.util.Objects.equals(this.environment, other.environment)) {
       return false;
+    }
     if (other.width != this.width)
       return false;
     if (other.height != this.height)
@@ -377,10 +364,10 @@ public class Simulation implements EventListener {
     int result = super.hashCode();
     final int prime = 31;
     result = prime * result + java.util.Objects.hashCode(this.environment);
-    result = prime * result + Integer.hashCode(this.width);
-    result = prime * result + Integer.hashCode(this.height);
-    result = prime * result + Integer.hashCode(this.boidsCount);
-    result = prime * result + Boolean.hashCode(this.isSimulationStarted);
+    result = prime * result + this.width;
+    result = prime * result + this.height;
+    result = prime * result + this.boidsCount;
+    result = prime * result + (this.isSimulationStarted ? 1231 : 1237);
     return result;
   }
 }

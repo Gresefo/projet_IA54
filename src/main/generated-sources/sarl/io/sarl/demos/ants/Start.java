@@ -14,7 +14,7 @@ import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
  * Event informing the environment from the real startup of the simulation with the corresponding boids inside
  * @author Nicolas Gaud
  */
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(15)
 @SuppressWarnings("all")
 public class Start extends Event {

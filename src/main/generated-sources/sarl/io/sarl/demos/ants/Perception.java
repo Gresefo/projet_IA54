@@ -14,7 +14,7 @@ import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
  * Event from the environment to the boids with the global state of the environment, could be optimized to reduce it to the true local perception of each boids
  * @author Nicolas Gaud
  */
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(15)
 @SuppressWarnings("all")
 public class Perception extends Event {

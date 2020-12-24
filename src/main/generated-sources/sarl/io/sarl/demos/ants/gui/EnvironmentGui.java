@@ -16,7 +16,7 @@ import org.eclipse.xtext.xbase.lib.Pure;
 /**
  * Graphical user interface for ants.
  */
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(10)
 @SuppressWarnings("all")
 public class EnvironmentGui extends Frame {

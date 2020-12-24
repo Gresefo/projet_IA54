@@ -47,5 +47,10 @@ interface Settings {
      * Specify a pause delay before each boids sends his influence to the environment, and respectively before the environment sends perceptions to boids
      */
     public static val pause = 0
+    
+    public static val alpha = 1
+
+	// 2-5
+	public static val beta = 2
 
 }

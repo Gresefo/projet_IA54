@@ -8,23 +8,19 @@ import io.sarl.lang.core.Event;
 import org.eclipse.xtext.xbase.lib.Pure;
 import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
 
-/**
- * Event from a boid to the environment containing his corresponding influence for the current simulation step.
- * @author Nicolas Gaud
- */
 @SarlSpecification("0.10")
 @SarlElementType(15)
 @SuppressWarnings("all")
-public class Action extends Event {
-  public /* Vector2d */Object influence;
+public class StartAnt extends Event {
+  public Double[][] pheromons;
   
   @SyntheticMember
-  public Action() {
+  public StartAnt() {
     super();
   }
   
   @SyntheticMember
-  public Action(final Address source) {
+  public StartAnt(final Address source) {
     super(source);
   }
   
@@ -44,15 +40,15 @@ public class Action extends Event {
   }
   
   /**
-   * Returns a String representation of the Action event's attributes only.
+   * Returns a String representation of the StartAnt event's attributes only.
    */
   @SyntheticMember
   @Pure
   protected void toString(final ToStringBuilder builder) {
     super.toString(builder);
-    builder.add("influence", this.influence);
+    builder.add("pheromons", this.pheromons);
   }
   
   @SyntheticMember
-  private static final long serialVersionUID = 1757625047L;
+  private static final long serialVersionUID = -549103992L;
 }
