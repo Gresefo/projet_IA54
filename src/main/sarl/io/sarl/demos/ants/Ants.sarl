@@ -83,11 +83,13 @@ agent Ant {
 				cumul = cumul + prob.get(i)
 				i += 1
 			}
-
+			
+			// ????
 			tourLength += this.distance.get(currentCity, citiesToVisit.get(i - 1)) as Double
 			currentCity = citiesToVisit.get(i - 1)
 			memory.add(currentCity)
 			citiesToVisit.remove(i - 1)
+			// ????	
 		}
 
 		new TourFound(memory, tourLength).emit[it.UUID == this.environment]

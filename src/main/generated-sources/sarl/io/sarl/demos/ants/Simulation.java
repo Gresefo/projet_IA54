@@ -122,7 +122,7 @@ public class Simulation implements EventListener {
       this.kernel = SRE.getBootstrap();
       this.defaultSARLContext = this.kernel.startWithoutAgent();
       this.environment = UUID.randomUUID();
-      this.kernel.startAgentWithID(Environment.class, this.environment, Integer.valueOf(this.height), Integer.valueOf(this.width), this.distMatrix);
+      this.kernel.startAgentWithID(Environment.class, this.environment, Integer.valueOf(this.height), Integer.valueOf(this.width), this.distMatrix, Integer.valueOf(this.antsCount));
       this.launchAllAnts();
       EventSpace _defaultSpace = this.defaultSARLContext.getDefaultSpace();
       this.space = ((OpenEventSpace) _defaultSpace);
@@ -173,7 +173,7 @@ public class Simulation implements EventListener {
   public void receiveEvent(final Event event) {
     throw new Error("Unresolved compilation problems:"
       + "\nThe method or field BestTour is undefined"
-      + "\nThe method setBoids(Map<UUID, PerceivedAntBody>) from the type EnvironmentGui refers to the missing type PerceivedAntBody");
+      + "\nThe method setBoids(Map<UUID, Object>) from the type EnvironmentGui refers to the missing type Object");
   }
   
   /**

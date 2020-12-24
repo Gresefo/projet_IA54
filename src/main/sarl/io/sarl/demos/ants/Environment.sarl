@@ -8,9 +8,10 @@ import io.sarl.core.Schedules
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentSkipListSet
-import org.arakhne.afc.math.geometry.d2.d.Vector2d
+
 import org.eclipse.xtend.lib.annotations.Accessors
 import io.sarl.core.Lifecycle
+import java.util.ArrayList
 
 /** 
  * The environmental agent in charge of collecting ants influences and computing the new state of the virtual world
@@ -32,7 +33,13 @@ agent Environment {
 	@Accessors
 	var influences : ConcurrentSkipListSet<UUID>
 	
-	var distMatrix : Double[][]
+	var distMatrix : double[][]
+	
+	var numberAnts : int
+	
+	var pheromons : double[][]
+	
+	var nnTourLength : double
 
 	on Initialize 
 	{
@@ -46,53 +53,97 @@ agent Environment {
 			if (occurrence.parameters.get(1) instanceof Integer) {
 				width = occurrence.parameters.get(1) as Integer
 			}
-			if (occurrence.parameters.get(2) instanceof Double[][]) {
-				distMatrix = occurrence.parameters.get(2) as Double[][]
+			if (occurrence.parameters.get(2) instanceof double[][]) {
+				distMatrix = occurrence.parameters.get(2) as double[][]
 			}
-			//ants = null
+			if (occurrence.parameters.get(3) instanceof Integer) {
+				numberAnts = occurrence.parameters.get(3) as Integer
+			}
 			influences = new ConcurrentSkipListSet
+		}
+		if (Settings::isLogActivated) {
+			"Environment activated".info
+			info(this.distMatrix.get(0, 1))
 		}
 	}
 
-	on Start {
-		this.ants = occurrence.perceivedAgentBody
+	on StartEnvironment {
+		/*this.ants = occurrence.perceivedAgentBody
 		new GuiRepaint(ants).emit
-		new Perception(ants).emit
+		new Perception(ants).emit*/
+		info("ENV STARTED")
+		
+		this.nnTourLength = nearestNeighbour(this.distMatrix)
+		info(this.nnTourLength)
 	}
 
 	on Action 
 	{
 		// TODO 5 Complete Environment behavior : collecting influences from all agents, updating environmental state, sending perceptions, refreshing GUI
-        synchronized (ants) 
-        {
-			synchronized (influences) 
-			{
-				if (ants.containsKey(occurrence.source.UUID)) 
-				{
-					this.influences.add(occurrence.source.UUID)
-					applyForce(occurrence.influence, ants.get(occurrence.source.UUID))
-				}
-
+        synchronized (influences) 
+		{
+			if (ants.containsKey(occurrence.source.UUID)) {
+				this.influences.add(occurrence.source.UUID)
+				applyForce(occurrence.influence, ants.get(occurrence.source.UUID))
+			}
 				if (this.influences.size == this.ants.size) 
-				{
-					in(Settings::pause) [
-						new GuiRepaint(ants).emit[it.UUID == Simulation.id]
-						new Perception(ants).emit
-						if (Settings::isLogActivated) 
-						{
-							info("New Simulation Step.")
-                        }
-                    ]
-                    this.influences.clear
-                }
-            }
-        }
-    }
+			{
+				in(Settings::pause) [
+					new GuiRepaint(ants).emit[it.UUID == Simulation.id]
+					new Perception(ants).emit
+					if (Settings::isLogActivated) 
+					{
+						info("New Simulation Step.")
+                       }
+                   ]
+                   this.influences.clear
+			}
+		}
+	}
 
 	on Die {
 		killMe
 	}
-
+	
+	def nearestNeighbour(distMatrix : double[][]) : double{
+		var tourLength = 0.0
+		var size = this.distMatrix.length
+		
+		var tour : ArrayList<Integer> = new ArrayList<Integer>
+		var citiesToVisit : ArrayList<Integer> = new ArrayList<Integer>
+		for (var i = 1; i < size; i++) {
+			citiesToVisit.add(i)
+		}
+		
+		tour.add(0)
+		var currentCity = 0
+		var index = 0
+		var min = 0.0
+		
+		while(tour.size != size) {
+			if (currentCity == 0) {
+				min = distMatrix.get(currentCity, 1)
+				index = 1
+			}
+			else {
+				min = distMatrix.get(currentCity, 0)
+				index = 0
+			}
+			for(i : citiesToVisit) {
+				if (distMatrix.get(currentCity, i) < min) {
+					min = distMatrix.get(currentCity, i)
+					index = i
+				}
+			}
+			tourLength += distMatrix.get(currentCity, index)
+			currentCity = index
+			tour.add(currentCity)
+			citiesToVisit.remove(currentCity as Integer)
+		}
+		
+		return tourLength
+	}
+	
 	def applyForce(force : Vector2d, b : PerceivedAntBody) {
 		// limiting/clamping the applied force
 		if (force.length > b.group.maxForce) {

@@ -7,6 +7,8 @@ import io.sarl.core.Logging;
 import io.sarl.core.Schedules;
 import io.sarl.demos.ants.Action;
 import io.sarl.demos.ants.Die;
+import io.sarl.demos.ants.Settings;
+import io.sarl.demos.ants.StartEnvironment;
 import io.sarl.lang.annotation.ImportedCapacityFeature;
 import io.sarl.lang.annotation.PerceptGuardEvaluator;
 import io.sarl.lang.annotation.SarlElementType;
@@ -17,6 +19,7 @@ import io.sarl.lang.core.BuiltinCapacitiesProvider;
 import io.sarl.lang.core.DynamicSkillProvider;
 import io.sarl.lang.core.Skill;
 import io.sarl.lang.util.ClearableReference;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -44,7 +47,13 @@ public class Environment extends Agent {
   @Accessors
   private ConcurrentSkipListSet<UUID> influences;
   
-  private Double[][] distMatrix;
+  private double[][] distMatrix;
+  
+  private int numberAnts;
+  
+  private double[][] pheromons;
+  
+  private double nnTourLength;
   
   private void $behaviorUnit$Initialize$0(final Initialize occurrence) {
     Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
@@ -62,37 +71,45 @@ public class Environment extends Agent {
         this.width = ((((Integer) _get_3)) == null ? 0 : (((Integer) _get_3)).intValue());
       }
       Object _get_4 = occurrence.parameters[2];
-      if ((_get_4 instanceof Double[][])) {
+      if ((_get_4 instanceof double[][])) {
         Object _get_5 = occurrence.parameters[2];
-        this.distMatrix = ((Double[][]) _get_5);
+        this.distMatrix = ((double[][]) _get_5);
+      }
+      Object _get_6 = occurrence.parameters[3];
+      if ((_get_6 instanceof Integer)) {
+        Object _get_7 = occurrence.parameters[3];
+        this.numberAnts = ((((Integer) _get_7)) == null ? 0 : (((Integer) _get_7)).intValue());
       }
       ConcurrentSkipListSet<UUID> _concurrentSkipListSet = new ConcurrentSkipListSet<UUID>();
       this.influences = _concurrentSkipListSet;
     }
+    if (Settings.isLogActivated) {
+      Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
+      _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1.info("Environment activated");
+      Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
+      _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2.info(Double.valueOf(this.distMatrix[0][1]));
+    }
   }
   
-  private void $behaviorUnit$void$1(final /* Start */Object occurrence) {
-    throw new Error("Unresolved compilation problems:"
-      + "\nThe method ants(Object) is undefined for the type Environment"
-      + "\nThe method or field ants is undefined"
-      + "\nThe method or field ants is undefined"
-      + "\nThe constructor GuiRepaint(ConcurrentHashMap<UUID, PerceivedAntBody>) refers to the missing type PerceivedAntBody"
-      + "\nThe constructor Perception(ConcurrentHashMap<UUID, PerceivedAntBody>) refers to the missing type PerceivedAntBody"
-      + "\nperceivedAgentBody cannot be resolved");
+  private void $behaviorUnit$StartEnvironment$1(final StartEnvironment occurrence) {
+    Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
+    _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER.info("ENV STARTED");
+    this.nnTourLength = this.nearestNeighbour(this.distMatrix);
+    Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
+    _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1.info(Double.valueOf(this.nnTourLength));
   }
   
   private void $behaviorUnit$Action$2(final Action occurrence) {
     throw new Error("Unresolved compilation problems:"
       + "\nThe method or field ants is undefined"
       + "\nThe method or field ants is undefined"
-      + "\nThe method or field ants is undefined"
       + "\nThe method or field ants is undefined for the type Environment"
       + "\nThe method or field ants is undefined"
       + "\nThe method or field ants is undefined"
       + "\nThe method applyForce(Vector2d, PerceivedAntBody) from the type Environment refers to the missing type Object"
-      + "\nThe field Action.influence refers to the missing type Vector2d"
-      + "\nThe constructor GuiRepaint(ConcurrentHashMap<UUID, PerceivedAntBody>) refers to the missing type PerceivedAntBody"
-      + "\nThe constructor Perception(ConcurrentHashMap<UUID, PerceivedAntBody>) refers to the missing type PerceivedAntBody"
+      + "\nThe field Action.influence refers to the missing type Object"
+      + "\nThe constructor GuiRepaint(ConcurrentHashMap<UUID, Object>) refers to the missing type Object"
+      + "\nThe constructor Perception(ConcurrentHashMap<UUID, Object>) refers to the missing type Object"
       + "\ncontainsKey cannot be resolved"
       + "\nget cannot be resolved"
       + "\nsize cannot be resolved");
@@ -101,6 +118,44 @@ public class Environment extends Agent {
   private void $behaviorUnit$Die$3(final Die occurrence) {
     Lifecycle _$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER = this.$castSkill(Lifecycle.class, (this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE == null || this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE = this.$getSkill(Lifecycle.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE);
     _$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER.killMe();
+  }
+  
+  protected double nearestNeighbour(final double[][] distMatrix) {
+    double tourLength = 0.0;
+    int size = this.distMatrix.length;
+    ArrayList<Integer> tour = new ArrayList<Integer>();
+    ArrayList<Integer> citiesToVisit = new ArrayList<Integer>();
+    for (int i = 1; (i < size); i++) {
+      citiesToVisit.add(Integer.valueOf(i));
+    }
+    tour.add(Integer.valueOf(0));
+    int currentCity = 0;
+    int index = 0;
+    double min = 0.0;
+    while ((tour.size() != size)) {
+      {
+        if ((currentCity == 0)) {
+          min = distMatrix[currentCity][1];
+          index = 1;
+        } else {
+          min = distMatrix[currentCity][0];
+          index = 0;
+        }
+        for (final Integer i : citiesToVisit) {
+          double _get = distMatrix[currentCity][((i) == null ? 0 : (i).intValue())];
+          if ((_get < min)) {
+            min = distMatrix[currentCity][((i) == null ? 0 : (i).intValue())];
+            index = ((i) == null ? 0 : (i).intValue());
+          }
+        }
+        double _get_1 = distMatrix[currentCity][index];
+        tourLength = (tourLength + _get_1);
+        currentCity = index;
+        tour.add(Integer.valueOf(currentCity));
+        citiesToVisit.remove(Integer.valueOf(currentCity));
+      }
+    }
+    return tourLength;
   }
   
   protected Object applyForce(final /* Vector2d */Object force, final /* PerceivedAntBody */Object b) {
@@ -228,17 +283,18 @@ public class Environment extends Agent {
   
   @SyntheticMember
   @PerceptGuardEvaluator
-  private void $guardEvaluator$void(final /* Start */Object occurrence, final Collection<Runnable> ___SARLlocal_runnableCollection) {
-    throw new Error("Unresolved compilation problems:"
-      + "\nStart cannot be resolved to a type.");
-  }
-  
-  @SyntheticMember
-  @PerceptGuardEvaluator
   private void $guardEvaluator$Action(final Action occurrence, final Collection<Runnable> ___SARLlocal_runnableCollection) {
     assert occurrence != null;
     assert ___SARLlocal_runnableCollection != null;
     ___SARLlocal_runnableCollection.add(() -> $behaviorUnit$Action$2(occurrence));
+  }
+  
+  @SyntheticMember
+  @PerceptGuardEvaluator
+  private void $guardEvaluator$StartEnvironment(final StartEnvironment occurrence, final Collection<Runnable> ___SARLlocal_runnableCollection) {
+    assert occurrence != null;
+    assert ___SARLlocal_runnableCollection != null;
+    ___SARLlocal_runnableCollection.add(() -> $behaviorUnit$StartEnvironment$1(occurrence));
   }
   
   @SyntheticMember
@@ -264,6 +320,10 @@ public class Environment extends Agent {
       return false;
     if (other.height != this.height)
       return false;
+    if (other.numberAnts != this.numberAnts)
+      return false;
+    if (Double.doubleToLongBits(other.nnTourLength) != Double.doubleToLongBits(this.nnTourLength))
+      return false;
     return super.equals(obj);
   }
   
@@ -275,6 +335,8 @@ public class Environment extends Agent {
     final int prime = 31;
     result = prime * result + this.width;
     result = prime * result + this.height;
+    result = prime * result + this.numberAnts;
+    result = prime * result + (int) (Double.doubleToLongBits(this.nnTourLength) ^ (Double.doubleToLongBits(this.nnTourLength) >>> 32));
     return result;
   }
   

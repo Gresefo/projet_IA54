@@ -116,7 +116,7 @@ class Simulation implements EventListener {
 		defaultSARLContext = kernel.startWithoutAgent
 
 		environment = UUID::randomUUID
-		kernel.startAgentWithID(typeof(Environment), environment, height, width, distMatrix)
+		kernel.startAgentWithID(typeof(Environment), environment, height, width, distMatrix, antsCount)
 
 		//
 		launchAllAnts
@@ -128,7 +128,7 @@ class Simulation implements EventListener {
 		//Registering to receive GUIRepaint events
 		^space.register(this)
 		// Sending start to Environment
-		^space.emit(id, new StartEnvironment())
+		^space.emit(id, new StartEnvironment)
 	}
 
 	private def launchAllAnts : void {
