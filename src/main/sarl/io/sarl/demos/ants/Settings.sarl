@@ -31,7 +31,7 @@ interface Settings {
     /**
      * Environmental grid default width
      */
-    public static val EnvtWidth = 1500
+    public static val EnvtWidth = 1000
     
     /**
 	 * Environmental grid default height

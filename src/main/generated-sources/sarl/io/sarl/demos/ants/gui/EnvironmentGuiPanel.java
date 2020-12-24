@@ -1,5 +1,6 @@
 package io.sarl.demos.ants.gui;
 
+import io.sarl.demos.ants.Settings;
 import io.sarl.lang.annotation.SarlElementType;
 import io.sarl.lang.annotation.SarlSpecification;
 import io.sarl.lang.annotation.SyntheticMember;
@@ -20,7 +21,7 @@ import org.eclipse.xtext.xbase.lib.Pure;
  * 
  * @author Nicolas GAUD
  */
-@SarlSpecification("0.10")
+@SarlSpecification("0.11")
 @SarlElementType(10)
 @SuppressWarnings("all")
 class EnvironmentGuiPanel extends Panel {
@@ -67,8 +68,9 @@ class EnvironmentGuiPanel extends Panel {
       this.myCanvas.fillRect(0, 0, ((this.width * 2) - 1), ((this.height * 2) - 1));
       this.myCanvas.setColor(Color.BLACK);
       this.myCanvas.drawRect(0, 0, ((this.width * 2) - 1), ((this.height * 2) - 1));
+      int maxCoord = this.getMaxCoord(this.posList);
       for (final double[] pos : this.posList) {
-        this.paintBoid(((Graphics2D) this.myCanvas), pos);
+        this.paintBoid(((Graphics2D) this.myCanvas), pos, maxCoord);
       }
       this.myGraphics.drawImage(this.myImage, 0, 0, this);
     }
@@ -88,15 +90,38 @@ class EnvironmentGuiPanel extends Panel {
     this.myGraphics = this.getGraphics();
   }
   
-  public void paintBoid(final Graphics2D g, final double[] pos) {
+  public void paintBoid(final Graphics2D g, final double[] pos, final int maxCoord) {
     double _get = pos[1];
-    int posX = ((int) _get);
+    double posX = ((_get * (Settings.EnvtWidth - 50)) / maxCoord);
     double _get_1 = pos[2];
-    int posY = ((int) _get_1);
+    double posY = ((_get_1 * (Settings.EnvtHeight - 50)) / maxCoord);
     Shape circle = new Ellipse2D.Double(posX, posY, 15, 15);
     g.setColor(Color.RED);
     g.fill(circle);
     g.draw(circle);
+  }
+  
+  /**
+   * Return the maximum coordinate you can find in the position list
+   * @param posList : ArrayList<double[]> the list of position of every town
+   * @return int : the maximum coordinate
+   */
+  @Pure
+  private int getMaxCoord(final ArrayList<double[]> posList) {
+    double max = 0;
+    for (final double[] pos : posList) {
+      {
+        double _get = pos[1];
+        if ((_get > max)) {
+          max = pos[1];
+        }
+        double _get_1 = pos[2];
+        if ((_get_1 > max)) {
+          max = pos[2];
+        }
+      }
+    }
+    return ((int) max);
   }
   
   @Override
@@ -123,11 +148,11 @@ class EnvironmentGuiPanel extends Panel {
   public int hashCode() {
     int result = super.hashCode();
     final int prime = 31;
-    result = prime * result + this.width;
-    result = prime * result + this.height;
+    result = prime * result + Integer.hashCode(this.width);
+    result = prime * result + Integer.hashCode(this.height);
     return result;
   }
   
   @SyntheticMember
-  private static final long serialVersionUID = -3710425576L;
+  private static final long serialVersionUID = -4548345366L;
 }

@@ -28,14 +28,14 @@ import io.sarl.lang.annotation.SarlSpecification;
  * 
  * @author Nicolas Gaud
  */
-@SarlSpecification("0.10")
+@SarlSpecification("0.11")
 @SarlElementType(11)
 @SuppressWarnings("all")
 public interface Settings {
   /**
    * Environmental grid default width
    */
-  public static final int EnvtWidth = 1500;
+  public static final int EnvtWidth = 1000;
   
   /**
    * Environmental grid default height

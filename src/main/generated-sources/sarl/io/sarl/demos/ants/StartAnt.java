@@ -8,7 +8,7 @@ import io.sarl.lang.core.Event;
 import org.eclipse.xtext.xbase.lib.Pure;
 import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
 
-@SarlSpecification("0.10")
+@SarlSpecification("0.11")
 @SarlElementType(15)
 @SuppressWarnings("all")
 public class StartAnt extends Event {

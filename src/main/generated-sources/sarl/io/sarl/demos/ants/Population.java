@@ -11,7 +11,7 @@ import org.eclipse.xtext.xbase.lib.Pure;
  * 
  * @author Nicolas Gaud
  */
-@SarlSpecification("0.10")
+@SarlSpecification("0.11")
 @SarlElementType(10)
 @SuppressWarnings("all")
 public class Population {
@@ -144,23 +144,23 @@ public class Population {
   public int hashCode() {
     int result = super.hashCode();
     final int prime = 31;
-    result = prime * result + (int) (Double.doubleToLongBits(this.maxSpeed) ^ (Double.doubleToLongBits(this.maxSpeed) >>> 32));
-    result = prime * result + (int) (Double.doubleToLongBits(this.maxForce) ^ (Double.doubleToLongBits(this.maxForce) >>> 32));
-    result = prime * result + (int) (Double.doubleToLongBits(this.distSeparation) ^ (Double.doubleToLongBits(this.distSeparation) >>> 32));
-    result = prime * result + (int) (Double.doubleToLongBits(this.distCohesion) ^ (Double.doubleToLongBits(this.distCohesion) >>> 32));
-    result = prime * result + (int) (Double.doubleToLongBits(this.distAlignment) ^ (Double.doubleToLongBits(this.distAlignment) >>> 32));
-    result = prime * result + (int) (Double.doubleToLongBits(this.distRepulsion) ^ (Double.doubleToLongBits(this.distRepulsion) >>> 32));
-    result = prime * result + (int) (Double.doubleToLongBits(this.visibleAngleCos) ^ (Double.doubleToLongBits(this.visibleAngleCos) >>> 32));
-    result = prime * result + (int) (Double.doubleToLongBits(this.separationForce) ^ (Double.doubleToLongBits(this.separationForce) >>> 32));
-    result = prime * result + (int) (Double.doubleToLongBits(this.cohesionForce) ^ (Double.doubleToLongBits(this.cohesionForce) >>> 32));
-    result = prime * result + (int) (Double.doubleToLongBits(this.alignmentForce) ^ (Double.doubleToLongBits(this.alignmentForce) >>> 32));
-    result = prime * result + (int) (Double.doubleToLongBits(this.repulsionForce) ^ (Double.doubleToLongBits(this.repulsionForce) >>> 32));
-    result = prime * result + (int) (Double.doubleToLongBits(this.mass) ^ (Double.doubleToLongBits(this.mass) >>> 32));
-    result = prime * result + (this.cohesionOn ? 1231 : 1237);
-    result = prime * result + (this.repulsionOn ? 1231 : 1237);
-    result = prime * result + (this.alignmentOn ? 1231 : 1237);
-    result = prime * result + (this.separationOn ? 1231 : 1237);
-    result = prime * result + this.popSize;
+    result = prime * result + Double.hashCode(this.maxSpeed);
+    result = prime * result + Double.hashCode(this.maxForce);
+    result = prime * result + Double.hashCode(this.distSeparation);
+    result = prime * result + Double.hashCode(this.distCohesion);
+    result = prime * result + Double.hashCode(this.distAlignment);
+    result = prime * result + Double.hashCode(this.distRepulsion);
+    result = prime * result + Double.hashCode(this.visibleAngleCos);
+    result = prime * result + Double.hashCode(this.separationForce);
+    result = prime * result + Double.hashCode(this.cohesionForce);
+    result = prime * result + Double.hashCode(this.alignmentForce);
+    result = prime * result + Double.hashCode(this.repulsionForce);
+    result = prime * result + Double.hashCode(this.mass);
+    result = prime * result + Boolean.hashCode(this.cohesionOn);
+    result = prime * result + Boolean.hashCode(this.repulsionOn);
+    result = prime * result + Boolean.hashCode(this.alignmentOn);
+    result = prime * result + Boolean.hashCode(this.separationOn);
+    result = prime * result + Integer.hashCode(this.popSize);
     return result;
   }
 }

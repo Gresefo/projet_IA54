@@ -18,6 +18,7 @@ import java.util.ArrayList
 import java.awt.geom.Ellipse2D
 import java.awt.Shape
 import java.awt.Graphics2D
+import io.sarl.demos.ants.Settings
 
 /** 
  * Graphical user interface for ants.
@@ -120,12 +121,9 @@ package class EnvironmentGuiPanel extends Panel {
 			myCanvas.setColor(Color::BLACK)
 			myCanvas.drawRect(0, 0, width * 2 - 1, height * 2 - 1)
 
-//			for (boid : boids.values) {
-			// paintBoid(myCanvas, boid)
-			// }
-			for (pos : posList) {
-				paintBoid(myCanvas as Graphics2D, pos)
-			}
+			var maxCoord : int = getMaxCoord(posList)
+			for (pos : posList) 
+				paintBoid(myCanvas as Graphics2D, pos, maxCoord)
 
 			myGraphics.drawImage(myImage, 0, 0, this)
 		}
@@ -146,16 +144,12 @@ package class EnvironmentGuiPanel extends Panel {
 		myGraphics = this.graphics
 	}
 
-	//	def paintBoid(g : Graphics, boid : PerceivedAntBody)
-	def paintBoid(g : Graphics2D, pos : double[]) {
-		// var posX = width + boid.position.x as int
-		// var posY = height + boid.position.y as int
-		// var direction = boid.vitesse.angle
-		var posX = pos.get(1) as int
-		var posY = pos.get(2) as int
-		// var direction = 1
-		// var cos = direction.cos
-		// var sin = direction.sin
+	
+	def paintBoid(g : Graphics2D, pos : double[], maxCoord : int) 
+	{
+		var posX = pos.get(1) * (Settings.EnvtWidth - 50) / maxCoord as int
+		var posY = pos.get(2) * (Settings.EnvtHeight - 50 ) / maxCoord as int
+
 		var circle : Shape = new Ellipse2D.Double(posX, posY, 15, 15);
 
 		g.color = Color.RED
@@ -180,4 +174,22 @@ package class EnvironmentGuiPanel extends Panel {
 	// if(v.y >= 0) return ( PI + (v.y / v.x).atan )
 	// return ( (v.y / v.x).atan - PI )
 	//	}
+	
+	/**
+	 * Return the maximum coordinate you can find in the position list
+	 * @param posList : ArrayList<double[]> the list of position of every town
+	 * @return int : the maximum coordinate
+	 */
+	private def getMaxCoord(posList : ArrayList<double[]>) : int
+	{
+		var max : double = 0
+		for(pos : posList)
+		{
+			if(pos.get(1) > max)
+				max = pos.get(1)
+			if(pos.get(2) > max)
+				max = pos.get(2)
+		}
+		return max as int
+	}
 }
