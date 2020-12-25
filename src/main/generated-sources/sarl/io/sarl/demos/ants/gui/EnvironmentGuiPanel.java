@@ -69,6 +69,14 @@ class EnvironmentGuiPanel extends Panel {
       this.myCanvas.setColor(Color.BLACK);
       this.myCanvas.drawRect(0, 0, ((this.width * 2) - 1), ((this.height * 2) - 1));
       int maxCoord = this.getMaxCoord(this.posList);
+      ArrayList<Integer> testList = new ArrayList<Integer>();
+      for (int i = 0; (i < this.posList.size()); i++) {
+        testList.add(Integer.valueOf((i + 1)));
+      }
+      ArrayList<int[]> linePixelList = this.getRectPixel(this.posList, testList, maxCoord);
+      for (final int[] line : linePixelList) {
+        this.myCanvas.drawLine(line[0], line[1], line[2], line[3]);
+      }
       for (final double[] pos : this.posList) {
         this.paintBoid(((Graphics2D) this.myCanvas), pos, maxCoord);
       }
@@ -91,11 +99,13 @@ class EnvironmentGuiPanel extends Panel {
   }
   
   public void paintBoid(final Graphics2D g, final double[] pos, final int maxCoord) {
-    double _get = pos[1];
-    double posX = ((_get * (Settings.EnvtWidth - 50)) / maxCoord);
-    double _get_1 = pos[2];
-    double posY = ((_get_1 * (Settings.EnvtHeight - 50)) / maxCoord);
-    Shape circle = new Ellipse2D.Double(posX, posY, 15, 15);
+    double[] coord = new double[2];
+    coord[0] = pos[1];
+    coord[1] = pos[2];
+    int[] pixel = this.pixelResizing(coord, maxCoord);
+    int _get = pixel[0];
+    int _get_1 = pixel[1];
+    Shape circle = new Ellipse2D.Double((_get - 8), (_get_1 - 8), 16, 16);
     g.setColor(Color.RED);
     g.fill(circle);
     g.draw(circle);
@@ -122,6 +132,82 @@ class EnvironmentGuiPanel extends Panel {
       }
     }
     return ((int) max);
+  }
+  
+  /**
+   * Return the pixel value based on the size of the screen and the maximum coordinate
+   * @param coord : double[], the coordinate to translate in pixel, X and Y
+   * @param maxCoord : int, the biggest coordinate in the list
+   * @return int[2], the pixels to print
+   */
+  private int[] pixelResizing(final double[] coord, final int maxCoord) {
+    int[] result = new int[2];
+    double _get = coord[0];
+    result[0] = ((int) (((_get * (Settings.EnvtWidth - 100)) / maxCoord) + 25));
+    double _get_1 = coord[1];
+    result[1] = ((int) (((_get_1 * (Settings.EnvtHeight - 100)) / maxCoord) + 25));
+    return result;
+  }
+  
+  /**
+   * Find a town coordinates from its ID in the position list
+   * @param posList : ArrayList<double[]>, the position list
+   * @param id : int, the ID of the town to find
+   * @return double[2], the town coordinates
+   */
+  @Pure
+  private double[] getCoordFromTownId(final ArrayList<double[]> posList, final int id) {
+    double[] result = new double[2];
+    int i = 0;
+    while (((i < posList.size()) && (((int) posList.get(i)[0]) != id))) {
+      i++;
+    }
+    double _get = posList.get(i)[0];
+    if ((((int) _get) == id)) {
+      result[0] = posList.get(i)[1];
+      result[1] = posList.get(i)[2];
+    } else {
+      System.out.println("Error, coordinate not found with this ID");
+    }
+    return result;
+  }
+  
+  /**
+   * Return the coordinates of the pixel of the rectangle to draw between each town
+   * @param posList : ArrayList<double[]> : the position list of every town
+   * @param travelorder : ArrayList<Integer> : the path between the town
+   * @param maxCoord : int, the max coordinate to do the resizing
+   * @return ArrayList<int[]> : the pixel list of each corner of the rectangle to drawa
+   */
+  @Pure
+  private ArrayList<int[]> getRectPixel(final ArrayList<double[]> posList, final ArrayList<Integer> travelOrder, final int maxCoord) {
+    ArrayList<int[]> rectPixelList = new ArrayList<int[]>();
+    int size = travelOrder.size();
+    for (int i = 0; (i < (size - 1)); i++) {
+      {
+        int[] intArray = new int[4];
+        double[] coord1 = this.getCoordFromTownId(posList, ((travelOrder.get(i)) == null ? 0 : (travelOrder.get(i)).intValue()));
+        double[] coord2 = this.getCoordFromTownId(posList, ((travelOrder.get((i + 1))) == null ? 0 : (travelOrder.get((i + 1))).intValue()));
+        int[] pixel1 = this.pixelResizing(coord1, maxCoord);
+        int[] pixel2 = this.pixelResizing(coord2, maxCoord);
+        intArray[0] = pixel1[0];
+        intArray[1] = pixel1[1];
+        intArray[2] = pixel2[0];
+        intArray[3] = pixel2[1];
+        rectPixelList.add(intArray);
+      }
+    }
+    int[] intArray = new int[4];
+    double[] coord1 = this.getCoordFromTownId(posList, ((travelOrder.get((size - 1))) == null ? 0 : (travelOrder.get((size - 1))).intValue()));
+    double[] coord2 = this.getCoordFromTownId(posList, ((travelOrder.get(0)) == null ? 0 : (travelOrder.get(0)).intValue()));
+    int[] pixel1 = this.pixelResizing(coord1, maxCoord);
+    int[] pixel2 = this.pixelResizing(coord2, maxCoord);
+    intArray[0] = pixel1[0];
+    intArray[1] = pixel1[1];
+    intArray[2] = pixel2[0];
+    intArray[3] = pixel2[1];
+    rectPixelList.add(intArray);
+    return rectPixelList;
   }
   
   @Override
@@ -154,5 +240,5 @@ class EnvironmentGuiPanel extends Panel {
   }
   
   @SyntheticMember
-  private static final long serialVersionUID = -4548345366L;
+  private static final long serialVersionUID = -5369341868L;
 }

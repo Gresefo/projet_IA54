@@ -18,7 +18,7 @@ public class BoidsSimulationLauncher {
    * @param args command line arguments
    */
   public static void main(final String... args) {
-    String fileName = "berlin52.txt";
+    String fileName = args[0];
     Simulation simu = new Simulation(fileName);
     simu.start();
   }

@@ -105,9 +105,7 @@ public class Simulation implements EventListener {
   public void start() {
     this.posList = this.parsor(this.getPath(this.fileName));
     this.antsCount = ((Object[])Conversions.unwrapArray(this.posList, Object.class)).length;
-    this.printCoord(this.posList);
     this.distMatrix = this.getDistMatrix(this.posList);
-    this.printDistMatrix(this.distMatrix, 20);
     this.launchAllAgents();
     this.isSimulationStarted = true;
   }
@@ -172,7 +170,7 @@ public class Simulation implements EventListener {
   public void receiveEvent(final Event event) {
     throw new Error("Unresolved compilation problems:"
       + "\nThe method or field BestTour is undefined"
-      + "\nThe method setBoids(Map<UUID, PerceivedAntBody>) from the type EnvironmentGui refers to the missing type PerceivedAntBody");
+      + "\nThe method setBoids(Map<UUID, Object>) from the type EnvironmentGui refers to the missing type Object");
   }
   
   /**

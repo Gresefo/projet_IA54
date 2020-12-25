@@ -96,9 +96,9 @@ class Simulation implements EventListener {
 		this.posList = parsor(getPath(fileName))
 		this.antsCount = this.posList.length
 		 
-		printCoord(this.posList)
+//		printCoord(this.posList)
 		this.distMatrix = getDistMatrix(this.posList)
-		printDistMatrix(this.distMatrix, 20)
+//		printDistMatrix(this.distMatrix, 20)
 
 		launchAllAgents
 		isSimulationStarted = true

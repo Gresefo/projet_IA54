@@ -113,15 +113,27 @@ package class EnvironmentGuiPanel extends Panel {
 		this.posList = _posList
 	}
 
-	override paint(g : Graphics) {
-		if ((myCanvas !== null) && (myGraphics !== null)) {
+	override paint(g : Graphics) 
+	{
+		if ((myCanvas !== null) && (myGraphics !== null)) 
+		{
 			val bgColor = new Color(0.6F, 0.6F, 0.6F)
 			myCanvas.color = bgColor
 			myCanvas.fillRect(0, 0, width * 2 - 1, height * 2 - 1)
 			myCanvas.setColor(Color::BLACK)
 			myCanvas.drawRect(0, 0, width * 2 - 1, height * 2 - 1)
-
+			
 			var maxCoord : int = getMaxCoord(posList)
+			var testList : ArrayList<Integer> = new ArrayList<Integer>()
+			for(var i : int = 0; i < posList.size; i++)
+				testList.add(i + 1)
+			
+			var linePixelList : ArrayList<int[]> = getRectPixel(this.posList, testList, maxCoord)
+			for(line : linePixelList)
+			{
+				myCanvas.drawLine(line.get(0), line.get(1), line.get(2), line.get(3))
+			}
+
 			for (pos : posList) 
 				paintBoid(myCanvas as Graphics2D, pos, maxCoord)
 
@@ -147,21 +159,16 @@ package class EnvironmentGuiPanel extends Panel {
 	
 	def paintBoid(g : Graphics2D, pos : double[], maxCoord : int) 
 	{
-		var posX = pos.get(1) * (Settings.EnvtWidth - 50) / maxCoord as int
-		var posY = pos.get(2) * (Settings.EnvtHeight - 50 ) / maxCoord as int
+		var coord : double[] = newDoubleArrayOfSize(2)
+		coord.set(0, pos.get(1))
+		coord.set(1, pos.get(2))
+		var pixel : int[] = pixelResizing(coord, maxCoord)
 
-		var circle : Shape = new Ellipse2D.Double(posX, posY, 15, 15);
+		var circle : Shape = new Ellipse2D.Double(pixel.get(0) - 8, pixel.get(1) - 8, 16, 16);
 
 		g.color = Color.RED
 		g.fill(circle)
 		g.draw(circle)
-
-		// g.drawLine(posX + ( 5 * cos ) as int, posY + ( 5 * sin ) as int, posX - ( 2 * cos + 2 * sin ) as int,
-		// posY - ( 2 * sin - 2 * cos ) as int)
-		// g.drawLine(posX + ( 5 * cos ) as int, posY + ( 5 * sin ) as int, posX - ( 2 * cos - 2 * sin ) as int,
-		// posY - ( 2 * sin + 2 * cos ) as int)
-		// g.drawLine(posX - ( 2 * cos + 2 * sin ) as int, posY - ( 2 * sin - 2 * cos ) as int,
-		// posX - ( 2 * cos - 2 * sin ) as int, posY - ( 2 * sin + 2 * cos ) as int)
 	}
 
 	//	private static def getAngle(v : Vector2d) : double {
@@ -192,4 +199,84 @@ package class EnvironmentGuiPanel extends Panel {
 		}
 		return max as int
 	}
+	
+	/**
+	 * Return the pixel value based on the size of the screen and the maximum coordinate
+	 * @param coord : double[], the coordinate to translate in pixel, X and Y
+	 * @param maxCoord : int, the biggest coordinate in the list
+	 * @return int[2], the pixels to print 
+	 */
+	private def pixelResizing(coord : double[], maxCoord : int) : int[]
+	{
+		var result : int[] = newIntArrayOfSize(2)
+		result.set(0, (coord.get(0) * (Settings.EnvtWidth - 100) / maxCoord + 25) as int)
+		result.set(1, (coord.get(1) * (Settings.EnvtHeight - 100) / maxCoord + 25) as int)
+		return result
+	}
+	
+	/**
+	 * Find a town coordinates from its ID in the position list
+	 * @param posList : ArrayList<double[]>, the position list
+	 * @param id : int, the ID of the town to find
+	 * @return double[2], the town coordinates
+	 */
+	private def getCoordFromTownId(posList : ArrayList<double[]>, id : int) : double[]
+	{
+		var result : double[] = newDoubleArrayOfSize(2)
+		var i : int = 0
+		while(i < posList.size && (posList.get(i).get(0) as int) != id)
+		{
+			i++
+		}
+
+		if(posList.get(i).get(0) as int == id)
+		{
+			result.set(0, posList.get(i).get(1))
+			result.set(1, posList.get(i).get(2))
+		}
+		else
+			System.out.println("Error, coordinate not found with this ID")
+		return result
+	}
+	
+	/**
+	 * Return the coordinates of the pixel of the rectangle to draw between each town
+	 * @param posList : ArrayList<double[]> : the position list of every town
+	 * @param travelorder : ArrayList<Integer> : the path between the town
+	 * @param maxCoord : int, the max coordinate to do the resizing
+	 * @return ArrayList<int[]> : the pixel list of each corner of the rectangle to drawa
+	 */
+	 private def getRectPixel(posList : ArrayList<double[]>, travelOrder : ArrayList<Integer>, maxCoord : int) : ArrayList<int[]>
+	 {
+	 	var rectPixelList : ArrayList<int[]> = new ArrayList<int[]>()
+	 	var size : int = travelOrder.size
+	 	
+	 	for(var i : int = 0; i < size - 1; i++)
+	 	{
+	 		var intArray : int[] = newIntArrayOfSize(4)
+	 		var coord1 : double[] = getCoordFromTownId(posList, travelOrder.get(i))
+	 		var coord2 : double[] = getCoordFromTownId(posList, travelOrder.get(i + 1))
+	 		var pixel1 : int[] = pixelResizing(coord1, maxCoord)
+			var pixel2 : int[] = pixelResizing(coord2, maxCoord)
+	 		intArray.set(0, pixel1.get(0))
+			intArray.set(1, pixel1.get(1))
+			intArray.set(2, pixel2.get(0))
+			intArray.set(3, pixel2.get(1))
+			rectPixelList.add(intArray)
+	 	}
+	 	
+	 	//Add the last line from the first to the last town in the list
+		var intArray : int[] = newIntArrayOfSize(4)
+		var coord1 : double[] = getCoordFromTownId(posList, travelOrder.get(size - 1))
+		var coord2 : double[] = getCoordFromTownId(posList, travelOrder.get(0))
+		var pixel1 : int[] = pixelResizing(coord1, maxCoord)
+		var pixel2 : int[] = pixelResizing(coord2, maxCoord)
+		intArray.set(0, pixel1.get(0))
+		intArray.set(1, pixel1.get(1))
+		intArray.set(2, pixel2.get(0))
+		intArray.set(3, pixel2.get(1))
+		rectPixelList.add(intArray)
+		
+	 	return rectPixelList
+	 }
 }
