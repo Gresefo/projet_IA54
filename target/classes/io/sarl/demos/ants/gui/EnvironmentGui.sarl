@@ -43,8 +43,8 @@ class EnvironmentGui extends Frame {
 		this.visible = true
 	}
 
-	def setBoids(boids : Map<UUID, PerceivedAntBody>) {
-		this.panel.boids = boids
+	def setTour(tour : ArrayList<Integer>) {
+		this.panel.tour = tour
 	}
 
 	override paint(g : Graphics) {
@@ -100,10 +100,10 @@ package class EnvironmentGuiPanel extends Panel {
 
 	var posList : ArrayList<double[]>
 
-	var boids : Map<UUID, PerceivedAntBody>
+	var tour : ArrayList<Integer>
 
-	def setBoids(boids : Map<UUID, PerceivedAntBody>) {
-		this.boids = boids
+	def setTour(tour : ArrayList<Integer>) {
+		this.tour = tour
 	}
 
 	new (iheight : int, iwidth : int, _posList : ArrayList<double[]>) {
@@ -124,18 +124,20 @@ package class EnvironmentGuiPanel extends Panel {
 			myCanvas.drawRect(0, 0, width * 2 - 1, height * 2 - 1)
 			
 			var maxCoord : int = getMaxCoord(posList)
-			var testList : ArrayList<Integer> = new ArrayList<Integer>()
+			/*var testList : ArrayList<Integer> = new ArrayList<Integer>()
 			for(var i : int = 0; i < posList.size; i++)
 				testList.add(i + 1)
 			
 			var linePixelList : ArrayList<int[]> = getRectPixel(this.posList, testList, maxCoord)
+			*/
+			var linePixelList : ArrayList<int[]> = getRectPixel(this.posList, this.tour, maxCoord)
 			for(line : linePixelList)
 			{
 				myCanvas.drawLine(line.get(0), line.get(1), line.get(2), line.get(3))
 			}
 
 			for (pos : posList) 
-				paintBoid(myCanvas as Graphics2D, pos, maxCoord)
+				paintTour(myCanvas as Graphics2D, pos, maxCoord)
 
 			myGraphics.drawImage(myImage, 0, 0, this)
 		}
@@ -157,7 +159,7 @@ package class EnvironmentGuiPanel extends Panel {
 	}
 
 	
-	def paintBoid(g : Graphics2D, pos : double[], maxCoord : int) 
+	def paintTour(g : Graphics2D, pos : double[], maxCoord : int) 
 	{
 		var coord : double[] = newDoubleArrayOfSize(2)
 		coord.set(0, pos.get(1))
@@ -224,7 +226,7 @@ package class EnvironmentGuiPanel extends Panel {
 	{
 		var result : double[] = newDoubleArrayOfSize(2)
 		var i : int = 0
-		while(i < posList.size && (posList.get(i).get(0) as int) != id)
+		while(i < posList.size - 1 && (posList.get(i).get(0) as int) != id)
 		{
 			i++
 		}

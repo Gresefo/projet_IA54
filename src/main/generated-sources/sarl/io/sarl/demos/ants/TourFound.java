@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import org.eclipse.xtext.xbase.lib.Pure;
 import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
 
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(15)
 @SuppressWarnings("all")
 public class TourFound extends Event {
@@ -43,7 +43,7 @@ public class TourFound extends Event {
   public int hashCode() {
     int result = super.hashCode();
     final int prime = 31;
-    result = prime * result + Double.hashCode(this.length);
+    result = prime * result + (int) (Double.doubleToLongBits(this.length) ^ (Double.doubleToLongBits(this.length) >>> 32));
     return result;
   }
   
@@ -57,7 +57,4 @@ public class TourFound extends Event {
     builder.add("tour", this.tour);
     builder.add("length", this.length);
   }
-  
-  @SyntheticMember
-  private static final long serialVersionUID = -3264611693L;
 }

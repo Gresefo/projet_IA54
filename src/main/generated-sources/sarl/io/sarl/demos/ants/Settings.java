@@ -28,7 +28,7 @@ import io.sarl.lang.annotation.SarlSpecification;
  * 
  * @author Nicolas Gaud
  */
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(11)
 @SuppressWarnings("all")
 public interface Settings {
@@ -52,7 +52,11 @@ public interface Settings {
    */
   public static final int pause = 0;
   
+  public static final int iteration = 100;
+  
   public static final int alpha = 1;
   
   public static final int beta = 2;
+  
+  public static final double rho = 0.5;
 }

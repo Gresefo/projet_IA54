@@ -6,6 +6,7 @@ import io.sarl.bootstrap.SREBootstrap;
 import io.sarl.core.OpenEventSpace;
 import io.sarl.demos.ants.Ant;
 import io.sarl.demos.ants.Environment;
+import io.sarl.demos.ants.GuiRepaint;
 import io.sarl.demos.ants.Settings;
 import io.sarl.demos.ants.StartEnvironment;
 import io.sarl.demos.ants.gui.EnvironmentGui;
@@ -30,7 +31,7 @@ import org.eclipse.xtext.xbase.lib.Pure;
  * The boids simulation launching the SARL environment with the corresponding agent and ensuring the communication between agents and the GUI
  * @author Nicolas Gaud
  */
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(10)
 @SuppressWarnings("all")
 public class Simulation implements EventListener {
@@ -154,6 +155,7 @@ public class Simulation implements EventListener {
     }
   }
   
+  @Pure
   private void killAllAgents() {
   }
   
@@ -168,9 +170,11 @@ public class Simulation implements EventListener {
    */
   @Override
   public void receiveEvent(final Event event) {
-    throw new Error("Unresolved compilation problems:"
-      + "\nThe method or field BestTour is undefined"
-      + "\nThe method setBoids(Map<UUID, Object>) from the type EnvironmentGui refers to the missing type Object");
+    if ((event instanceof GuiRepaint)) {
+      this.myGUI.setTour(((GuiRepaint)event).tour);
+      System.out.println(((GuiRepaint)event).tour);
+      this.myGUI.repaint();
+    }
   }
   
   /**
@@ -325,10 +329,12 @@ public class Simulation implements EventListener {
     if (getClass() != obj.getClass())
       return false;
     Simulation other = (Simulation) obj;
-    if (!java.util.Objects.equals(this.fileName, other.fileName))
+    if (!java.util.Objects.equals(this.fileName, other.fileName)) {
       return false;
-    if (!java.util.Objects.equals(this.environment, other.environment))
+    }
+    if (!java.util.Objects.equals(this.environment, other.environment)) {
       return false;
+    }
     if (other.width != this.width)
       return false;
     if (other.height != this.height)
@@ -348,10 +354,10 @@ public class Simulation implements EventListener {
     final int prime = 31;
     result = prime * result + java.util.Objects.hashCode(this.fileName);
     result = prime * result + java.util.Objects.hashCode(this.environment);
-    result = prime * result + Integer.hashCode(this.width);
-    result = prime * result + Integer.hashCode(this.height);
-    result = prime * result + Integer.hashCode(this.antsCount);
-    result = prime * result + Boolean.hashCode(this.isSimulationStarted);
+    result = prime * result + this.width;
+    result = prime * result + this.height;
+    result = prime * result + this.antsCount;
+    result = prime * result + (this.isSimulationStarted ? 1231 : 1237);
     return result;
   }
 }

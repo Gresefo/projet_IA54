@@ -4,8 +4,7 @@ import io.sarl.lang.annotation.SarlElementType;
 import io.sarl.lang.annotation.SarlSpecification;
 import io.sarl.lang.annotation.SyntheticMember;
 import io.sarl.lang.core.Event;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
 import org.eclipse.xtext.xbase.lib.Pure;
 import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
 
@@ -13,16 +12,14 @@ import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
  * Event specifying when the GUI must be refresh according to the new environmental state embodied by the specified map
  * @author Nicolas Gaud
  */
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(15)
 @SuppressWarnings("all")
 public class GuiRepaint extends Event {
-  public final /* ConcurrentHashMap<UUID, PerceivedAntBody> */Object perceivedAgentBody;
+  public final ArrayList<Integer> tour;
   
-  public GuiRepaint(final /* ConcurrentHashMap<UUID, PerceivedAntBody> */Object bodies) {
-    throw new Error("Unresolved compilation problems:"
-      + "\nPerceivedAntBody cannot be resolved to a type."
-      + "\nThe field GuiRepaint.perceivedAgentBody refers to the missing type PerceivedAntBody");
+  public GuiRepaint(final ArrayList<Integer> tour) {
+    this.tour = tour;
   }
   
   @Override
@@ -47,9 +44,6 @@ public class GuiRepaint extends Event {
   @Pure
   protected void toString(final ToStringBuilder builder) {
     super.toString(builder);
-    builder.add("perceivedAgentBody", this.perceivedAgentBody);
+    builder.add("tour", this.tour);
   }
-  
-  @SyntheticMember
-  private static final long serialVersionUID = 1048280001L;
 }

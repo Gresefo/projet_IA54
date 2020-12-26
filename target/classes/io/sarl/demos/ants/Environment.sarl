@@ -1,4 +1,3 @@
-
 package io.sarl.demos.ants
 
 import io.sarl.core.DefaultContextInteractions
@@ -12,6 +11,7 @@ import java.util.concurrent.ConcurrentSkipListSet
 import org.eclipse.xtend.lib.annotations.Accessors
 import io.sarl.core.Lifecycle
 import java.util.ArrayList
+import java.util.concurrent.CopyOnWriteArrayList
 
 /** 
  * The environmental agent in charge of collecting ants influences and computing the new state of the virtual world
@@ -26,23 +26,26 @@ agent Environment {
 	@Accessors
 	var height : int
 
-	//@Accessors
-	//var ants : ConcurrentHashMap<UUID, PerceivedAntBody>
+	// @Accessors
+	// var ants : ConcurrentHashMap<UUID, PerceivedAntBody>
 
 	// Set of ants ID who has sent their influence in the current time step
 	@Accessors
 	var influences : ConcurrentSkipListSet<UUID>
-	
+
 	var distMatrix : double[][]
-	
+
 	var numberAnts : int
-	
+
 	var pheromons : double[][]
-	
+
 	var nnTourLength : double
 
-	on Initialize 
-	{
+	var tourArray : CopyOnWriteArrayList<Pair<ArrayList<Integer>, Double>>
+
+	var iteration : int
+
+	on Initialize {
 		loggingName = "Environment"
 		// Environment init parameters : An Integer the grid's height, An integer the grid's width
 		if (occurrence.parameters.size > 1) {
@@ -68,11 +71,14 @@ agent Environment {
 	}
 
 	on StartEnvironment {
-		/*this.ants = occurrence.perceivedAgentBody
-		new GuiRepaint(ants).emit
-		new Perception(ants).emit*/
+
+			/* this.ants = occurrence.perceivedAgentBody
+			 * new GuiRepaint(ants).emit
+			 * new Perception(ants).emit
+			 */
 		info("ENV STARTED")
-		
+		this.tourArray = new CopyOnWriteArrayList<Pair<ArrayList<Integer>, Double>>
+		this.iteration = 0
 		this.nnTourLength = nearestNeighbour(this.distMatrix)
 
 		var size = this.distMatrix.length
@@ -81,35 +87,72 @@ agent Environment {
 			for (var j = 0; j < size; j++) {
 				if (i == j) {
 					this.pheromons.set(i, j, 0.0)
-				}
-				else {
+				} else {
 					this.pheromons.set(i, j, this.numberAnts / this.nnTourLength)
 				}
 			}
 		}
-		
+
+		new StartAnt(this.pheromons).emit
 	}
 
-	on Action 
-	{
+	on TourFound {
+		synchronized (this.tourArray) {
+			this.tourArray.add(new Pair(occurrence.tour, occurrence.length))
+
+			info(this.tourArray.size)
+			if (this.tourArray.size == this.numberAnts) {
+				var phero : double
+				var min : double = this.tourArray.get(0).getValue
+				var index = 0
+				var k = 0
+				for (var i = 0; i < this.numberAnts; i++) {
+					for (var j = 0; j < this.numberAnts; j++) {
+						phero = this.pheromons.get(i, j) * (1 - Settings::rho)
+						this.pheromons.set(i, j, phero)
+					}
+				}
+				for (tA : this.tourArray) {
+					phero = 1 / tA.getValue
+					if (tA.getValue < min) {
+						min = tA.getValue
+						index = k
+					}
+					k++
+
+					for (var i = 0; i < this.numberAnts - 1; i++) {
+						this.pheromons.set(tA.getKey.get(i), tA.getKey.get(i + 1), phero)
+					}
+				}
+				new GuiRepaint(this.tourArray.get(index).getKey).emit[it.UUID == Simulation.id]
+				this.tourArray.clear
+				this.iteration++
+				if (this.iteration - 1 == Settings::iteration) {
+					info("KILL AGENTS")
+					new Die().emit
+				}
+				new StartAnt(this.pheromons).emit
+			}
+		}
+
+	}
+
+	on Action {
 		// TODO 5 Complete Environment behavior : collecting influences from all agents, updating environmental state, sending perceptions, refreshing GUI
-        synchronized (influences) 
-		{
+		synchronized (influences) {
 			if (ants.containsKey(occurrence.source.UUID)) {
 				this.influences.add(occurrence.source.UUID)
 				applyForce(occurrence.influence, ants.get(occurrence.source.UUID))
 			}
-				if (this.influences.size == this.ants.size) 
-			{
+			if (this.influences.size == this.ants.size) {
 				in(Settings::pause) [
 					new GuiRepaint(ants).emit[it.UUID == Simulation.id]
 					new Perception(ants).emit
-					if (Settings::isLogActivated) 
-					{
+					if (Settings::isLogActivated) {
 						info("New Simulation Step.")
                        }
                    ]
-                   this.influences.clear
+				this.influences.clear
 			}
 		}
 	}
@@ -117,32 +160,31 @@ agent Environment {
 	on Die {
 		killMe
 	}
-	
-	def nearestNeighbour(distMatrix : double[][]) : double{
+
+	def nearestNeighbour(distMatrix : double[][]) : double {
 		var tourLength = 0.0
 		var size = this.distMatrix.length
-		
+
 		var tour : ArrayList<Integer> = new ArrayList<Integer>
 		var citiesToVisit : ArrayList<Integer> = new ArrayList<Integer>
 		for (var i = 1; i < size; i++) {
 			citiesToVisit.add(i)
 		}
-		
+
 		tour.add(0)
 		var currentCity = 0
 		var index = 0
 		var min = 0.0
-		
-		while(tour.size != size) {
+
+		while (tour.size != size) {
 			if (currentCity == 0) {
 				min = distMatrix.get(currentCity, 1)
 				index = 1
-			}
-			else {
+			} else {
 				min = distMatrix.get(currentCity, 0)
 				index = 0
 			}
-			for(i : citiesToVisit) {
+			for (i : citiesToVisit) {
 				if (distMatrix.get(currentCity, i) < min) {
 					min = distMatrix.get(currentCity, i)
 					index = i
@@ -153,10 +195,10 @@ agent Environment {
 			tour.add(currentCity)
 			citiesToVisit.remove(currentCity as Integer)
 		}
-		
+
 		return tourLength
 	}
-	
+
 	def applyForce(force : Vector2d, b : PerceivedAntBody) {
 		// limiting/clamping the applied force
 		if (force.length > b.group.maxForce) {

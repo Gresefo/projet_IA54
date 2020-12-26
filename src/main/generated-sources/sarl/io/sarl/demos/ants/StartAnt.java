@@ -3,25 +3,18 @@ package io.sarl.demos.ants;
 import io.sarl.lang.annotation.SarlElementType;
 import io.sarl.lang.annotation.SarlSpecification;
 import io.sarl.lang.annotation.SyntheticMember;
-import io.sarl.lang.core.Address;
 import io.sarl.lang.core.Event;
 import org.eclipse.xtext.xbase.lib.Pure;
 import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
 
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(15)
 @SuppressWarnings("all")
 public class StartAnt extends Event {
-  public double[][] pheromons;
+  public final double[][] pheromons;
   
-  @SyntheticMember
-  public StartAnt() {
-    super();
-  }
-  
-  @SyntheticMember
-  public StartAnt(final Address source) {
-    super(source);
+  public StartAnt(final double[][] pheromons) {
+    this.pheromons = pheromons;
   }
   
   @Override
@@ -48,7 +41,4 @@ public class StartAnt extends Event {
     super.toString(builder);
     builder.add("pheromons", this.pheromons);
   }
-  
-  @SyntheticMember
-  private static final long serialVersionUID = 177719860L;
 }

@@ -1,5 +1,6 @@
 package io.sarl.demos.ants;
 
+import com.google.common.base.Objects;
 import io.sarl.core.DefaultContextInteractions;
 import io.sarl.core.Initialize;
 import io.sarl.core.Lifecycle;
@@ -7,32 +8,44 @@ import io.sarl.core.Logging;
 import io.sarl.core.Schedules;
 import io.sarl.demos.ants.Action;
 import io.sarl.demos.ants.Die;
+import io.sarl.demos.ants.GuiRepaint;
 import io.sarl.demos.ants.Settings;
+import io.sarl.demos.ants.Simulation;
+import io.sarl.demos.ants.StartAnt;
 import io.sarl.demos.ants.StartEnvironment;
+import io.sarl.demos.ants.TourFound;
 import io.sarl.lang.annotation.ImportedCapacityFeature;
 import io.sarl.lang.annotation.PerceptGuardEvaluator;
 import io.sarl.lang.annotation.SarlElementType;
 import io.sarl.lang.annotation.SarlSpecification;
 import io.sarl.lang.annotation.SyntheticMember;
+import io.sarl.lang.core.Address;
 import io.sarl.lang.core.Agent;
-import io.sarl.lang.core.AtomicSkillReference;
 import io.sarl.lang.core.BuiltinCapacitiesProvider;
 import io.sarl.lang.core.DynamicSkillProvider;
+import io.sarl.lang.core.Scope;
+import io.sarl.lang.core.Skill;
+import io.sarl.lang.util.ClearableReference;
+import io.sarl.lang.util.SerializableProxy;
+import java.io.ObjectStreamException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javax.inject.Inject;
 import org.eclipse.xtend.lib.annotations.Accessors;
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Extension;
+import org.eclipse.xtext.xbase.lib.Inline;
+import org.eclipse.xtext.xbase.lib.Pair;
 import org.eclipse.xtext.xbase.lib.Pure;
 
 /**
  * The environmental agent in charge of collecting ants influences and computing the new state of the virtual world
  */
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(19)
 @SuppressWarnings("all")
 public class Environment extends Agent {
@@ -53,8 +66,12 @@ public class Environment extends Agent {
   
   private double nnTourLength;
   
+  private CopyOnWriteArrayList<Pair<ArrayList<Integer>, Double>> tourArray;
+  
+  private int iteration;
+  
   private void $behaviorUnit$Initialize$0(final Initialize occurrence) {
-    Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
+    Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
     _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER.setLoggingName("Environment");
     int _size = ((List<Object>)Conversions.doWrapArray(occurrence.parameters)).size();
     if ((_size > 1)) {
@@ -82,16 +99,19 @@ public class Environment extends Agent {
       this.influences = _concurrentSkipListSet;
     }
     if (Settings.isLogActivated) {
-      Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
+      Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
       _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1.info("Environment activated");
-      Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
+      Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
       _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2.info(Double.valueOf(this.distMatrix[0][1]));
     }
   }
   
   private void $behaviorUnit$StartEnvironment$1(final StartEnvironment occurrence) {
-    Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
+    Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
     _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER.info("ENV STARTED");
+    CopyOnWriteArrayList<Pair<ArrayList<Integer>, Double>> _copyOnWriteArrayList = new CopyOnWriteArrayList<Pair<ArrayList<Integer>, Double>>();
+    this.tourArray = _copyOnWriteArrayList;
+    this.iteration = 0;
     this.nnTourLength = this.nearestNeighbour(this.distMatrix);
     int size = this.distMatrix.length;
     this.pheromons = new double[size][size];
@@ -104,9 +124,88 @@ public class Environment extends Agent {
         }
       }
     }
+    DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER = this.$castSkill(DefaultContextInteractions.class, (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = this.$getSkill(DefaultContextInteractions.class)) : this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS);
+    _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER.emit(new StartAnt(this.pheromons));
   }
   
-  private void $behaviorUnit$Action$2(final Action occurrence) {
+  private void $behaviorUnit$TourFound$2(final TourFound occurrence) {
+    synchronized (this.tourArray) {
+      Pair<ArrayList<Integer>, Double> _pair = new Pair<ArrayList<Integer>, Double>(occurrence.tour, Double.valueOf(occurrence.length));
+      this.tourArray.add(_pair);
+      Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
+      _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER.info(Integer.valueOf(this.tourArray.size()));
+      int _size = this.tourArray.size();
+      if ((_size == this.numberAnts)) {
+        double phero = 0;
+        double min = ((this.tourArray.get(0).getValue()) == null ? 0 : (this.tourArray.get(0).getValue()).doubleValue());
+        int index = 0;
+        int k = 0;
+        for (int i = 0; (i < this.numberAnts); i++) {
+          for (int j = 0; (j < this.numberAnts); j++) {
+            {
+              double _get = this.pheromons[i][j];
+              phero = (_get * (1 - Settings.rho));
+              this.pheromons[i][j] = phero;
+            }
+          }
+        }
+        for (final Pair<ArrayList<Integer>, Double> tA : this.tourArray) {
+          {
+            Double _value = tA.getValue();
+            phero = (1 / ((_value) == null ? 0 : (_value).doubleValue()));
+            Double _value_1 = tA.getValue();
+            if ((_value_1.doubleValue() < min)) {
+              min = ((tA.getValue()) == null ? 0 : (tA.getValue()).doubleValue());
+              index = k;
+            }
+            k++;
+            for (int i = 0; (i < (this.numberAnts - 1)); i++) {
+              this.pheromons[((tA.getKey().get(i)) == null ? 0 : (tA.getKey().get(i)).intValue())][((tA.getKey().get((i + 1))) == null ? 0 : (tA.getKey().get((i + 1))).intValue())] = phero;
+            }
+          }
+        }
+        DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER = this.$castSkill(DefaultContextInteractions.class, (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = this.$getSkill(DefaultContextInteractions.class)) : this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS);
+        ArrayList<Integer> _key = this.tourArray.get(index).getKey();
+        class $SerializableClosureProxy implements Scope<Address> {
+          
+          private final UUID $_id_1;
+          
+          public $SerializableClosureProxy(final UUID $_id_1) {
+            this.$_id_1 = $_id_1;
+          }
+          
+          @Override
+          public boolean matches(final Address it) {
+            UUID _uUID = it.getUUID();
+            return Objects.equal(_uUID, $_id_1);
+          }
+        }
+        final Scope<Address> _function = new Scope<Address>() {
+          @Override
+          public boolean matches(final Address it) {
+            UUID _uUID = it.getUUID();
+            return Objects.equal(_uUID, Simulation.id);
+          }
+          private Object writeReplace() throws ObjectStreamException {
+            return new SerializableProxy($SerializableClosureProxy.class, Simulation.id);
+          }
+        };
+        _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER.emit(new GuiRepaint(_key), _function);
+        this.tourArray.clear();
+        this.iteration++;
+        if (((this.iteration - 1) == Settings.iteration)) {
+          Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
+          _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1.info("KILL AGENTS");
+          DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_1 = this.$castSkill(DefaultContextInteractions.class, (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = this.$getSkill(DefaultContextInteractions.class)) : this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS);
+          _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_1.emit(new Die());
+        }
+        DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_2 = this.$castSkill(DefaultContextInteractions.class, (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = this.$getSkill(DefaultContextInteractions.class)) : this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS);
+        _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_2.emit(new StartAnt(this.pheromons));
+      }
+    }
+  }
+  
+  private void $behaviorUnit$Action$3(final Action occurrence) {
     throw new Error("Unresolved compilation problems:"
       + "\nThe method or field ants is undefined"
       + "\nThe method or field ants is undefined"
@@ -114,16 +213,15 @@ public class Environment extends Agent {
       + "\nThe method or field ants is undefined"
       + "\nThe method or field ants is undefined"
       + "\nThe method applyForce(Vector2d, PerceivedAntBody) from the type Environment refers to the missing type Object"
-      + "\nThe field Action.influence refers to the missing type Vector2d"
-      + "\nThe constructor GuiRepaint(ConcurrentHashMap<UUID, PerceivedAntBody>) refers to the missing type PerceivedAntBody"
-      + "\nThe constructor Perception(ConcurrentHashMap<UUID, PerceivedAntBody>) refers to the missing type PerceivedAntBody"
+      + "\nThe field Action.influence refers to the missing type Object"
+      + "\nThe constructor Perception(ConcurrentHashMap<UUID, Object>) refers to the missing type Object"
       + "\ncontainsKey cannot be resolved"
       + "\nget cannot be resolved"
       + "\nsize cannot be resolved");
   }
   
-  private void $behaviorUnit$Die$3(final Die occurrence) {
-    Lifecycle _$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER = this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER();
+  private void $behaviorUnit$Die$4(final Die occurrence) {
+    Lifecycle _$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER = this.$castSkill(Lifecycle.class, (this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE == null || this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE = this.$getSkill(Lifecycle.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE);
     _$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER.killMe();
   }
   
@@ -223,10 +321,11 @@ public class Environment extends Agent {
   @Extension
   @ImportedCapacityFeature(Logging.class)
   @SyntheticMember
-  private transient AtomicSkillReference $CAPACITY_USE$IO_SARL_CORE_LOGGING;
+  private transient ClearableReference<Skill> $CAPACITY_USE$IO_SARL_CORE_LOGGING;
   
   @SyntheticMember
   @Pure
+  @Inline(value = "$castSkill(Logging.class, ($0$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || $0$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? ($0$CAPACITY_USE$IO_SARL_CORE_LOGGING = $0$getSkill(Logging.class)) : $0$CAPACITY_USE$IO_SARL_CORE_LOGGING)", imported = Logging.class)
   private Logging $CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER() {
     if (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) {
       this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = $getSkill(Logging.class);
@@ -237,10 +336,11 @@ public class Environment extends Agent {
   @Extension
   @ImportedCapacityFeature(DefaultContextInteractions.class)
   @SyntheticMember
-  private transient AtomicSkillReference $CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS;
+  private transient ClearableReference<Skill> $CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS;
   
   @SyntheticMember
   @Pure
+  @Inline(value = "$castSkill(DefaultContextInteractions.class, ($0$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || $0$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? ($0$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = $0$getSkill(DefaultContextInteractions.class)) : $0$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS)", imported = DefaultContextInteractions.class)
   private DefaultContextInteractions $CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER() {
     if (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) {
       this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = $getSkill(DefaultContextInteractions.class);
@@ -251,10 +351,11 @@ public class Environment extends Agent {
   @Extension
   @ImportedCapacityFeature(Schedules.class)
   @SyntheticMember
-  private transient AtomicSkillReference $CAPACITY_USE$IO_SARL_CORE_SCHEDULES;
+  private transient ClearableReference<Skill> $CAPACITY_USE$IO_SARL_CORE_SCHEDULES;
   
   @SyntheticMember
   @Pure
+  @Inline(value = "$castSkill(Schedules.class, ($0$CAPACITY_USE$IO_SARL_CORE_SCHEDULES == null || $0$CAPACITY_USE$IO_SARL_CORE_SCHEDULES.get() == null) ? ($0$CAPACITY_USE$IO_SARL_CORE_SCHEDULES = $0$getSkill(Schedules.class)) : $0$CAPACITY_USE$IO_SARL_CORE_SCHEDULES)", imported = Schedules.class)
   private Schedules $CAPACITY_USE$IO_SARL_CORE_SCHEDULES$CALLER() {
     if (this.$CAPACITY_USE$IO_SARL_CORE_SCHEDULES == null || this.$CAPACITY_USE$IO_SARL_CORE_SCHEDULES.get() == null) {
       this.$CAPACITY_USE$IO_SARL_CORE_SCHEDULES = $getSkill(Schedules.class);
@@ -265,10 +366,11 @@ public class Environment extends Agent {
   @Extension
   @ImportedCapacityFeature(Lifecycle.class)
   @SyntheticMember
-  private transient AtomicSkillReference $CAPACITY_USE$IO_SARL_CORE_LIFECYCLE;
+  private transient ClearableReference<Skill> $CAPACITY_USE$IO_SARL_CORE_LIFECYCLE;
   
   @SyntheticMember
   @Pure
+  @Inline(value = "$castSkill(Lifecycle.class, ($0$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE == null || $0$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE.get() == null) ? ($0$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE = $0$getSkill(Lifecycle.class)) : $0$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE)", imported = Lifecycle.class)
   private Lifecycle $CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER() {
     if (this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE == null || this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE.get() == null) {
       this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE = $getSkill(Lifecycle.class);
@@ -289,7 +391,7 @@ public class Environment extends Agent {
   private void $guardEvaluator$Action(final Action occurrence, final Collection<Runnable> ___SARLlocal_runnableCollection) {
     assert occurrence != null;
     assert ___SARLlocal_runnableCollection != null;
-    ___SARLlocal_runnableCollection.add(() -> $behaviorUnit$Action$2(occurrence));
+    ___SARLlocal_runnableCollection.add(() -> $behaviorUnit$Action$3(occurrence));
   }
   
   @SyntheticMember
@@ -305,7 +407,15 @@ public class Environment extends Agent {
   private void $guardEvaluator$Die(final Die occurrence, final Collection<Runnable> ___SARLlocal_runnableCollection) {
     assert occurrence != null;
     assert ___SARLlocal_runnableCollection != null;
-    ___SARLlocal_runnableCollection.add(() -> $behaviorUnit$Die$3(occurrence));
+    ___SARLlocal_runnableCollection.add(() -> $behaviorUnit$Die$4(occurrence));
+  }
+  
+  @SyntheticMember
+  @PerceptGuardEvaluator
+  private void $guardEvaluator$TourFound(final TourFound occurrence, final Collection<Runnable> ___SARLlocal_runnableCollection) {
+    assert occurrence != null;
+    assert ___SARLlocal_runnableCollection != null;
+    ___SARLlocal_runnableCollection.add(() -> $behaviorUnit$TourFound$2(occurrence));
   }
   
   @Override
@@ -327,6 +437,8 @@ public class Environment extends Agent {
       return false;
     if (Double.doubleToLongBits(other.nnTourLength) != Double.doubleToLongBits(this.nnTourLength))
       return false;
+    if (other.iteration != this.iteration)
+      return false;
     return super.equals(obj);
   }
   
@@ -336,10 +448,11 @@ public class Environment extends Agent {
   public int hashCode() {
     int result = super.hashCode();
     final int prime = 31;
-    result = prime * result + Integer.hashCode(this.width);
-    result = prime * result + Integer.hashCode(this.height);
-    result = prime * result + Integer.hashCode(this.numberAnts);
-    result = prime * result + Double.hashCode(this.nnTourLength);
+    result = prime * result + this.width;
+    result = prime * result + this.height;
+    result = prime * result + this.numberAnts;
+    result = prime * result + (int) (Double.doubleToLongBits(this.nnTourLength) ^ (Double.doubleToLongBits(this.nnTourLength) >>> 32));
+    result = prime * result + this.iteration;
     return result;
   }
   

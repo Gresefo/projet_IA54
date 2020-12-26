@@ -9,14 +9,12 @@ import io.sarl.lang.annotation.SyntheticMember;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.UUID;
 import org.eclipse.xtext.xbase.lib.Pure;
 
 /**
  * Graphical user interface for ants.
  */
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(10)
 @SuppressWarnings("all")
 public class EnvironmentGui extends Frame {
@@ -37,9 +35,8 @@ public class EnvironmentGui extends Frame {
     this.setVisible(true);
   }
   
-  public void setBoids(final /* Map<UUID, PerceivedAntBody> */Object boids) {
-    throw new Error("Unresolved compilation problems:"
-      + "\nThe method setBoids(Map<UUID, PerceivedAntBody>) from the type EnvironmentGuiPanel refers to the missing type PerceivedAntBody");
+  public void setTour(final ArrayList<Integer> tour) {
+    this.panel.setTour(tour);
   }
   
   @Override
@@ -64,5 +61,5 @@ public class EnvironmentGui extends Frame {
   }
   
   @SyntheticMember
-  private static final long serialVersionUID = 1419251547L;
+  private static final long serialVersionUID = -1380478292L;
 }
