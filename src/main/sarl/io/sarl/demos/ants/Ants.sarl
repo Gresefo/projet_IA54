@@ -1,4 +1,3 @@
-
 package io.sarl.demos.ants
 
 import io.sarl.core.DefaultContextInteractions
@@ -20,9 +19,9 @@ agent Ant {
 
 	// ID of the environmental agent
 	var environment : UUID
-	
-	var distance : Float[][]
-	
+
+	var distance : double[][]
+
 	on Initialize {
 		// 5 Boids init parameters : UUID envt, Population p, Vector2d initialPosition, Vector2d initialVitesse, String boidName
 		if (occurrence.parameters.size > 2) {
@@ -32,80 +31,84 @@ agent Ant {
 			if (occurrence.parameters.get(1) instanceof String) {
 				loggingName = occurrence.parameters.get(1) as String
 			}
-			if (occurrence.parameters.get(2) instanceof Float[][]) {
-				distance = occurrence.parameters.get(2) as Float[][]
+			if (occurrence.parameters.get(2) instanceof double[][]) {
+				distance = occurrence.parameters.get(2) as double[][]
 			}
 
 		}
-		if (Settings::isLogActivated) 
-		{
+		if (Settings::isLogActivated) {
+			// info(this.distance.get(0, 0))
 			"Ants activated".info
 		}
 	}
-	
+
 	on StartAnt {
+		info("Ant's ready !")
+
 		// Matrix of pheromons
-		var pheromons : double[][] = occurrence.pheromons
-		
+		var pheromons = occurrence.pheromons
+
 		var size = this.distance.length
+		info(size)
+
 		var tourLength = 0.0
-		
+
 		// Memory of visited cities
 		var memory : ArrayList<Integer> = new ArrayList<Integer>
 		var citiesToVisit : ArrayList<Integer> = new ArrayList<Integer>
-		for(var i = 1; i < size; i++) {
+		for (var i = 1; i < size; i++) {
 			citiesToVisit.add(i)
 		}
-		
+
 		var prob : ArrayList<Double> = new ArrayList<Double>
-		
+		var probability : double
+
 		// Every ant start in the first city
 		memory.add(0)
 		var currentCity = 0
 
 		while (memory.size != size) {
 			var sum = 0.0
-			for(i : citiesToVisit){
+			for (i : citiesToVisit) {
 				sum = sum + Math.pow(pheromons.get(currentCity, i), Settings::alpha) *
-						Math.pow(1 / this.distance.get(currentCity, i), Settings::beta)
+					Math.pow(1 / this.distance.get(currentCity, i), Settings::beta)
 			}
-			for(i : citiesToVisit){
-				var probabilty = 
-					Math.pow(pheromons.get(currentCity, i), Settings::alpha) *
+			for (i : citiesToVisit) {
+				probability = Math.pow(pheromons.get(currentCity, i), Settings::alpha) *
 					Math.pow(1 / this.distance.get(currentCity, i), Settings::beta) / sum
-				prob.add(probabilty)
+				prob.add(probability)
 			}
-			
+
 			var cityChosen = Math.random()
-			var cumul = prob.get(0)
+			var cumul = 0.0 // prob.get(0)
 			var i = 0
 			while (cumul < cityChosen) {
 				cumul = cumul + prob.get(i)
 				i += 1
 			}
-			
+
 			// ????
-			tourLength += this.distance.get(currentCity, citiesToVisit.get(i - 1)) as Double
+			info(tourLength) // + "/" + (i - 1) + "/" + cityChosen + "\n" + citiesToVisit + "\n" + prob)
+			tourLength += this.distance.get(currentCity, citiesToVisit.get(i - 1))
 			currentCity = citiesToVisit.get(i - 1)
 			memory.add(currentCity)
 			citiesToVisit.remove(i - 1)
-			// ????	
+			prob.clear()
+			// ????
 		}
 
 		new TourFound(memory, tourLength).emit[it.UUID == this.environment]
-		//emit(new TourFound(memory, tourLength))[it.UUID == this.environment]
+		// emit(new TourFound(memory, tourLength))[it.UUID == this.environment]
 	}
 
 	on Die {
 		killMe
 	}
 
-	/************** Boids' behavioral Methods ****************************
-	 */
-	 
-	 /**
-	  * The core boids behavior : aggregating all forces into a influence 
-	  */
+/************** Boids' behavioral Methods ****************************
+ */
 
-
+/** 
+ * The core boids behavior : aggregating all forces into a influence 
+ */
 }

@@ -4,21 +4,23 @@ import io.sarl.demos.ants.Simulation;
 import io.sarl.lang.annotation.SarlElementType;
 import io.sarl.lang.annotation.SarlSpecification;
 import io.sarl.lang.annotation.SyntheticMember;
+import org.eclipse.xtext.xbase.lib.Pure;
 
 /**
  * The main class configuring the various boids populations and launching the simulation
  * 
  * @author Nicolas Gaud
  */
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(10)
 @SuppressWarnings("all")
 public class BoidsSimulationLauncher {
   /**
    * @param args command line arguments
    */
+  @Pure
   public static void main(final String... args) {
-    String fileName = args[0];
+    String fileName = "berlin52.txt";
     Simulation simu = new Simulation(fileName);
     simu.start();
   }

@@ -9,7 +9,7 @@ import io.sarl.lang.core.Event;
 /**
  * Event from the GUI to kill each agent to end the simulation before closing the main window
  */
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(15)
 @SuppressWarnings("all")
 public class Die extends Event {
@@ -22,7 +22,4 @@ public class Die extends Event {
   public Die(final Address source) {
     super(source);
   }
-  
-  @SyntheticMember
-  private static final long serialVersionUID = 588368462L;
 }

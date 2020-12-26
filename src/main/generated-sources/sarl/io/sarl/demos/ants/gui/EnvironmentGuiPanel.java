@@ -12,8 +12,6 @@ import java.awt.Panel;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.UUID;
 import org.eclipse.xtext.xbase.lib.Pure;
 
 /**
@@ -21,7 +19,7 @@ import org.eclipse.xtext.xbase.lib.Pure;
  * 
  * @author Nicolas GAUD
  */
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(10)
 @SuppressWarnings("all")
 class EnvironmentGuiPanel extends Panel {
@@ -46,11 +44,10 @@ class EnvironmentGuiPanel extends Panel {
   
   private ArrayList<double[]> posList;
   
-  private /* Map<UUID, PerceivedAntBody> */Object boids;
+  private ArrayList<Integer> tour;
   
-  public void setBoids(final /* Map<UUID, PerceivedAntBody> */Object boids) {
-    throw new Error("Unresolved compilation problems:"
-      + "\nThe field EnvironmentGuiPanel.boids refers to the missing type PerceivedAntBody");
+  public void setTour(final ArrayList<Integer> tour) {
+    this.tour = tour;
   }
   
   public EnvironmentGuiPanel(final int iheight, final int iwidth, final ArrayList<double[]> _posList) {
@@ -69,16 +66,12 @@ class EnvironmentGuiPanel extends Panel {
       this.myCanvas.setColor(Color.BLACK);
       this.myCanvas.drawRect(0, 0, ((this.width * 2) - 1), ((this.height * 2) - 1));
       int maxCoord = this.getMaxCoord(this.posList);
-      ArrayList<Integer> testList = new ArrayList<Integer>();
-      for (int i = 0; (i < this.posList.size()); i++) {
-        testList.add(Integer.valueOf((i + 1)));
-      }
-      ArrayList<int[]> linePixelList = this.getRectPixel(this.posList, testList, maxCoord);
+      ArrayList<int[]> linePixelList = this.getRectPixel(this.posList, this.tour, maxCoord);
       for (final int[] line : linePixelList) {
         this.myCanvas.drawLine(line[0], line[1], line[2], line[3]);
       }
       for (final double[] pos : this.posList) {
-        this.paintBoid(((Graphics2D) this.myCanvas), pos, maxCoord);
+        this.paintTour(((Graphics2D) this.myCanvas), pos, maxCoord);
       }
       this.myGraphics.drawImage(this.myImage, 0, 0, this);
     }
@@ -98,7 +91,7 @@ class EnvironmentGuiPanel extends Panel {
     this.myGraphics = this.getGraphics();
   }
   
-  public void paintBoid(final Graphics2D g, final double[] pos, final int maxCoord) {
+  public void paintTour(final Graphics2D g, final double[] pos, final int maxCoord) {
     double[] coord = new double[2];
     coord[0] = pos[1];
     coord[1] = pos[2];
@@ -159,7 +152,7 @@ class EnvironmentGuiPanel extends Panel {
   private double[] getCoordFromTownId(final ArrayList<double[]> posList, final int id) {
     double[] result = new double[2];
     int i = 0;
-    while (((i < posList.size()) && (((int) posList.get(i)[0]) != id))) {
+    while (((i < (posList.size() - 1)) && (((int) posList.get(i)[0]) != id))) {
       i++;
     }
     double _get = posList.get(i)[0];
@@ -234,11 +227,11 @@ class EnvironmentGuiPanel extends Panel {
   public int hashCode() {
     int result = super.hashCode();
     final int prime = 31;
-    result = prime * result + Integer.hashCode(this.width);
-    result = prime * result + Integer.hashCode(this.height);
+    result = prime * result + this.width;
+    result = prime * result + this.height;
     return result;
   }
   
   @SyntheticMember
-  private static final long serialVersionUID = -5369341868L;
+  private static final long serialVersionUID = -8098180800L;
 }

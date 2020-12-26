@@ -1,4 +1,3 @@
-
 package io.sarl.demos.ants
 
 import java.util.UUID
@@ -7,12 +6,12 @@ import org.eclipse.xtend.lib.annotations.Accessors
 import org.arakhne.afc.math.geometry.d2.d.Vector2d
 import java.util.ArrayList
 
-/**
+/** 
  * Event from the GUI to kill each agent to end the simulation before closing the main window
  */
 event Die
 
-/**
+/** 
  * Event from a boid to the environment containing his corresponding influence for the current simulation step.
  * @author Nicolas Gaud
  */
@@ -26,7 +25,7 @@ event Action {
  */
 event Perception {
 	val perceivedAgentBody : ConcurrentHashMap<UUID, PerceivedAntBody>
-	
+
 	new (bodies : ConcurrentHashMap<UUID, PerceivedAntBody>) {
 		perceivedAgentBody = new ConcurrentHashMap<UUID, PerceivedAntBody>(bodies);
 	}
@@ -39,13 +38,17 @@ event Perception {
 event StartEnvironment
 
 event StartAnt {
-	var pheromons : double[][]
+	val pheromons : double[][]
+
+	new (pheromons : double[][]) {
+		this.pheromons = pheromons
+	}
 }
 
 event TourFound {
 	val tour : ArrayList<Integer>
 	val length : double
-	
+
 	new (tour : ArrayList<Integer>, length : double) {
 		this.tour = tour
 		this.length = length
@@ -57,10 +60,10 @@ event TourFound {
  * @author Nicolas Gaud
  */
 event GuiRepaint {
-	val perceivedAgentBody : ConcurrentHashMap<UUID, PerceivedAntBody>
+	val tour : ArrayList<Integer>
 
-	new (bodies : ConcurrentHashMap<UUID, PerceivedAntBody>) {
-		perceivedAgentBody = new ConcurrentHashMap<UUID, PerceivedAntBody>(bodies);
+	new (tour : ArrayList<Integer>) {
+		this.tour = tour
 	}
 
 }

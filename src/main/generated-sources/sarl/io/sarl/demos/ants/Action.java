@@ -12,7 +12,7 @@ import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
  * Event from a boid to the environment containing his corresponding influence for the current simulation step.
  * @author Nicolas Gaud
  */
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(15)
 @SuppressWarnings("all")
 public class Action extends Event {
@@ -52,7 +52,4 @@ public class Action extends Event {
     super.toString(builder);
     builder.add("influence", this.influence);
   }
-  
-  @SyntheticMember
-  private static final long serialVersionUID = 1757625047L;
 }
