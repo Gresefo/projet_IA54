@@ -65,7 +65,7 @@ class Simulation implements EventListener {
 	 */
 	var isSimulationStarted = false
 
-	/**
+	/** 
 	 * the vent space used to establish communication between GUI and agents,
 	 * Especially enabling GUI to forward start event to the environment, 
 	 * respectively the environment to send GUIRepain at each simulation step to the GUI
@@ -79,8 +79,8 @@ class Simulation implements EventListener {
 
 	new (fileName : String) {
 		antsCount = 0
-		
-		this.fileName = fileName 
+
+		this.fileName = fileName
 	}
 
 	/** 
@@ -91,15 +91,13 @@ class Simulation implements EventListener {
 		this.fileName = fileName
 	}
 
-	def start : void 
-	{
+	def start : void {
 		this.posList = parsor(getPath(fileName))
 		this.antsCount = this.posList.length
-		 
-//		printCoord(this.posList)
-		this.distMatrix = getDistMatrix(this.posList)
-//		printDistMatrix(this.distMatrix, 20)
 
+		//		printCoord(this.posList)
+		this.distMatrix = getDistMatrix(this.posList)
+		// printDistMatrix(this.distMatrix, 20)
 		launchAllAgents
 		isSimulationStarted = true
 	}
@@ -121,11 +119,11 @@ class Simulation implements EventListener {
 		//
 		launchAllAnts
 		^space = defaultSARLContext.defaultSpace as OpenEventSpace
-		
+
 		// No need to send boidBodies
 		this.myGUI = new EnvironmentGui(^space, height, width, this.fileName, posList)
 
-		//Registering to receive GUIRepaint events
+		// Registering to receive GUIRepaint events
 		^space.register(this)
 		// Sending start to Environment
 		^space.emit(id, new StartEnvironment)
@@ -145,10 +143,11 @@ class Simulation implements EventListener {
 		var id_a = UUID::randomUUID
 		kernel.startAgentWithID(typeof(Ant), id_a, environment, antName, distMatrix)
 
-		/*if (Settings::isLogActivated) {
-			System.out.println("Lancement d'un boid à la position " + initialPosition + " et avec une vitesse de " +
-				initialVitesse)
-		}*/
+	/* if (Settings::isLogActivated) {
+	 * System.out.println("Lancement d'un boid à la position " + initialPosition + " et avec une vitesse de " +
+	 * initialVitesse)
+	 * }
+	 */
 	}
 
 	private def killAllAgents : void {
@@ -169,104 +168,91 @@ class Simulation implements EventListener {
 			this.myGUI.repaint
 		}
 	}
-	
-	/**
+
+	/** 
 	 * Returns the path to get the file
 	 * @param file : String, the file to get
 	 * @return String : the complete path to get this file
 	 */
-	 public def getPath(file : String) : String
-	 {
+	 public def getPath(file : String) : String {
 		var fileSep : String = System.getProperty("file.separator")
 		var path : String = System.getProperty("user.dir") + fileSep + "TSP" + fileSep + "berlin52.txt"
 	 	return path
-	 }
-	
-	/**
+	}
+
+	/** 
 	 * TSP parsor
 	 * @param path : String, the file path to parse
 	 * @return ArrayList<double[]> : the coordonates of each town
 	 */
-	public def parsor(path : String) : ArrayList<double[]>
-	{
+	public def parsor(path : String) : ArrayList<double[]> {
 		var file : File = new File(path)
 		var sc : Scanner = new Scanner(file)
-		var storing : ArrayList<double[]> = new ArrayList <double[]> ()
-		while (sc.hasNextLine())
-		{
+		var storing : ArrayList<double[]> = new ArrayList<double[]>()
+		while (sc.hasNextLine()) {
 			var line : String = sc.nextLine();
-			if ("NODE_COORD_SECTION".equals(line)) 
-			{
-                while (sc.hasNextLine()) 
-                {
-                	var next : String = sc.next()
-                	if(next != "EOF")
+			if ("NODE_COORD_SECTION".equals(line)) {
+				while (sc.hasNextLine()) {
+					var next : String = sc.next()
+					if (next != "EOF")
                 	{
 						var list : double[] = newDoubleArrayOfSize(3)
 						list.set(0, next as double)
 						list.set(1, sc.next() as double)
 						list.set(2, sc.next() as double)
 						storing.add(list);
-                	}
+					}
 				}
 			}
 		}
-        sc.close();
-        return storing;
+		sc.close();
+		return storing;
 	}
-	
-	/**
+
+	/** 
 	 * Prints the coordinates of each town
 	 * @param coord : ArrayList<Double[]> the list of coordinates
 	 */
-	public def printCoord(coord : ArrayList<double[]>) : void
-	{
-		for(f : coord)
-		{
+	public def printCoord(coord : ArrayList<double[]>) : void {
+		for (f : coord) {
 			System.out.println("Town n°: " + f.get(0) + " | x=" + f.get(1) + " | y=" + f.get(2))
 		}
 	}
-	
-	/**
+
+	/** 
 	 * Return the distance matrix computed from the coordinates list
 	 * @param coord : ArrayList<double[]>, the list of coordinates
 	 * @return double[][], the distance matrix
 	 */
-	 public def getDistMatrix(coordList : ArrayList<double[]>) : double[][]
-	 {
-	 	var size : int = coordList.size
-	 	var distMatrix : double[][] = newDoubleArrayOfSize(size, size)
-	 	for(var i = 0; i < size; i++)
-	 	{
-	 		var distLine : double[] = newDoubleArrayOfSize(size)
-	 		for(var j = 0; j < size; j++)
-	 		{
-	 			var dist : double = Math.pow((coordList.get(i).get(1) - coordList.get(j).get(1)), 2) 
-	 			dist += Math.pow((coordList.get(i).get(2) - coordList.get(j).get(2)), 2) 
-	 			dist = Math.pow(dist, 0.5)
-	 			distLine.set(j, dist)
-	 		}
-	 		distMatrix.set(i, distLine)
-	 	}
-	 	return distMatrix
-	 }
-	 
-	 /**
-	  * Prints the distance matrix
-	  * @param distMatrix : the distance matrix to print
-	  * @param maxSize : the maximum size of value to print. If maxSize = 5, it will only print the 5x5 matrix (the top left corner)
-	  */
-	 public def printDistMatrix(distMatrix : double[][], maxSize : int) : void
-	 {
-	 	var maxSize2 : int = maxSize
-	 	if(maxSize > distMatrix.size)
-	 		maxSize2 = distMatrix.size
-	 		
+	public def getDistMatrix(coordList : ArrayList<double[]>) : double[][] {
+		var size : int = coordList.size
+		var distMatrix : double[][] = newDoubleArrayOfSize(size, size)
+		for (var i = 0; i < size; i++) {
+			var distLine : double[] = newDoubleArrayOfSize(size)
+			for (var j = 0; j < size; j++) {
+				var dist : double = Math.pow((coordList.get(i).get(1) - coordList.get(j).get(1)), 2)
+				dist += Math.pow((coordList.get(i).get(2) - coordList.get(j).get(2)), 2)
+				dist = Math.pow(dist, 0.5)
+				distLine.set(j, dist)
+			}
+			distMatrix.set(i, distLine)
+		}
+		return distMatrix
+	}
+
+	/** 
+	 * Prints the distance matrix
+	 * @param distMatrix : the distance matrix to print
+	 * @param maxSize : the maximum size of value to print. If maxSize = 5, it will only print the 5x5 matrix (the top left corner)
+	 */
+	public def printDistMatrix(distMatrix : double[][], maxSize : int) : void {
+		var maxSize2 : int = maxSize
+		if (maxSize > distMatrix.size)
+			maxSize2 = distMatrix.size
+
 		System.out.println("Distance Matrix (size printed: " + maxSize2 + "):")
-		for (var i : int = 0; i < maxSize2; i++) 
-		{
-			for (var j : int = 0; j < maxSize2; j++)
-			{
+		for (var i : int = 0; i < maxSize2; i++) {
+			for (var j : int = 0; j < maxSize2; j++) {
 				System.out.print(" " + distMatrix.get(i).get(j) as int)
 				if (distMatrix.get(i).get(j) < 10)
 					System.out.print("    ")

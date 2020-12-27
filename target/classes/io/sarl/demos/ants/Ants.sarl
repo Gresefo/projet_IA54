@@ -94,11 +94,11 @@ agent Ant {
 			memory.add(currentCity)
 			citiesToVisit.remove(i - 1)
 			prob.clear()
-			// ????
+				// ????
 		}
 
 		new TourFound(memory, tourLength).emit[it.UUID == this.environment]
-		// emit(new TourFound(memory, tourLength))[it.UUID == this.environment]
+			// emit(new TourFound(memory, tourLength))[it.UUID == this.environment]
 	}
 
 	on Die {
