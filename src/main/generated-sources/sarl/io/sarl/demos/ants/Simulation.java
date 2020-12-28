@@ -172,7 +172,6 @@ public class Simulation implements EventListener {
   public void receiveEvent(final Event event) {
     if ((event instanceof GuiRepaint)) {
       this.myGUI.setTour(((GuiRepaint)event).tour);
-      System.out.println(((GuiRepaint)event).tour);
       this.myGUI.repaint();
     }
   }

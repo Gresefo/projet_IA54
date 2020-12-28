@@ -124,6 +124,7 @@ agent Environment {
 						this.pheromons.set(tA.getKey.get(i), tA.getKey.get(i + 1), phero)
 					}
 				}
+				info("Best tour : " + this.tourArray.get(index).getValue)
 				new GuiRepaint(this.tourArray.get(index).getKey).emit[it.UUID == Simulation.id]
 				this.tourArray.clear
 				this.iteration++
@@ -135,26 +136,6 @@ agent Environment {
 			}
 		}
 
-	}
-
-	on Action {
-		// TODO 5 Complete Environment behavior : collecting influences from all agents, updating environmental state, sending perceptions, refreshing GUI
-		synchronized (influences) {
-			if (ants.containsKey(occurrence.source.UUID)) {
-				this.influences.add(occurrence.source.UUID)
-				applyForce(occurrence.influence, ants.get(occurrence.source.UUID))
-			}
-			if (this.influences.size == this.ants.size) {
-				in(Settings::pause) [
-					new GuiRepaint(ants).emit[it.UUID == Simulation.id]
-					new Perception(ants).emit
-					if (Settings::isLogActivated) {
-						info("New Simulation Step.")
-                       }
-                   ]
-				this.influences.clear
-			}
-		}
 	}
 
 	on Die {
@@ -197,61 +178,6 @@ agent Environment {
 		}
 
 		return tourLength
-	}
-
-	def applyForce(force : Vector2d, b : PerceivedAntBody) {
-		// limiting/clamping the applied force
-		if (force.length > b.group.maxForce) {
-			force.length = b.group.maxForce
-		}
-
-		// contribution of the mass.
-		// force * (1 / b.getGroupe().masse);
-		// updating acceleration and speed.
-		var acceleration = b.acceleration
-		acceleration.set(force)
-		var vitesse = b.vitesse
-		vitesse += acceleration
-
-		// updating speed
-		if (vitesse.length > b.group.maxSpeed) {
-			vitesse.length = b.group.maxSpeed
-		}
-
-		// updating the position
-		var position = b.position
-		position += vitesse
-
-		var bb = ants.get(b.owner)
-		bb.acceleration = acceleration
-		bb.vitesse = vitesse
-		bb.position = position
-
-		// we adjust it according to the dimensions of the World.
-		b.clampToWorld
-	}
-
-	/** 
-	 * The world is circular, this function clamps coordinates to stay within the frame
-	 */
-	def clampToWorld(b : PerceivedAntBody) {
-		var posX = b.position.x
-		var posY = b.position.y
-
-		if (posX > width / 2) {
-			posX -= width
-		}
-		if (posX < ( -1 * width / 2 )) {
-			posX += width
-		}
-		if (posY > height / 2) {
-			posY -= height
-		}
-		if (posY < ( -1 * height / 2 )) {
-			posY += height
-		}
-
-		ants.get(b.owner).position = new Vector2d(posX, posY)
 	}
 
 }

@@ -23,7 +23,7 @@ agent Ant {
 	var distance : double[][]
 
 	on Initialize {
-		// 5 Boids init parameters : UUID envt, Population p, Vector2d initialPosition, Vector2d initialVitesse, String boidName
+		// 3 Boids init parameters : UUID envt, String boidName, double[][] distanceMatrix
 		if (occurrence.parameters.size > 2) {
 			if (occurrence.parameters.get(0) instanceof UUID) {
 				environment = occurrence.parameters.get(0) as UUID
@@ -43,13 +43,10 @@ agent Ant {
 	}
 
 	on StartAnt {
-		info("Ant's ready !")
-
 		// Matrix of pheromons
 		var pheromons = occurrence.pheromons
 
 		var size = this.distance.length
-		info(size)
 
 		var tourLength = 0.0
 
@@ -87,18 +84,14 @@ agent Ant {
 				i += 1
 			}
 
-			// ????
-			info(tourLength) // + "/" + (i - 1) + "/" + cityChosen + "\n" + citiesToVisit + "\n" + prob)
 			tourLength += this.distance.get(currentCity, citiesToVisit.get(i - 1))
 			currentCity = citiesToVisit.get(i - 1)
 			memory.add(currentCity)
 			citiesToVisit.remove(i - 1)
 			prob.clear()
-			// ????
 		}
 
 		new TourFound(memory, tourLength).emit[it.UUID == this.environment]
-		// emit(new TourFound(memory, tourLength))[it.UUID == this.environment]
 	}
 
 	on Die {

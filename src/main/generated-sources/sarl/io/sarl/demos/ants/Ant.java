@@ -69,12 +69,8 @@ public class Ant extends Agent {
   }
   
   private void $behaviorUnit$StartAnt$1(final StartAnt occurrence) {
-    Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
-    _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER.info("Ant\'s ready !");
     double[][] pheromons = occurrence.pheromons;
     int size = this.distance.length;
-    Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
-    _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1.info(Integer.valueOf(size));
     double tourLength = 0.0;
     ArrayList<Integer> memory = new ArrayList<Integer>();
     ArrayList<Integer> citiesToVisit = new ArrayList<Integer>();
@@ -113,8 +109,6 @@ public class Ant extends Agent {
             i_2 = (i_2 + 1);
           }
         }
-        Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
-        _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2.info(Double.valueOf(tourLength));
         double _get_1 = this.distance[currentCity][((citiesToVisit.get((i_2 - 1))) == null ? 0 : (citiesToVisit.get((i_2 - 1))).intValue())];
         tourLength = (tourLength + _get_1);
         currentCity = ((citiesToVisit.get((i_2 - 1))) == null ? 0 : (citiesToVisit.get((i_2 - 1))).intValue());

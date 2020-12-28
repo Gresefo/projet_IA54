@@ -6,7 +6,6 @@ import io.sarl.core.Initialize;
 import io.sarl.core.Lifecycle;
 import io.sarl.core.Logging;
 import io.sarl.core.Schedules;
-import io.sarl.demos.ants.Action;
 import io.sarl.demos.ants.Die;
 import io.sarl.demos.ants.GuiRepaint;
 import io.sarl.demos.ants.Settings;
@@ -164,6 +163,9 @@ public class Environment extends Agent {
             }
           }
         }
+        Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
+        Double _value = this.tourArray.get(index).getValue();
+        _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1.info(("Best tour : " + _value));
         DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER = this.$castSkill(DefaultContextInteractions.class, (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = this.$getSkill(DefaultContextInteractions.class)) : this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS);
         ArrayList<Integer> _key = this.tourArray.get(index).getKey();
         class $SerializableClosureProxy implements Scope<Address> {
@@ -194,8 +196,8 @@ public class Environment extends Agent {
         this.tourArray.clear();
         this.iteration++;
         if (((this.iteration - 1) == Settings.iteration)) {
-          Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
-          _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1.info("KILL AGENTS");
+          Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
+          _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2.info("KILL AGENTS");
           DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_1 = this.$castSkill(DefaultContextInteractions.class, (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = this.$getSkill(DefaultContextInteractions.class)) : this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS);
           _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_1.emit(new Die());
         }
@@ -205,22 +207,7 @@ public class Environment extends Agent {
     }
   }
   
-  private void $behaviorUnit$Action$3(final Action occurrence) {
-    throw new Error("Unresolved compilation problems:"
-      + "\nThe method or field ants is undefined"
-      + "\nThe method or field ants is undefined"
-      + "\nThe method or field ants is undefined for the type Environment"
-      + "\nThe method or field ants is undefined"
-      + "\nThe method or field ants is undefined"
-      + "\nThe method applyForce(Vector2d, PerceivedAntBody) from the type Environment refers to the missing type Object"
-      + "\nThe field Action.influence refers to the missing type Vector2d"
-      + "\nThe constructor Perception(ConcurrentHashMap<UUID, PerceivedAntBody>) refers to the missing type PerceivedAntBody"
-      + "\ncontainsKey cannot be resolved"
-      + "\nget cannot be resolved"
-      + "\nsize cannot be resolved");
-  }
-  
-  private void $behaviorUnit$Die$4(final Die occurrence) {
+  private void $behaviorUnit$Die$3(final Die occurrence) {
     Lifecycle _$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER = this.$castSkill(Lifecycle.class, (this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE == null || this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE = this.$getSkill(Lifecycle.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE);
     _$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER.killMe();
   }
@@ -261,61 +248,6 @@ public class Environment extends Agent {
       }
     }
     return tourLength;
-  }
-  
-  protected Object applyForce(final /* Vector2d */Object force, final /* PerceivedAntBody */Object b) {
-    throw new Error("Unresolved compilation problems:"
-      + "\nThe method or field ants is undefined"
-      + "\nlength cannot be resolved"
-      + "\n> cannot be resolved"
-      + "\ngroup cannot be resolved"
-      + "\nmaxForce cannot be resolved"
-      + "\nlength cannot be resolved"
-      + "\ngroup cannot be resolved"
-      + "\nmaxForce cannot be resolved"
-      + "\nacceleration cannot be resolved"
-      + "\nset cannot be resolved"
-      + "\nvitesse cannot be resolved"
-      + "\n+= cannot be resolved"
-      + "\nlength cannot be resolved"
-      + "\n> cannot be resolved"
-      + "\ngroup cannot be resolved"
-      + "\nmaxSpeed cannot be resolved"
-      + "\nlength cannot be resolved"
-      + "\ngroup cannot be resolved"
-      + "\nmaxSpeed cannot be resolved"
-      + "\nposition cannot be resolved"
-      + "\n+= cannot be resolved"
-      + "\nget cannot be resolved"
-      + "\nowner cannot be resolved"
-      + "\nacceleration cannot be resolved"
-      + "\nvitesse cannot be resolved"
-      + "\nposition cannot be resolved"
-      + "\nclampToWorld cannot be resolved");
-  }
-  
-  /**
-   * The world is circular, this function clamps coordinates to stay within the frame
-   */
-  protected Object clampToWorld(final /* PerceivedAntBody */Object b) {
-    throw new Error("Unresolved compilation problems:"
-      + "\nThe method or field ants is undefined"
-      + "\nVector2d cannot be resolved."
-      + "\nposition cannot be resolved"
-      + "\nx cannot be resolved"
-      + "\nposition cannot be resolved"
-      + "\ny cannot be resolved"
-      + "\n> cannot be resolved"
-      + "\n-= cannot be resolved"
-      + "\n< cannot be resolved"
-      + "\n+= cannot be resolved"
-      + "\n> cannot be resolved"
-      + "\n-= cannot be resolved"
-      + "\n< cannot be resolved"
-      + "\n+= cannot be resolved"
-      + "\nget cannot be resolved"
-      + "\nowner cannot be resolved"
-      + "\nposition cannot be resolved");
   }
   
   @Extension
@@ -388,14 +320,6 @@ public class Environment extends Agent {
   
   @SyntheticMember
   @PerceptGuardEvaluator
-  private void $guardEvaluator$Action(final Action occurrence, final Collection<Runnable> ___SARLlocal_runnableCollection) {
-    assert occurrence != null;
-    assert ___SARLlocal_runnableCollection != null;
-    ___SARLlocal_runnableCollection.add(() -> $behaviorUnit$Action$3(occurrence));
-  }
-  
-  @SyntheticMember
-  @PerceptGuardEvaluator
   private void $guardEvaluator$StartEnvironment(final StartEnvironment occurrence, final Collection<Runnable> ___SARLlocal_runnableCollection) {
     assert occurrence != null;
     assert ___SARLlocal_runnableCollection != null;
@@ -407,7 +331,7 @@ public class Environment extends Agent {
   private void $guardEvaluator$Die(final Die occurrence, final Collection<Runnable> ___SARLlocal_runnableCollection) {
     assert occurrence != null;
     assert ___SARLlocal_runnableCollection != null;
-    ___SARLlocal_runnableCollection.add(() -> $behaviorUnit$Die$4(occurrence));
+    ___SARLlocal_runnableCollection.add(() -> $behaviorUnit$Die$3(occurrence));
   }
   
   @SyntheticMember
