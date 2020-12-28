@@ -57,4 +57,7 @@ public class TourFound extends Event {
     builder.add("tour", this.tour);
     builder.add("length", this.length);
   }
+  
+  @SyntheticMember
+  private static final long serialVersionUID = -3264611693L;
 }

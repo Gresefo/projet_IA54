@@ -41,4 +41,7 @@ public class StartAnt extends Event {
     super.toString(builder);
     builder.add("pheromons", this.pheromons);
   }
+  
+  @SyntheticMember
+  private static final long serialVersionUID = -1444407402L;
 }

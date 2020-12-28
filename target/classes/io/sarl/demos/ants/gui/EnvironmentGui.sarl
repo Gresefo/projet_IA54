@@ -13,7 +13,6 @@ import java.util.Map
 import java.util.UUID
 
 import static extension java.lang.Math.*
-import io.sarl.demos.ants.PerceivedAntBody
 import java.util.ArrayList
 import java.awt.geom.Ellipse2D
 import java.awt.Shape
@@ -124,12 +123,10 @@ package class EnvironmentGuiPanel extends Panel {
 			myCanvas.drawRect(0, 0, width * 2 - 1, height * 2 - 1)
 			
 			var maxCoord : int = getMaxCoord(posList)
-			/*var testList : ArrayList<Integer> = new ArrayList<Integer>()
-			for(var i : int = 0; i < posList.size; i++)
-				testList.add(i + 1)
 			
-			var linePixelList : ArrayList<int[]> = getRectPixel(this.posList, testList, maxCoord)
-			*/
+			for (var i = 0; i < this.tour.size; i++) {
+				this.tour.set(i, this.tour.get(i) + 1)
+			}
 			var linePixelList : ArrayList<int[]> = getRectPixel(this.posList, this.tour, maxCoord)
 			for(line : linePixelList)
 			{
@@ -172,17 +169,6 @@ package class EnvironmentGuiPanel extends Panel {
 		g.fill(circle)
 		g.draw(circle)
 	}
-
-	//	private static def getAngle(v : Vector2d) : double {
-	// var zero = 1E-9
-	// if ((v.x * v.x) < zero) {
-	// if(v.y >= 0) return (PI / 2)
-	// return (-1 * PI / 2)
-	// }
-	// if(v.x >= 0) return (v.y / v.x).atan
-	// if(v.y >= 0) return ( PI + (v.y / v.x).atan )
-	// return ( (v.y / v.x).atan - PI )
-	//	}
 	
 	/**
 	 * Return the maximum coordinate you can find in the position list

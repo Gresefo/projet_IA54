@@ -49,4 +49,7 @@ public class Perception extends Event {
     super.toString(builder);
     builder.add("perceivedAgentBody", this.perceivedAgentBody);
   }
+  
+  @SyntheticMember
+  private static final long serialVersionUID = 1048280001L;
 }

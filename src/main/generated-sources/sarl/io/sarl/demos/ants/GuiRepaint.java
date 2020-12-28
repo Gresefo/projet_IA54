@@ -46,4 +46,7 @@ public class GuiRepaint extends Event {
     super.toString(builder);
     builder.add("tour", this.tour);
   }
+  
+  @SyntheticMember
+  private static final long serialVersionUID = 581411869L;
 }

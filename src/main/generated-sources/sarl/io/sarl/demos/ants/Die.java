@@ -22,4 +22,7 @@ public class Die extends Event {
   public Die(final Address source) {
     super(source);
   }
+  
+  @SyntheticMember
+  private static final long serialVersionUID = 588368462L;
 }

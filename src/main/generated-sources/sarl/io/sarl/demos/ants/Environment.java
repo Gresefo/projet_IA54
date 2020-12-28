@@ -213,8 +213,8 @@ public class Environment extends Agent {
       + "\nThe method or field ants is undefined"
       + "\nThe method or field ants is undefined"
       + "\nThe method applyForce(Vector2d, PerceivedAntBody) from the type Environment refers to the missing type Object"
-      + "\nThe field Action.influence refers to the missing type Object"
-      + "\nThe constructor Perception(ConcurrentHashMap<UUID, Object>) refers to the missing type Object"
+      + "\nThe field Action.influence refers to the missing type Vector2d"
+      + "\nThe constructor Perception(ConcurrentHashMap<UUID, PerceivedAntBody>) refers to the missing type PerceivedAntBody"
       + "\ncontainsKey cannot be resolved"
       + "\nget cannot be resolved"
       + "\nsize cannot be resolved");

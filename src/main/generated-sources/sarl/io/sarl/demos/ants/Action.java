@@ -52,4 +52,7 @@ public class Action extends Event {
     super.toString(builder);
     builder.add("influence", this.influence);
   }
+  
+  @SyntheticMember
+  private static final long serialVersionUID = 1757625047L;
 }
