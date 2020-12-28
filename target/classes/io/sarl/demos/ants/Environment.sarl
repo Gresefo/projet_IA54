@@ -31,8 +31,6 @@ agent Environment {
 
 	// Set of ants ID who has sent their influence in the current time step
 	@Accessors
-	var influences : ConcurrentSkipListSet<UUID>
-
 	var distMatrix : double[][]
 
 	var numberAnts : int
@@ -62,20 +60,13 @@ agent Environment {
 			if (occurrence.parameters.get(3) instanceof Integer) {
 				numberAnts = occurrence.parameters.get(3) as Integer
 			}
-			influences = new ConcurrentSkipListSet
 		}
 		if (Settings::isLogActivated) {
 			"Environment activated".info
-			info(this.distMatrix.get(0, 1))
 		}
 	}
 
 	on StartEnvironment {
-
-			/* this.ants = occurrence.perceivedAgentBody
-			 * new GuiRepaint(ants).emit
-			 * new Perception(ants).emit
-			 */
 		info("ENV STARTED")
 		this.tourArray = new CopyOnWriteArrayList<Pair<ArrayList<Integer>, Double>>
 		this.iteration = 0
@@ -100,7 +91,6 @@ agent Environment {
 		synchronized (this.tourArray) {
 			this.tourArray.add(new Pair(occurrence.tour, occurrence.length))
 
-			info(this.tourArray.size)
 			if (this.tourArray.size == this.numberAnts) {
 				var phero : double
 				var min : double = this.tourArray.get(0).getValue

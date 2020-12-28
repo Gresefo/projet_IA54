@@ -123,15 +123,17 @@ package class EnvironmentGuiPanel extends Panel {
 			myCanvas.drawRect(0, 0, width * 2 - 1, height * 2 - 1)
 			
 			var maxCoord : int = getMaxCoord(posList)
+
+			if (this.tour !== null) {
+				for (var i = 0; i < this.tour.size; i++) {
+					this.tour.set(i, this.tour.get(i) + 1)
+				}
+				var linePixelList : ArrayList<int[]> = getRectPixel(this.posList, this.tour, maxCoord)
+				for (line : linePixelList) {
+					myCanvas.drawLine(line.get(0), line.get(1), line.get(2), line.get(3))
+				}	
+			}
 			
-			for (var i = 0; i < this.tour.size; i++) {
-				this.tour.set(i, this.tour.get(i) + 1)
-			}
-			var linePixelList : ArrayList<int[]> = getRectPixel(this.posList, this.tour, maxCoord)
-			for(line : linePixelList)
-			{
-				myCanvas.drawLine(line.get(0), line.get(1), line.get(2), line.get(3))
-			}
 
 			for (pos : posList) 
 				paintTour(myCanvas as Graphics2D, pos, maxCoord)
@@ -244,6 +246,7 @@ package class EnvironmentGuiPanel extends Panel {
 	 		var intArray : int[] = newIntArrayOfSize(4)
 	 		var coord1 : double[] = getCoordFromTownId(posList, travelOrder.get(i))
 	 		var coord2 : double[] = getCoordFromTownId(posList, travelOrder.get(i + 1))
+	 		
 	 		var pixel1 : int[] = pixelResizing(coord1, maxCoord)
 			var pixel2 : int[] = pixelResizing(coord2, maxCoord)
 	 		intArray.set(0, pixel1.get(0))
@@ -257,6 +260,7 @@ package class EnvironmentGuiPanel extends Panel {
 		var intArray : int[] = newIntArrayOfSize(4)
 		var coord1 : double[] = getCoordFromTownId(posList, travelOrder.get(size - 1))
 		var coord2 : double[] = getCoordFromTownId(posList, travelOrder.get(0))
+
 		var pixel1 : int[] = pixelResizing(coord1, maxCoord)
 		var pixel2 : int[] = pixelResizing(coord2, maxCoord)
 		intArray.set(0, pixel1.get(0))

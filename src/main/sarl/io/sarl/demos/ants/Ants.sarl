@@ -98,10 +98,4 @@ agent Ant {
 		killMe
 	}
 
-/************** Boids' behavioral Methods ****************************
- */
-
-/** 
- * The core boids behavior : aggregating all forces into a influence 
- */
 }
