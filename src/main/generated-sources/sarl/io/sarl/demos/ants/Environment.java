@@ -35,6 +35,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.inject.Inject;
 import org.eclipse.xtend.lib.annotations.Accessors;
 import org.eclipse.xtext.xbase.lib.Conversions;
+import org.eclipse.xtext.xbase.lib.DoubleExtensions;
 import org.eclipse.xtext.xbase.lib.Extension;
 import org.eclipse.xtext.xbase.lib.Inline;
 import org.eclipse.xtext.xbase.lib.Pair;
@@ -65,6 +66,8 @@ public class Environment extends Agent {
   private CopyOnWriteArrayList<Pair<ArrayList<Integer>, Double>> tourArray;
   
   private int iteration;
+  
+  private ArrayList<Double> lastTour;
   
   private void $behaviorUnit$Initialize$0(final Initialize occurrence) {
     Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
@@ -103,6 +106,8 @@ public class Environment extends Agent {
     _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER.info("ENV STARTED");
     CopyOnWriteArrayList<Pair<ArrayList<Integer>, Double>> _copyOnWriteArrayList = new CopyOnWriteArrayList<Pair<ArrayList<Integer>, Double>>();
     this.tourArray = _copyOnWriteArrayList;
+    ArrayList<Double> _arrayList = new ArrayList<Double>();
+    this.lastTour = _arrayList;
     this.iteration = 0;
     this.nnTourLength = this.nearestNeighbour(this.distMatrix);
     int size = this.distMatrix.length;
@@ -132,7 +137,7 @@ public class Environment extends Agent {
         int k = 0;
         for (int i = 0; (i < this.numberAnts); i++) {
           for (int j = 0; (j < this.numberAnts); j++) {
-            {
+            if ((i != j)) {
               double _get = this.pheromons[i][j];
               phero = (_get * (1 - Settings.rho));
               this.pheromons[i][j] = phero;
@@ -184,14 +189,35 @@ public class Environment extends Agent {
           }
         };
         _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER.emit(new GuiRepaint(_key), _function);
-        this.tourArray.clear();
-        this.iteration++;
-        if (((this.iteration - 1) == Settings.iteration)) {
+        if ((this.iteration == Settings.iteration)) {
+          this.printDistMatrix(this.pheromons, 25);
           Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
           _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1.info("KILL AGENTS");
           DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_1 = this.$castSkill(DefaultContextInteractions.class, (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = this.$getSkill(DefaultContextInteractions.class)) : this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS);
           _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_1.emit(new Die());
+        } else {
+          int size = this.lastTour.size();
+          if (((size - 10) >= 0)) {
+            int same = 0;
+            for (int i = (size - 10); (i < size); i++) {
+              Double _value_1 = this.tourArray.get(index).getValue();
+              Double _get = this.lastTour.get(i);
+              double _minus = DoubleExtensions.operator_minus(_value_1, _get);
+              double _abs = Math.abs(_minus);
+              if ((_abs < 1.0)) {
+                same++;
+              }
+            }
+            if ((same == 10)) {
+              Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
+              _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2.info(("Stopped at iteration : " + Integer.valueOf(this.iteration)));
+              this.iteration = (Settings.iteration - 1);
+            }
+          }
+          this.lastTour.add(this.tourArray.get(index).getValue());
         }
+        this.tourArray.clear();
+        this.iteration++;
         DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_2 = this.$castSkill(DefaultContextInteractions.class, (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = this.$getSkill(DefaultContextInteractions.class)) : this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS);
         _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_2.emit(new StartAnt(this.pheromons));
       }
@@ -239,6 +265,45 @@ public class Environment extends Agent {
       }
     }
     return tourLength;
+  }
+  
+  protected void printDistMatrix(final double[][] distMatrix, final int maxSize) {
+    int maxSize2 = maxSize;
+    int _size = ((List<double[]>)Conversions.doWrapArray(distMatrix)).size();
+    if ((maxSize > _size)) {
+      maxSize2 = ((List<double[]>)Conversions.doWrapArray(distMatrix)).size();
+    }
+    System.out.println((("Distance Matrix (size printed: " + Integer.valueOf(maxSize2)) + "):"));
+    for (int i = 0; (i < maxSize2); i++) {
+      {
+        for (int j = 0; (j < maxSize2); j++) {
+          {
+            double _get = distMatrix[i][j];
+            System.out.print((" " + Double.valueOf(_get)));
+            double _get_1 = distMatrix[i][j];
+            if ((_get_1 < 10)) {
+              System.out.print("    ");
+            } else {
+              double _get_2 = distMatrix[i][j];
+              if ((_get_2 < 100)) {
+                System.out.print("   ");
+              } else {
+                double _get_3 = distMatrix[i][j];
+                if ((_get_3 < 1000)) {
+                  System.out.print("  ");
+                } else {
+                  double _get_4 = distMatrix[i][j];
+                  if ((_get_4 < 10000)) {
+                    System.out.print(" ");
+                  }
+                }
+              }
+            }
+          }
+        }
+        System.out.println();
+      }
+    }
   }
   
   @Extension
@@ -390,29 +455,29 @@ public class Environment extends Agent {
   }
   
   @Pure
-  public int getWidth() {
+  protected int getWidth() {
     return this.width;
   }
   
-  public void setWidth(final int width) {
+  protected void setWidth(final int width) {
     this.width = width;
   }
   
   @Pure
-  public int getHeight() {
+  protected int getHeight() {
     return this.height;
   }
   
-  public void setHeight(final int height) {
+  protected void setHeight(final int height) {
     this.height = height;
   }
   
   @Pure
-  public double[][] getDistMatrix() {
+  protected double[][] getDistMatrix() {
     return this.distMatrix;
   }
   
-  public void setDistMatrix(final double[][] distMatrix) {
+  protected void setDistMatrix(final double[][] distMatrix) {
     this.distMatrix = distMatrix;
   }
 }

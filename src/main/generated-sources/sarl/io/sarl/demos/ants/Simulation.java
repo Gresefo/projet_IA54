@@ -185,7 +185,7 @@ public class Simulation implements EventListener {
   public String getPath(final String file) {
     String fileSep = System.getProperty("file.separator");
     String _property = System.getProperty("user.dir");
-    String path = ((((_property + fileSep) + "TSP") + fileSep) + "berlin52.txt");
+    String path = ((((_property + fileSep) + "TSP") + fileSep) + file);
     return path;
   }
   

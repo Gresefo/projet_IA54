@@ -48,7 +48,7 @@ interface Settings {
 	 */
 	public static val pause = 0
     
-    public static val iteration = 100
+    public static val iteration = 5000
 
 	public static val alpha = 1
 

@@ -42,6 +42,8 @@ agent Environment {
 	var tourArray : CopyOnWriteArrayList<Pair<ArrayList<Integer>, Double>>
 
 	var iteration : int
+	
+	var lastTour : ArrayList<Double>
 
 	on Initialize {
 		loggingName = "Environment"
@@ -69,6 +71,8 @@ agent Environment {
 	on StartEnvironment {
 		info("ENV STARTED")
 		this.tourArray = new CopyOnWriteArrayList<Pair<ArrayList<Integer>, Double>>
+		this.lastTour = new ArrayList<Double>
+		
 		this.iteration = 0
 		this.nnTourLength = nearestNeighbour(this.distMatrix)
 
@@ -98,8 +102,10 @@ agent Environment {
 				var k = 0
 				for (var i = 0; i < this.numberAnts; i++) {
 					for (var j = 0; j < this.numberAnts; j++) {
-						phero = this.pheromons.get(i, j) * (1 - Settings::rho)
-						this.pheromons.set(i, j, phero)
+						if (i != j) {
+							phero = this.pheromons.get(i, j) * (1 - Settings::rho)
+							this.pheromons.set(i, j, phero)
+						}
 					}
 				}
 				for (tA : this.tourArray) {
@@ -109,19 +115,39 @@ agent Environment {
 						index = k
 					}
 					k++
-
 					for (var i = 0; i < this.numberAnts - 1; i++) {
 						this.pheromons.set(tA.getKey.get(i), tA.getKey.get(i + 1), phero)
 					}
 				}
 				info("Best tour : " + this.tourArray.get(index).getValue)
 				new GuiRepaint(this.tourArray.get(index).getKey).emit[it.UUID == Simulation.id]
-				this.tourArray.clear
-				this.iteration++
-				if (this.iteration - 1 == Settings::iteration) {
+				
+				
+				if (this.iteration == Settings::iteration) {
+					printDistMatrix(this.pheromons, 25)
+					
 					info("KILL AGENTS")
 					new Die().emit
 				}
+				else {
+					var size = this.lastTour.size
+					if (size - 10 >= 0) {
+						var same = 0
+						for(var i = size - 10; i < size; i++){
+							if(Math.abs(this.tourArray.get(index).getValue - this.lastTour.get(i)) < 1.0) {
+								same++
+							}
+						}
+						if (same == 10) {
+							info("Stopped at iteration : " + this.iteration)
+							this.iteration = Settings::iteration - 1
+						}
+					}
+					this.lastTour.add(this.tourArray.get(index).getValue)
+				}
+
+				this.tourArray.clear
+				this.iteration++
 				new StartAnt(this.pheromons).emit
 			}
 		}
@@ -168,6 +194,29 @@ agent Environment {
 		}
 
 		return tourLength
+	}
+
+	def printDistMatrix(distMatrix : double[][], maxSize : int) : void {
+	var maxSize2 : int = maxSize
+	if (maxSize > distMatrix.size)
+		maxSize2 = distMatrix.size
+
+		System.out.println("Distance Matrix (size printed: " + maxSize2 + "):")
+		for (var i : int = 0; i < maxSize2; i++) {
+			for (var j : int = 0; j < maxSize2; j++) {
+			System.out.print(" " + distMatrix.get(i).get(j) as double)
+			if (distMatrix.get(i).get(j) < 10)
+				System.out.print("    ")
+			else if (distMatrix.get(i).get(j) < 100)
+				System.out.print("   ")
+			else if (distMatrix.get(i).get(j) < 1000)
+				System.out.print("  ")
+			else if (distMatrix.get(i).get(j) < 10000)
+				System.out.print(" ")
+		}
+		System.out.println()
+		}
+	
 	}
 
 }

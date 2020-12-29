@@ -52,7 +52,7 @@ public interface Settings {
    */
   public static final int pause = 0;
   
-  public static final int iteration = 100;
+  public static final int iteration = 5000;
   
   public static final int alpha = 1;
   

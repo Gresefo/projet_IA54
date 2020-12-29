@@ -175,7 +175,7 @@ class Simulation implements EventListener {
 	 public def getPath(file : String) : String
 	 {
 		var fileSep : String = System.getProperty("file.separator")
-		var path : String = System.getProperty("user.dir") + fileSep + "TSP" + fileSep + "berlin52.txt"
+		var path : String = System.getProperty("user.dir") + fileSep + "TSP" + fileSep + file
 	 	return path
 	 }
 	
