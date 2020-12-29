@@ -5,10 +5,10 @@ import io.sarl.lang.annotation.SarlElementType;
 import io.sarl.lang.annotation.SarlSpecification;
 import io.sarl.lang.annotation.SyntheticMember;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Label;
 import java.awt.Panel;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
@@ -82,10 +82,9 @@ class EnvironmentGuiPanel extends Panel {
         for (final int[] line : linePixelList) {
           this.myCanvas.drawLine(line[0], line[1], line[2], line[3]);
         }
-        Label labelTourLength = new Label(("Tour length : " + Double.valueOf(this.tourLength)));
-        System.out.println(("tour length " + Double.valueOf(this.tourLength)));
-        labelTourLength.setBounds((Settings.EnvtWidth - 200), (Settings.EnvtHeight - 100), 200, 50);
-        this.add(labelTourLength);
+        this.myCanvas.drawString(("Tour length : " + Integer.toString(((int) this.tourLength))), (Settings.EnvtWidth - 300), (Settings.EnvtHeight - 60));
+        Font _font = new Font("Arial", Font.PLAIN, 24);
+        this.myCanvas.setFont(_font);
       }
       for (final double[] pos : this.posList) {
         this.paintTown(((Graphics2D) this.myCanvas), pos, maxCoord);

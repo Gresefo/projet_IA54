@@ -19,6 +19,7 @@ import java.awt.Shape
 import java.awt.Graphics2D
 import io.sarl.demos.ants.Settings
 import java.awt.Label
+import java.awt.Font
 
 /** 
  * Graphical user interface for ants.
@@ -145,10 +146,8 @@ package class EnvironmentGuiPanel extends Panel {
 				var linePixelList : ArrayList<int[]> = getRectPixel(this.posList, this.tour, maxCoord)
 				for (line : linePixelList) 
 					myCanvas.drawLine(line.get(0), line.get(1), line.get(2), line.get(3))
-				var labelTourLength : Label = new Label("Tour length : " + tourLength)
-				System.out.println("tour length " + tourLength)
-				labelTourLength.setBounds(Settings.EnvtWidth - 200, Settings.EnvtHeight -100, 200, 50);  
-				this.add(labelTourLength)
+				myCanvas.drawString("Tour length : " + tourLength as int as String, Settings.EnvtWidth - 300, Settings.EnvtHeight- 60)
+				myCanvas.setFont(new Font("Arial", Font.PLAIN, 24))
 			}
 			
 			
