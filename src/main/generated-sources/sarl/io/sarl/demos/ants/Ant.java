@@ -117,6 +117,9 @@ public class Ant extends Agent {
         prob.clear();
       }
     }
+    double _get = this.distance[((memory.get((size - 1))) == null ? 0 : (memory.get((size - 1))).intValue())][1];
+    tourLength = (tourLength + _get);
+    memory.add(Integer.valueOf(0));
     DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER = this.$castSkill(DefaultContextInteractions.class, (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = this.$getSkill(DefaultContextInteractions.class)) : this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS);
     class $SerializableClosureProxy implements Scope<Address> {
       

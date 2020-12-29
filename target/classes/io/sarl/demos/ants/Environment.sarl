@@ -127,6 +127,7 @@ agent Environment {
 					printDistMatrix(this.pheromons, 25)
 					
 					info("KILL AGENTS")
+					info("Tour : " + this.tourArray.get(index).getKey)
 					new Die().emit
 				}
 				else {

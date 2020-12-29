@@ -91,6 +91,8 @@ agent Ant {
 			prob.clear()
 		}
 
+		tourLength += this.distance.get(memory.get(size - 1), 1)
+		memory.add(0)
 		new TourFound(memory, tourLength).emit[it.UUID == this.environment]
 	}
 
