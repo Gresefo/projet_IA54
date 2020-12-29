@@ -14,7 +14,7 @@ import org.eclipse.xtext.xbase.lib.Pure;
 /**
  * Graphical user interface for ants.
  */
-@SarlSpecification("0.10")
+@SarlSpecification("0.11")
 @SarlElementType(10)
 @SuppressWarnings("all")
 public class EnvironmentGui extends Frame {
@@ -39,6 +39,10 @@ public class EnvironmentGui extends Frame {
     this.panel.setTour(tour);
   }
   
+  public void setTourLength(final double length) {
+    this.panel.setTourLength(length);
+  }
+  
   @Override
   public void paint(final Graphics g) {
     super.paint(g);
@@ -61,5 +65,5 @@ public class EnvironmentGui extends Frame {
   }
   
   @SyntheticMember
-  private static final long serialVersionUID = -1380478292L;
+  private static final long serialVersionUID = -2753374285L;
 }

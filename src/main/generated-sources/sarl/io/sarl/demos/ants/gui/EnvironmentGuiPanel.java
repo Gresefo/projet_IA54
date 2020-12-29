@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Label;
 import java.awt.Panel;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
@@ -19,7 +20,7 @@ import org.eclipse.xtext.xbase.lib.Pure;
  * 
  * @author Nicolas GAUD
  */
-@SarlSpecification("0.10")
+@SarlSpecification("0.11")
 @SarlElementType(10)
 @SuppressWarnings("all")
 class EnvironmentGuiPanel extends Panel {
@@ -46,8 +47,14 @@ class EnvironmentGuiPanel extends Panel {
   
   private ArrayList<Integer> tour;
   
+  private double tourLength;
+  
   public void setTour(final ArrayList<Integer> tour) {
     this.tour = tour;
+  }
+  
+  public void setTourLength(final double length) {
+    this.tourLength = length;
   }
   
   public EnvironmentGuiPanel(final int iheight, final int iwidth, final ArrayList<double[]> _posList) {
@@ -75,9 +82,13 @@ class EnvironmentGuiPanel extends Panel {
         for (final int[] line : linePixelList) {
           this.myCanvas.drawLine(line[0], line[1], line[2], line[3]);
         }
+        Label labelTourLength = new Label(("Tour length : " + Double.valueOf(this.tourLength)));
+        System.out.println(("tour length " + Double.valueOf(this.tourLength)));
+        labelTourLength.setBounds((Settings.EnvtWidth - 200), (Settings.EnvtHeight - 100), 200, 50);
+        this.add(labelTourLength);
       }
       for (final double[] pos : this.posList) {
-        this.paintTour(((Graphics2D) this.myCanvas), pos, maxCoord);
+        this.paintTown(((Graphics2D) this.myCanvas), pos, maxCoord);
       }
       this.myGraphics.drawImage(this.myImage, 0, 0, this);
     }
@@ -97,7 +108,7 @@ class EnvironmentGuiPanel extends Panel {
     this.myGraphics = this.getGraphics();
   }
   
-  public void paintTour(final Graphics2D g, final double[] pos, final int maxCoord) {
+  public void paintTown(final Graphics2D g, final double[] pos, final int maxCoord) {
     double[] coord = new double[2];
     coord[0] = pos[1];
     coord[1] = pos[2];
@@ -224,6 +235,8 @@ class EnvironmentGuiPanel extends Panel {
       return false;
     if (other.height != this.height)
       return false;
+    if (Double.doubleToLongBits(other.tourLength) != Double.doubleToLongBits(this.tourLength))
+      return false;
     return super.equals(obj);
   }
   
@@ -233,11 +246,12 @@ class EnvironmentGuiPanel extends Panel {
   public int hashCode() {
     int result = super.hashCode();
     final int prime = 31;
-    result = prime * result + this.width;
-    result = prime * result + this.height;
+    result = prime * result + Integer.hashCode(this.width);
+    result = prime * result + Integer.hashCode(this.height);
+    result = prime * result + Double.hashCode(this.tourLength);
     return result;
   }
   
   @SyntheticMember
-  private static final long serialVersionUID = -8098180800L;
+  private static final long serialVersionUID = -12762691460L;
 }

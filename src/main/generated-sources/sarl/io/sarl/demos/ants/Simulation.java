@@ -31,7 +31,7 @@ import org.eclipse.xtext.xbase.lib.Pure;
  * The boids simulation launching the SARL environment with the corresponding agent and ensuring the communication between agents and the GUI
  * @author Nicolas Gaud
  */
-@SarlSpecification("0.10")
+@SarlSpecification("0.11")
 @SarlElementType(10)
 @SuppressWarnings("all")
 public class Simulation implements EventListener {
@@ -155,7 +155,6 @@ public class Simulation implements EventListener {
     }
   }
   
-  @Pure
   private void killAllAgents() {
   }
   
@@ -172,6 +171,7 @@ public class Simulation implements EventListener {
   public void receiveEvent(final Event event) {
     if ((event instanceof GuiRepaint)) {
       this.myGUI.setTour(((GuiRepaint)event).tour);
+      this.myGUI.setTourLength(((GuiRepaint)event).length);
       this.myGUI.repaint();
     }
   }
@@ -328,12 +328,10 @@ public class Simulation implements EventListener {
     if (getClass() != obj.getClass())
       return false;
     Simulation other = (Simulation) obj;
-    if (!java.util.Objects.equals(this.fileName, other.fileName)) {
+    if (!java.util.Objects.equals(this.fileName, other.fileName))
       return false;
-    }
-    if (!java.util.Objects.equals(this.environment, other.environment)) {
+    if (!java.util.Objects.equals(this.environment, other.environment))
       return false;
-    }
     if (other.width != this.width)
       return false;
     if (other.height != this.height)
@@ -353,10 +351,10 @@ public class Simulation implements EventListener {
     final int prime = 31;
     result = prime * result + java.util.Objects.hashCode(this.fileName);
     result = prime * result + java.util.Objects.hashCode(this.environment);
-    result = prime * result + this.width;
-    result = prime * result + this.height;
-    result = prime * result + this.antsCount;
-    result = prime * result + (this.isSimulationStarted ? 1231 : 1237);
+    result = prime * result + Integer.hashCode(this.width);
+    result = prime * result + Integer.hashCode(this.height);
+    result = prime * result + Integer.hashCode(this.antsCount);
+    result = prime * result + Boolean.hashCode(this.isSimulationStarted);
     return result;
   }
 }

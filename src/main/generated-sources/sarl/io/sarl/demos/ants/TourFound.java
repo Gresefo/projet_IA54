@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import org.eclipse.xtext.xbase.lib.Pure;
 import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
 
-@SarlSpecification("0.10")
+@SarlSpecification("0.11")
 @SarlElementType(15)
 @SuppressWarnings("all")
 public class TourFound extends Event {
@@ -43,7 +43,7 @@ public class TourFound extends Event {
   public int hashCode() {
     int result = super.hashCode();
     final int prime = 31;
-    result = prime * result + (int) (Double.doubleToLongBits(this.length) ^ (Double.doubleToLongBits(this.length) >>> 32));
+    result = prime * result + Double.hashCode(this.length);
     return result;
   }
   

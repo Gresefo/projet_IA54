@@ -28,7 +28,7 @@ import io.sarl.lang.annotation.SarlSpecification;
  * 
  * @author Nicolas Gaud
  */
-@SarlSpecification("0.10")
+@SarlSpecification("0.11")
 @SarlElementType(11)
 @SuppressWarnings("all")
 public interface Settings {

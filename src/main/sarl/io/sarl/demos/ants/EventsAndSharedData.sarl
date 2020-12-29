@@ -40,9 +40,11 @@ event TourFound {
  */
 event GuiRepaint {
 	val tour : ArrayList<Integer>
-
-	new (tour : ArrayList<Integer>) {
+	val length : double
+	
+	new (tour : ArrayList<Integer>, length : double) {
 		this.tour = tour
+		this.length = length
 	}
 
 }

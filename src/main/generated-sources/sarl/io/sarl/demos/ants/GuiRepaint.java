@@ -12,20 +12,32 @@ import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
  * Event specifying when the GUI must be refresh according to the new environmental state embodied by the specified map
  * @author Nicolas Gaud
  */
-@SarlSpecification("0.10")
+@SarlSpecification("0.11")
 @SarlElementType(15)
 @SuppressWarnings("all")
 public class GuiRepaint extends Event {
   public final ArrayList<Integer> tour;
   
-  public GuiRepaint(final ArrayList<Integer> tour) {
+  public final double length;
+  
+  public GuiRepaint(final ArrayList<Integer> tour, final double length) {
     this.tour = tour;
+    this.length = length;
   }
   
   @Override
   @Pure
   @SyntheticMember
   public boolean equals(final Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    GuiRepaint other = (GuiRepaint) obj;
+    if (Double.doubleToLongBits(other.length) != Double.doubleToLongBits(this.length))
+      return false;
     return super.equals(obj);
   }
   
@@ -34,6 +46,8 @@ public class GuiRepaint extends Event {
   @SyntheticMember
   public int hashCode() {
     int result = super.hashCode();
+    final int prime = 31;
+    result = prime * result + Double.hashCode(this.length);
     return result;
   }
   
@@ -45,8 +59,9 @@ public class GuiRepaint extends Event {
   protected void toString(final ToStringBuilder builder) {
     super.toString(builder);
     builder.add("tour", this.tour);
+    builder.add("length", this.length);
   }
   
   @SyntheticMember
-  private static final long serialVersionUID = 581411869L;
+  private static final long serialVersionUID = -3264611693L;
 }
