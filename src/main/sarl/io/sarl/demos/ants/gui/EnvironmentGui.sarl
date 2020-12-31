@@ -52,6 +52,11 @@ class EnvironmentGui extends Frame {
 	{
 		this.panel.tourLength = length
 	}
+	
+	def setIteration(iteration : int)
+	{
+		this.panel.iteration = iteration
+	}
 
 	override paint(g : Graphics) {
 		super.paint(g)
@@ -81,20 +86,17 @@ package class Closer extends WindowAdapter {
 
 /** 
  * The GUI of the Simulation
- * 
- * @author Nicolas GAUD
  */
 package class EnvironmentGuiPanel extends Panel {
 
-		/** 
-		 * Double buffering management.
-		 */
+	/** 
+	 * Double buffering management.
+	 */
 	var myGraphics : Graphics
 	/** 
 	 * Double buffering management.
 	 */
 	var myCanvas : Graphics
-
 	/** 
 	 * Double buffering management.
 	 */
@@ -103,12 +105,21 @@ package class EnvironmentGuiPanel extends Panel {
 	var width : int
 
 	var height : int
-
+	/**
+	 * The list of town positions
+	 */
 	var posList : ArrayList<double[]>
 
+	/**
+	 * The tour between towns to print
+	 */
 	var tour : ArrayList<Integer>
-	
+	/**
+	 * The tour length
+	 */
 	var tourLength : double
+	
+	var iteration : int
 
 	def setTour(tour : ArrayList<Integer>) {
 		this.tour = tour
@@ -119,6 +130,14 @@ package class EnvironmentGuiPanel extends Panel {
 		this.tourLength = length
 	}
 
+	def setIteration(iteration : int) {
+		this.iteration = iteration
+	}
+
+	/**
+	 * Constructor
+	 * @param iheight : int
+	 */
 	new (iheight : int, iwidth : int, _posList : ArrayList<double[]>) {
 		super()
 		width = iwidth
@@ -137,7 +156,8 @@ package class EnvironmentGuiPanel extends Panel {
 			myCanvas.drawRect(0, 0, width * 2 - 1, height * 2 - 1)
 			
 			var maxCoord : int = getMaxCoord(posList)
-
+			
+			//Draw the tour between towns and print the tour length
 			if (this.tour !== null) 
 			{
 				for (var i = 0; i < this.tour.size; i++)
@@ -146,10 +166,13 @@ package class EnvironmentGuiPanel extends Panel {
 				var linePixelList : ArrayList<int[]> = getRectPixel(this.posList, this.tour, maxCoord)
 				for (line : linePixelList) 
 					myCanvas.drawLine(line.get(0), line.get(1), line.get(2), line.get(3))
-				myCanvas.drawString("Tour length : " + tourLength as int as String, Settings.EnvtWidth - 300, Settings.EnvtHeight- 60)
+				myCanvas.drawString("Tour length : " + tourLength as int as String, Settings.EnvtWidth - 300, Settings.EnvtHeight - 60)
+				myCanvas.drawString("Number of remaining iterations (over " + Settings.iteration as String + ") : " 
+					+ (Settings.iteration - iteration) as String, 
+					0, Settings.EnvtHeight - 60
+				)
 				myCanvas.setFont(new Font("Arial", Font.PLAIN, 24))
 			}
-			
 			
 			for (pos : posList) 
 				paintTown(myCanvas as Graphics2D, pos, maxCoord)
@@ -173,7 +196,12 @@ package class EnvironmentGuiPanel extends Panel {
 		myGraphics = this.graphics
 	}
 
-	
+	/**
+	 * Paint on the graphic every town in the position list
+	 * @param g : Graphics2D, the graphic we print in
+	 * @param pos : double[], the list containing the town positions
+	 * @param maxCoord : int, the maximum coordinate to do the resizing
+	 */
 	def paintTown(g : Graphics2D, pos : double[], maxCoord : int) 
 	{
 		var coord : double[] = newDoubleArrayOfSize(2)

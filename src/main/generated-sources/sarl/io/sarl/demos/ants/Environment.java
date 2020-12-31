@@ -187,7 +187,7 @@ public class Environment extends Agent {
             return new SerializableProxy($SerializableClosureProxy.class, Simulation.id);
           }
         };
-        _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER.emit(new GuiRepaint(_key, ((_value_1) == null ? 0 : (_value_1).doubleValue())), _function);
+        _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER.emit(new GuiRepaint(_key, ((_value_1) == null ? 0 : (_value_1).doubleValue()), this.iteration), _function);
         if ((this.iteration == Settings.iteration)) {
           this.printDistMatrix(this.pheromons, 25);
           Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();

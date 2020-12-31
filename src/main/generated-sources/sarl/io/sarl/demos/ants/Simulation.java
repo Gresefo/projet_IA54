@@ -172,6 +172,7 @@ public class Simulation implements EventListener {
     if ((event instanceof GuiRepaint)) {
       this.myGUI.setTour(((GuiRepaint)event).tour);
       this.myGUI.setTourLength(((GuiRepaint)event).length);
+      this.myGUI.setIteration(((GuiRepaint)event).iteration);
       this.myGUI.repaint();
     }
   }

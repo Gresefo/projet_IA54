@@ -43,6 +43,10 @@ public class EnvironmentGui extends Frame {
     this.panel.setTourLength(length);
   }
   
+  public void setIteration(final int iteration) {
+    this.panel.setIteration(iteration);
+  }
+  
   @Override
   public void paint(final Graphics g) {
     super.paint(g);
@@ -65,5 +69,5 @@ public class EnvironmentGui extends Frame {
   }
   
   @SyntheticMember
-  private static final long serialVersionUID = -2753374285L;
+  private static final long serialVersionUID = -4025335679L;
 }

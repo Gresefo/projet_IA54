@@ -38,13 +38,16 @@ event TourFound {
  * Event specifying when the GUI must be refresh according to the new environmental state embodied by the specified map
  * @author Nicolas Gaud
  */
-event GuiRepaint {
+event GuiRepaint 
+{
 	val tour : ArrayList<Integer>
 	val length : double
+	val iteration : int
 	
-	new (tour : ArrayList<Integer>, length : double) {
+	new (tour : ArrayList<Integer>, length : double, iteration : int) {
 		this.tour = tour
 		this.length = length
+		this.iteration = iteration
 	}
 
 }

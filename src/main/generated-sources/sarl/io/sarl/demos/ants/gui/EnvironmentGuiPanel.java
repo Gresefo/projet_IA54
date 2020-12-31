@@ -17,8 +17,6 @@ import org.eclipse.xtext.xbase.lib.Pure;
 
 /**
  * The GUI of the Simulation
- * 
- * @author Nicolas GAUD
  */
 @SarlSpecification("0.11")
 @SarlElementType(10)
@@ -43,11 +41,22 @@ class EnvironmentGuiPanel extends Panel {
   
   private int height;
   
+  /**
+   * The list of town positions
+   */
   private ArrayList<double[]> posList;
   
+  /**
+   * The tour between towns to print
+   */
   private ArrayList<Integer> tour;
   
+  /**
+   * The tour length
+   */
   private double tourLength;
+  
+  private int iteration;
   
   public void setTour(final ArrayList<Integer> tour) {
     this.tour = tour;
@@ -57,6 +66,14 @@ class EnvironmentGuiPanel extends Panel {
     this.tourLength = length;
   }
   
+  public void setIteration(final int iteration) {
+    this.iteration = iteration;
+  }
+  
+  /**
+   * Constructor
+   * @param iheight : int
+   */
   public EnvironmentGuiPanel(final int iheight, final int iwidth, final ArrayList<double[]> _posList) {
     super();
     this.width = iwidth;
@@ -83,6 +100,8 @@ class EnvironmentGuiPanel extends Panel {
           this.myCanvas.drawLine(line[0], line[1], line[2], line[3]);
         }
         this.myCanvas.drawString(("Tour length : " + Integer.toString(((int) this.tourLength))), (Settings.EnvtWidth - 300), (Settings.EnvtHeight - 60));
+        this.myCanvas.drawString(((("Number of remaining iterations (over " + Integer.toString(Settings.iteration)) + ") : ") + Integer.toString((Settings.iteration - this.iteration))), 
+          0, (Settings.EnvtHeight - 60));
         Font _font = new Font("Arial", Font.PLAIN, 24);
         this.myCanvas.setFont(_font);
       }
@@ -107,6 +126,12 @@ class EnvironmentGuiPanel extends Panel {
     this.myGraphics = this.getGraphics();
   }
   
+  /**
+   * Paint on the graphic every town in the position list
+   * @param g : Graphics2D, the graphic we print in
+   * @param pos : double[], the list containing the town positions
+   * @param maxCoord : int, the maximum coordinate to do the resizing
+   */
   public void paintTown(final Graphics2D g, final double[] pos, final int maxCoord) {
     double[] coord = new double[2];
     coord[0] = pos[1];
@@ -236,6 +261,8 @@ class EnvironmentGuiPanel extends Panel {
       return false;
     if (Double.doubleToLongBits(other.tourLength) != Double.doubleToLongBits(this.tourLength))
       return false;
+    if (other.iteration != this.iteration)
+      return false;
     return super.equals(obj);
   }
   
@@ -248,9 +275,10 @@ class EnvironmentGuiPanel extends Panel {
     result = prime * result + Integer.hashCode(this.width);
     result = prime * result + Integer.hashCode(this.height);
     result = prime * result + Double.hashCode(this.tourLength);
+    result = prime * result + Integer.hashCode(this.iteration);
     return result;
   }
   
   @SyntheticMember
-  private static final long serialVersionUID = -12762691460L;
+  private static final long serialVersionUID = -16030713834L;
 }

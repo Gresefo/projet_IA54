@@ -20,9 +20,12 @@ public class GuiRepaint extends Event {
   
   public final double length;
   
-  public GuiRepaint(final ArrayList<Integer> tour, final double length) {
+  public final int iteration;
+  
+  public GuiRepaint(final ArrayList<Integer> tour, final double length, final int iteration) {
     this.tour = tour;
     this.length = length;
+    this.iteration = iteration;
   }
   
   @Override
@@ -38,6 +41,8 @@ public class GuiRepaint extends Event {
     GuiRepaint other = (GuiRepaint) obj;
     if (Double.doubleToLongBits(other.length) != Double.doubleToLongBits(this.length))
       return false;
+    if (other.iteration != this.iteration)
+      return false;
     return super.equals(obj);
   }
   
@@ -48,6 +53,7 @@ public class GuiRepaint extends Event {
     int result = super.hashCode();
     final int prime = 31;
     result = prime * result + Double.hashCode(this.length);
+    result = prime * result + Integer.hashCode(this.iteration);
     return result;
   }
   
@@ -60,8 +66,9 @@ public class GuiRepaint extends Event {
     super.toString(builder);
     builder.add("tour", this.tour);
     builder.add("length", this.length);
+    builder.add("iteration", this.iteration);
   }
   
   @SyntheticMember
-  private static final long serialVersionUID = -3264611693L;
+  private static final long serialVersionUID = -3682516702L;
 }

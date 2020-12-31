@@ -120,7 +120,7 @@ agent Environment {
 					}
 				}
 				info("Best tour : " + this.tourArray.get(index).getValue)
-				new GuiRepaint(this.tourArray.get(index).getKey, this.tourArray.get(index).getValue).emit [
+				new GuiRepaint(this.tourArray.get(index).getKey, this.tourArray.get(index).getValue, this.iteration).emit [
 					it.UUID == Simulation.id
 				]
 				
