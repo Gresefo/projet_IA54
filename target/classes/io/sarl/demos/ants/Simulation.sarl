@@ -15,8 +15,7 @@ import java.io.File
 import java.util.Scanner
 
 /** 
- * The boids simulation launching the SARL environment with the corresponding agent and ensuring the communication between agents and the GUI
- * @author Nicolas Gaud
+ * The simulation launching the SARL environment with the corresponding agent and ensuring the communication between agents and the GUI
  */
 class Simulation implements EventListener {
 

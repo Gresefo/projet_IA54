@@ -28,8 +28,7 @@ import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Pure;
 
 /**
- * The boids simulation launching the SARL environment with the corresponding agent and ensuring the communication between agents and the GUI
- * @author Nicolas Gaud
+ * The simulation launching the SARL environment with the corresponding agent and ensuring the communication between agents and the GUI
  */
 @SarlSpecification("0.11")
 @SarlElementType(10)

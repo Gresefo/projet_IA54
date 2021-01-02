@@ -6,9 +6,7 @@ import io.sarl.lang.annotation.SarlSpecification;
 import io.sarl.lang.annotation.SyntheticMember;
 
 /**
- * The main class configuring the various boids populations and launching the simulation
- * 
- * @author Nicolas Gaud
+ * The main class launching the simulation
  */
 @SarlSpecification("0.11")
 @SarlElementType(10)

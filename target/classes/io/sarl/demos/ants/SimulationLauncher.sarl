@@ -1,21 +1,15 @@
 package io.sarl.demos.ants
 
-import java.awt.Color
-
 /**
- * 
- * The main class configuring the various boids populations and launching the simulation
- * 
- * @author Nicolas Gaud
+ * The main class launching the simulation
  */
 class BoidsSimulationLauncher {
 
 	/**
 	 * @param args command line arguments
 	 */
-	static def main(args : String*) {
-		
-		// 3 populations of boids (Red, Green and Blue)
+	static def main(args : String*) 
+	{
 		var fileName = args.get(0)
 		var simu = new Simulation(fileName)
 		
