@@ -115,7 +115,7 @@ public class Ant extends Agent {
         prob.clear();
       }
     }
-    double _get = this.distance[((memory.get((size - 1))) == null ? 0 : (memory.get((size - 1))).intValue())][1];
+    double _get = this.distance[currentCity][0];
     tourLength = (tourLength + _get);
     memory.add(Integer.valueOf(0));
     DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER = this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER();

@@ -39,10 +39,16 @@ agent Environment {
 
 	var nnTourLength : double
 
+	/**
+	 * 
+	 */
 	var tourArray : CopyOnWriteArrayList<Pair<ArrayList<Integer>, Double>>
 
 	var iteration : int
 	
+	/**
+	 * Used to check if the result converged
+	 */
 	var lastTour : ArrayList<Double>
 
 	on Initialize {
@@ -100,6 +106,8 @@ agent Environment {
 				var min : double = this.tourArray.get(0).getValue
 				var index = 0
 				var k = 0
+				
+				// Pheromone evaporation
 				for (var i = 0; i < this.numberAnts; i++) {
 					for (var j = 0; j < this.numberAnts; j++) {
 						if (i != j) {
@@ -108,19 +116,30 @@ agent Environment {
 						}
 					}
 				}
+				
+				// Get shortest path and update pheromons
 				for (tA : this.tourArray) {
-					phero = 1 / tA.getValue
+					// Gets shortest path
 					if (tA.getValue < min) {
 						min = tA.getValue
 						index = k
 					}
 					k++
+					// Update the pheromons matrix, increase visited path depending on the path length
+					phero = 1 / tA.getValue
 					for (var i = 0; i < this.numberAnts - 1; i++) {
-						this.pheromons.set(tA.getKey.get(i), tA.getKey.get(i + 1), phero)
+						this.pheromons.set(tA.getKey.get(i), 
+											tA.getKey.get(i + 1), 
+											this.pheromons.get(tA.getKey.get(i), tA.getKey.get(i + 1)) + phero
+						)
 					}
 				}
+				
 				info("Best tour : " + this.tourArray.get(index).getValue)
-				new GuiRepaint(this.tourArray.get(index).getKey, this.tourArray.get(index).getValue, this.iteration).emit [
+				var tmpList : ArrayList<Integer> = new ArrayList<Integer>()
+				for (var i = 0; i < this.tourArray.get(index).getKey.size; i++)
+					tmpList.add(this.tourArray.get(index).getKey.get(i) + 1)
+				new GuiRepaint(tmpList, this.tourArray.get(index).getValue, this.iteration).emit [
 					it.UUID == Simulation.id
 				]
 				
@@ -161,6 +180,11 @@ agent Environment {
 		killMe
 	}
 
+	/**
+	 * Calculate a tour using the nearest neighbor algo
+	 * @param
+	 * 
+	 */
 	def nearestNeighbour(distMatrix : double[][]) : double {
 		var tourLength = 0.0
 		var size = this.distMatrix.length
@@ -193,33 +217,33 @@ agent Environment {
 			tourLength += distMatrix.get(currentCity, index)
 			currentCity = index
 			tour.add(currentCity)
-			citiesToVisit.remove(currentCity as Integer)
+			citiesToVisit.remove(currentCity)
 		}
-
+		tourLength += distMatrix.get(currentCity, 0)
 		return tourLength
 	}
 
 	def printDistMatrix(distMatrix : double[][], maxSize : int) : void {
-	var maxSize2 : int = maxSize
-	if (maxSize > distMatrix.size)
-		maxSize2 = distMatrix.size
-
-		System.out.println("Distance Matrix (size printed: " + maxSize2 + "):")
+		var maxSize2 : int = maxSize
+		if (maxSize > distMatrix.size)
+			maxSize2 = distMatrix.size
+	
+		System.out.println("Pheromone Matrix (size printed: " + maxSize2 + "):")
 		for (var i : int = 0; i < maxSize2; i++) {
 			for (var j : int = 0; j < maxSize2; j++) {
-			System.out.print(" " + distMatrix.get(i).get(j) as double)
-			if (distMatrix.get(i).get(j) < 10)
-				System.out.print("    ")
-			else if (distMatrix.get(i).get(j) < 100)
-				System.out.print("   ")
-			else if (distMatrix.get(i).get(j) < 1000)
-				System.out.print("  ")
-			else if (distMatrix.get(i).get(j) < 10000)
-				System.out.print(" ")
+				System.out.print(" " + distMatrix.get(i).get(j) as double)
+				if (distMatrix.get(i).get(j) < 10)
+					System.out.print("    ")
+				else if (distMatrix.get(i).get(j) < 100)
+					System.out.print("   ")
+				else if (distMatrix.get(i).get(j) < 1000)
+					System.out.print("  ")
+				else if (distMatrix.get(i).get(j) < 10000)
+					System.out.print(" ")
+			}
+			System.out.println()
 		}
-		System.out.println()
-		}
-	
+		
 	}
 
 }

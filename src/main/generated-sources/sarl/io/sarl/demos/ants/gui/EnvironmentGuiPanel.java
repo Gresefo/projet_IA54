@@ -91,10 +91,6 @@ class EnvironmentGuiPanel extends Panel {
       this.myCanvas.drawRect(0, 0, ((this.width * 2) - 1), ((this.height * 2) - 1));
       int maxCoord = this.getMaxCoord(this.posList);
       if ((this.tour != null)) {
-        for (int i = 0; (i < this.tour.size()); i++) {
-          Integer _get = this.tour.get(i);
-          this.tour.set(i, Integer.valueOf((((_get) == null ? 0 : (_get).intValue()) + 1)));
-        }
         ArrayList<int[]> linePixelList = this.getRectPixel(this.posList, this.tour, maxCoord);
         for (final int[] line : linePixelList) {
           this.myCanvas.drawLine(line[0], line[1], line[2], line[3]);
@@ -201,7 +197,7 @@ class EnvironmentGuiPanel extends Panel {
       result[0] = posList.get(i)[1];
       result[1] = posList.get(i)[2];
     } else {
-      System.out.println("Error, coordinate not found with this ID");
+      System.out.println(("Error, coordinate not found with this ID : " + Integer.valueOf(id)));
     }
     return result;
   }

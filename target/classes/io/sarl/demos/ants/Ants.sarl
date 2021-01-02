@@ -65,17 +65,21 @@ agent Ant {
 		var currentCity = 0
 
 		while (memory.size != size) {
+			// Determinateur de la proba
 			var sum = 0.0
 			for (i : citiesToVisit) {
 				sum = sum + Math.pow(pheromons.get(currentCity, i), Settings::alpha) *
 					Math.pow(1 / this.distance.get(currentCity, i), Settings::beta)
 			}
+			// Calcul de la proba
 			for (i : citiesToVisit) {
 				probability = Math.pow(pheromons.get(currentCity, i), Settings::alpha) *
 					Math.pow(1 / this.distance.get(currentCity, i), Settings::beta) / sum
 				prob.add(probability)
 			}
 
+			// Choice of town, depending on its probability
+			// Choix de la proba en fonction de la pondération
 			var cityChosen = Math.random()
 			var cumul = 0.0 // prob.get(0)
 			var i = 0
@@ -91,7 +95,7 @@ agent Ant {
 			prob.clear()
 		}
 
-		tourLength += this.distance.get(memory.get(size - 1), 1)
+		tourLength += this.distance.get(currentCity, 0)
 		memory.add(0)
 		new TourFound(memory, tourLength).emit[it.UUID == this.environment]
 	}

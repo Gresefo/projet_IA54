@@ -65,6 +65,9 @@ public class Environment extends Agent {
   
   private int iteration;
   
+  /**
+   * Used to check if the result converged
+   */
   private ArrayList<Double> lastTour;
   
   private void $behaviorUnit$Initialize$0(final Initialize occurrence) {
@@ -145,23 +148,30 @@ public class Environment extends Agent {
         for (final Pair<ArrayList<Integer>, Double> tA : this.tourArray) {
           {
             Double _value = tA.getValue();
-            phero = (1 / ((_value) == null ? 0 : (_value).doubleValue()));
-            Double _value_1 = tA.getValue();
-            if ((_value_1.doubleValue() < min)) {
+            if ((_value.doubleValue() < min)) {
               min = ((tA.getValue()) == null ? 0 : (tA.getValue()).doubleValue());
               index = k;
             }
             k++;
+            Double _value_1 = tA.getValue();
+            phero = (1 / ((_value_1) == null ? 0 : (_value_1).doubleValue()));
             for (int i = 0; (i < (this.numberAnts - 1)); i++) {
-              this.pheromons[((tA.getKey().get(i)) == null ? 0 : (tA.getKey().get(i)).intValue())][((tA.getKey().get((i + 1))) == null ? 0 : (tA.getKey().get((i + 1))).intValue())] = phero;
+              double _get = this.pheromons[((tA.getKey().get(i)) == null ? 0 : (tA.getKey().get(i)).intValue())][((tA.getKey().get((i + 1))) == null ? 0 : (tA.getKey().get((i + 1))).intValue())];
+              this.pheromons[((tA.getKey().get(i)) == null ? 0 : (tA.getKey().get(i)).intValue())][
+                ((tA.getKey().get((i + 1))) == null ? 0 : (tA.getKey().get((i + 1))).intValue())] = 
+                (_get + phero);
             }
           }
         }
         Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
         Double _value = this.tourArray.get(index).getValue();
         _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER.info(("Best tour : " + _value));
+        ArrayList<Integer> tmpList = new ArrayList<Integer>();
+        for (int i = 0; (i < this.tourArray.get(index).getKey().size()); i++) {
+          Integer _get = this.tourArray.get(index).getKey().get(i);
+          tmpList.add(Integer.valueOf((((_get) == null ? 0 : (_get).intValue()) + 1)));
+        }
         DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER = this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER();
-        ArrayList<Integer> _key = this.tourArray.get(index).getKey();
         Double _value_1 = this.tourArray.get(index).getValue();
         class $SerializableClosureProxy implements Scope<Address> {
           
@@ -187,14 +197,14 @@ public class Environment extends Agent {
             return new SerializableProxy($SerializableClosureProxy.class, Simulation.id);
           }
         };
-        _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER.emit(new GuiRepaint(_key, ((_value_1) == null ? 0 : (_value_1).doubleValue()), this.iteration), _function);
+        _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER.emit(new GuiRepaint(tmpList, ((_value_1) == null ? 0 : (_value_1).doubleValue()), this.iteration), _function);
         if ((this.iteration == Settings.iteration)) {
           this.printDistMatrix(this.pheromons, 25);
           Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
           _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1.info("KILL AGENTS");
           Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
-          ArrayList<Integer> _key_1 = this.tourArray.get(index).getKey();
-          _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2.info(("Tour : " + _key_1));
+          ArrayList<Integer> _key = this.tourArray.get(index).getKey();
+          _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2.info(("Tour : " + _key));
           DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_1 = this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER();
           _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_1.emit(new Die());
         } else {
@@ -231,6 +241,10 @@ public class Environment extends Agent {
     _$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER.killMe();
   }
   
+  /**
+   * Calculate a tour using the nearest neighbor algo
+   * @param
+   */
   protected double nearestNeighbour(final double[][] distMatrix) {
     double tourLength = 0.0;
     int size = this.distMatrix.length;
@@ -263,9 +277,11 @@ public class Environment extends Agent {
         tourLength = (tourLength + _get_1);
         currentCity = index;
         tour.add(Integer.valueOf(currentCity));
-        citiesToVisit.remove(Integer.valueOf(currentCity));
+        citiesToVisit.remove(currentCity);
       }
     }
+    double _get = distMatrix[currentCity][0];
+    tourLength = (tourLength + _get);
     return tourLength;
   }
   
@@ -275,7 +291,7 @@ public class Environment extends Agent {
     if ((maxSize > _size)) {
       maxSize2 = ((List<double[]>)Conversions.doWrapArray(distMatrix)).size();
     }
-    System.out.println((("Distance Matrix (size printed: " + Integer.valueOf(maxSize2)) + "):"));
+    System.out.println((("Pheromone Matrix (size printed: " + Integer.valueOf(maxSize2)) + "):"));
     for (int i = 0; (i < maxSize2); i++) {
       {
         for (int j = 0; (j < maxSize2); j++) {

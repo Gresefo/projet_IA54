@@ -160,9 +160,6 @@ package class EnvironmentGuiPanel extends Panel {
 			//Draw the tour between towns and print the tour length
 			if (this.tour !== null) 
 			{
-				for (var i = 0; i < this.tour.size; i++)
-					this.tour.set(i, this.tour.get(i) + 1)
-					
 				var linePixelList : ArrayList<int[]> = getRectPixel(this.posList, this.tour, maxCoord)
 				for (line : linePixelList) 
 					myCanvas.drawLine(line.get(0), line.get(1), line.get(2), line.get(3))
@@ -269,7 +266,7 @@ package class EnvironmentGuiPanel extends Panel {
 			result.set(1, posList.get(i).get(2))
 		}
 		else
-			System.out.println("Error, coordinate not found with this ID")
+			System.out.println("Error, coordinate not found with this ID : " + id)
 		return result
 	}
 	

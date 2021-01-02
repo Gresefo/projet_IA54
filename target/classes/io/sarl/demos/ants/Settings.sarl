@@ -28,9 +28,9 @@ package io.sarl.demos.ants
 interface Settings {
 
     
-    	/** 
-		 * Environmental grid default width
-		 */
+    /** 
+	 * Environmental grid default width
+	 */
     public static val EnvtWidth = 1000
 
 	/**
@@ -48,12 +48,12 @@ interface Settings {
 	 */
 	public static val pause = 0
     
-    public static val iteration = 500
-
+    public static val iteration = 5000
+	
 	public static val alpha = 1
 
 	// 2-5
-	public static val beta = 2
+	public static val beta = 3
 
 	// Evaporation rate
 	public static val rho = 0.5
