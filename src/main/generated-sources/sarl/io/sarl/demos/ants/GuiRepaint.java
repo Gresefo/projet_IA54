@@ -9,8 +9,7 @@ import org.eclipse.xtext.xbase.lib.Pure;
 import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
 
 /**
- * Event specifying when the GUI must be refresh according to the new environmental state embodied by the specified map
- * @author Nicolas Gaud
+ * Event specifying when the GUI must be refresh according to the newest tour found
  */
 @SarlSpecification("0.11")
 @SarlElementType(15)

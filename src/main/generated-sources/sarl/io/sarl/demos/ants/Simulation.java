@@ -124,7 +124,7 @@ public class Simulation implements EventListener {
       this.launchAllAnts();
       EventSpace _defaultSpace = this.defaultSARLContext.getDefaultSpace();
       this.space = ((OpenEventSpace) _defaultSpace);
-      EnvironmentGui _environmentGui = new EnvironmentGui(this.space, this.height, this.width, this.fileName, this.posList);
+      EnvironmentGui _environmentGui = new EnvironmentGui(this.space, this.fileName, this.posList);
       this.myGUI = _environmentGui;
       this.space.register(this);
       StartEnvironment _startEnvironment = new StartEnvironment();

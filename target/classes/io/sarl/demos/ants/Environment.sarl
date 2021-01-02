@@ -40,10 +40,15 @@ agent Environment {
 	var nnTourLength : double
 
 	/**
-	 * 
+	 * A thread safe List<Pair> to store the list of :
+	 * 	- List<Integer> : the path with the town ID
+	 *  - Double : the path length
 	 */
 	var tourArray : CopyOnWriteArrayList<Pair<ArrayList<Integer>, Double>>
 
+	/**
+	 * The current iteration number 
+	 */
 	var iteration : int
 	
 	/**

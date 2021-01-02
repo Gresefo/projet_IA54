@@ -1,6 +1,7 @@
 package io.sarl.demos.ants.gui;
 
 import io.sarl.core.OpenEventSpace;
+import io.sarl.demos.ants.Settings;
 import io.sarl.demos.ants.gui.Closer;
 import io.sarl.demos.ants.gui.EnvironmentGuiPanel;
 import io.sarl.lang.annotation.SarlElementType;
@@ -22,14 +23,14 @@ public class EnvironmentGui extends Frame {
   
   private EnvironmentGuiPanel panel;
   
-  public EnvironmentGui(final OpenEventSpace comspace, final int iheight, final int iwidth, final String fileName, final ArrayList<double[]> posList) {
+  public EnvironmentGui(final OpenEventSpace comspace, final String fileName, final ArrayList<double[]> posList) {
     super();
     Closer _closer = new Closer(this, comspace);
     this.handler = _closer;
-    EnvironmentGuiPanel _environmentGuiPanel = new EnvironmentGuiPanel(iheight, iwidth, posList);
+    EnvironmentGuiPanel _environmentGuiPanel = new EnvironmentGuiPanel(posList);
     this.panel = _environmentGuiPanel;
     this.setTitle(("TSP Simulation : " + fileName));
-    this.setSize(iwidth, iheight);
+    this.setSize(Settings.EnvtWidth, Settings.EnvtHeight);
     this.addWindowListener(this.handler);
     this.add("Center", this.panel);
     this.setVisible(true);
@@ -69,5 +70,5 @@ public class EnvironmentGui extends Frame {
   }
   
   @SyntheticMember
-  private static final long serialVersionUID = -4025335679L;
+  private static final long serialVersionUID = -2203123487L;
 }

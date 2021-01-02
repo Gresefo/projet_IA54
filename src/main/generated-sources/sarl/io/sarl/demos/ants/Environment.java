@@ -61,8 +61,16 @@ public class Environment extends Agent {
   
   private double nnTourLength;
   
+  /**
+   * A thread safe List<Pair> to store the list of :
+   * 	- List<Integer> : the path with the town ID
+   *  - Double : the path length
+   */
   private CopyOnWriteArrayList<Pair<ArrayList<Integer>, Double>> tourArray;
   
+  /**
+   * The current iteration number
+   */
   private int iteration;
   
   /**

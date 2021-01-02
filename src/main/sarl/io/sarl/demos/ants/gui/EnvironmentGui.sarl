@@ -9,16 +9,13 @@ import java.awt.Image
 import java.awt.Panel
 import java.awt.^event.WindowAdapter
 import java.awt.^event.WindowEvent
-import java.util.Map
 import java.util.UUID
 
-import static extension java.lang.Math.*
 import java.util.ArrayList
 import java.awt.geom.Ellipse2D
 import java.awt.Shape
 import java.awt.Graphics2D
 import io.sarl.demos.ants.Settings
-import java.awt.Label
 import java.awt.Font
 
 /** 
@@ -30,14 +27,13 @@ class EnvironmentGui extends Frame {
 
 	var panel : EnvironmentGuiPanel
 
-	new (comspace : OpenEventSpace, iheight : int, iwidth : int,
-		fileName : String, posList : ArrayList<double[]>) {
+	new (comspace : OpenEventSpace, fileName : String, posList : ArrayList<double[]>) {
 		super()
 		handler = new Closer(this, comspace)
-		panel = new EnvironmentGuiPanel(iheight, iwidth, posList)
+		panel = new EnvironmentGuiPanel(posList)
 
 		this.title = "TSP Simulation : " + fileName
-		this.setSize(iwidth, iheight)
+		this.setSize(Settings::EnvtWidth, Settings::EnvtHeight)
 		addWindowListener(handler)
 
 		add("Center", panel)
@@ -81,7 +77,6 @@ package class Closer extends WindowAdapter {
 		^space.emit(UUID.randomUUID, new Die)
 		iframe.dispose();
 	}
-
 }
 
 /** 
@@ -101,10 +96,7 @@ package class EnvironmentGuiPanel extends Panel {
 	 * Double buffering management.
 	 */
 	var myImage : Image
-
-	var width : int
-
-	var height : int
+	
 	/**
 	 * The list of town positions
 	 */
@@ -138,10 +130,8 @@ package class EnvironmentGuiPanel extends Panel {
 	 * Constructor
 	 * @param iheight : int
 	 */
-	new (iheight : int, iwidth : int, _posList : ArrayList<double[]>) {
+	new (_posList : ArrayList<double[]>) {
 		super()
-		width = iwidth
-		height = iheight
 		this.posList = _posList
 	}
 
@@ -151,9 +141,9 @@ package class EnvironmentGuiPanel extends Panel {
 		{
 			val bgColor = new Color(0.6F, 0.6F, 0.6F)
 			myCanvas.color = bgColor
-			myCanvas.fillRect(0, 0, width * 2 - 1, height * 2 - 1)
+			myCanvas.fillRect(0, 0, Settings::EnvtWidth * 2 - 1, Settings::EnvtHeight * 2 - 1)
 			myCanvas.setColor(Color::BLACK)
-			myCanvas.drawRect(0, 0, width * 2 - 1, height * 2 - 1)
+			myCanvas.drawRect(0, 0, Settings::EnvtWidth * 2 - 1, Settings::EnvtHeight * 2 - 1)
 			
 			var maxCoord : int = getMaxCoord(posList)
 			
@@ -163,9 +153,9 @@ package class EnvironmentGuiPanel extends Panel {
 				var linePixelList : ArrayList<int[]> = getRectPixel(this.posList, this.tour, maxCoord)
 				for (line : linePixelList) 
 					myCanvas.drawLine(line.get(0), line.get(1), line.get(2), line.get(3))
-				myCanvas.drawString("Tour length : " + tourLength as int as String, Settings.EnvtWidth - 300, Settings.EnvtHeight - 60)
-				myCanvas.drawString("Number of remaining iterations (over " + Settings.iteration as String + ") : " 
-					+ (Settings.iteration - iteration) as String, 
+				myCanvas.drawString("Tour length : " + tourLength as int, Settings.EnvtWidth - 300, Settings.EnvtHeight - 60)
+				myCanvas.drawString("Number of remaining iterations (over " + Settings.iteration + ") : " 
+					+ (Settings.iteration - iteration), 
 					0, Settings.EnvtHeight - 60
 				)
 				myCanvas.setFont(new Font("Arial", Font.PLAIN, 24))
@@ -184,9 +174,6 @@ package class EnvironmentGuiPanel extends Panel {
 
  	override doLayout {
 		super.doLayout
-
-		width = (this.size.width / 2)
-		height = this.size.height / 2
 
 		myImage = createImage(width * 2, height * 2)
 		myCanvas = myImage.graphics
@@ -266,7 +253,7 @@ package class EnvironmentGuiPanel extends Panel {
 			result.set(1, posList.get(i).get(2))
 		}
 		else
-			System.out.println("Error, coordinate not found with this ID : " + id)
+			System.err.println("Error, coordinate not found with this ID : " + id)
 		return result
 	}
 	

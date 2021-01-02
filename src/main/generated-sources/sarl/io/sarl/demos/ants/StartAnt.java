@@ -7,6 +7,9 @@ import io.sarl.lang.core.Event;
 import org.eclipse.xtext.xbase.lib.Pure;
 import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
 
+/**
+ * Event sent to reset ants
+ */
 @SarlSpecification("0.11")
 @SarlElementType(15)
 @SuppressWarnings("all")

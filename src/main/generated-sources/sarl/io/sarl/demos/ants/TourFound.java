@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import org.eclipse.xtext.xbase.lib.Pure;
 import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
 
+/**
+ * Event sent when a tour is found
+ */
 @SarlSpecification("0.11")
 @SarlElementType(15)
 @SuppressWarnings("all")

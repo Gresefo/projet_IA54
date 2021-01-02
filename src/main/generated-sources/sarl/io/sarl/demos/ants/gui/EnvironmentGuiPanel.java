@@ -37,10 +37,6 @@ class EnvironmentGuiPanel extends Panel {
    */
   private Image myImage;
   
-  private int width;
-  
-  private int height;
-  
   /**
    * The list of town positions
    */
@@ -74,10 +70,8 @@ class EnvironmentGuiPanel extends Panel {
    * Constructor
    * @param iheight : int
    */
-  public EnvironmentGuiPanel(final int iheight, final int iwidth, final ArrayList<double[]> _posList) {
+  public EnvironmentGuiPanel(final ArrayList<double[]> _posList) {
     super();
-    this.width = iwidth;
-    this.height = iheight;
     this.posList = _posList;
   }
   
@@ -86,17 +80,17 @@ class EnvironmentGuiPanel extends Panel {
     if (((this.myCanvas != null) && (this.myGraphics != null))) {
       final Color bgColor = new Color(0.6F, 0.6F, 0.6F);
       this.myCanvas.setColor(bgColor);
-      this.myCanvas.fillRect(0, 0, ((this.width * 2) - 1), ((this.height * 2) - 1));
+      this.myCanvas.fillRect(0, 0, ((Settings.EnvtWidth * 2) - 1), ((Settings.EnvtHeight * 2) - 1));
       this.myCanvas.setColor(Color.BLACK);
-      this.myCanvas.drawRect(0, 0, ((this.width * 2) - 1), ((this.height * 2) - 1));
+      this.myCanvas.drawRect(0, 0, ((Settings.EnvtWidth * 2) - 1), ((Settings.EnvtHeight * 2) - 1));
       int maxCoord = this.getMaxCoord(this.posList);
       if ((this.tour != null)) {
         ArrayList<int[]> linePixelList = this.getRectPixel(this.posList, this.tour, maxCoord);
         for (final int[] line : linePixelList) {
           this.myCanvas.drawLine(line[0], line[1], line[2], line[3]);
         }
-        this.myCanvas.drawString(("Tour length : " + Integer.toString(((int) this.tourLength))), (Settings.EnvtWidth - 300), (Settings.EnvtHeight - 60));
-        this.myCanvas.drawString(((("Number of remaining iterations (over " + Integer.toString(Settings.iteration)) + ") : ") + Integer.toString((Settings.iteration - this.iteration))), 
+        this.myCanvas.drawString(("Tour length : " + Integer.valueOf(((int) this.tourLength))), (Settings.EnvtWidth - 300), (Settings.EnvtHeight - 60));
+        this.myCanvas.drawString(((("Number of remaining iterations (over " + Integer.valueOf(Settings.iteration)) + ") : ") + Integer.valueOf((Settings.iteration - this.iteration))), 
           0, (Settings.EnvtHeight - 60));
         Font _font = new Font("Arial", Font.PLAIN, 24);
         this.myCanvas.setFont(_font);
@@ -115,9 +109,9 @@ class EnvironmentGuiPanel extends Panel {
   @Override
   public void doLayout() {
     super.doLayout();
-    this.width = (this.getSize().width / 2);
-    this.height = (this.getSize().height / 2);
-    this.myImage = this.createImage((this.width * 2), (this.height * 2));
+    int _width = this.getWidth();
+    int _height = this.getHeight();
+    this.myImage = this.createImage((_width * 2), (_height * 2));
     this.myCanvas = this.myImage.getGraphics();
     this.myGraphics = this.getGraphics();
   }
@@ -197,7 +191,7 @@ class EnvironmentGuiPanel extends Panel {
       result[0] = posList.get(i)[1];
       result[1] = posList.get(i)[2];
     } else {
-      System.out.println(("Error, coordinate not found with this ID : " + Integer.valueOf(id)));
+      System.err.println(("Error, coordinate not found with this ID : " + Integer.valueOf(id)));
     }
     return result;
   }
@@ -251,10 +245,6 @@ class EnvironmentGuiPanel extends Panel {
     if (getClass() != obj.getClass())
       return false;
     EnvironmentGuiPanel other = (EnvironmentGuiPanel) obj;
-    if (other.width != this.width)
-      return false;
-    if (other.height != this.height)
-      return false;
     if (Double.doubleToLongBits(other.tourLength) != Double.doubleToLongBits(this.tourLength))
       return false;
     if (other.iteration != this.iteration)
@@ -268,13 +258,11 @@ class EnvironmentGuiPanel extends Panel {
   public int hashCode() {
     int result = super.hashCode();
     final int prime = 31;
-    result = prime * result + Integer.hashCode(this.width);
-    result = prime * result + Integer.hashCode(this.height);
     result = prime * result + Double.hashCode(this.tourLength);
     result = prime * result + Integer.hashCode(this.iteration);
     return result;
   }
   
   @SyntheticMember
-  private static final long serialVersionUID = -16030713834L;
+  private static final long serialVersionUID = -13840437333L;
 }

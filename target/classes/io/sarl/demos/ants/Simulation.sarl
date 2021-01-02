@@ -120,7 +120,7 @@ class Simulation implements EventListener {
 		^space = defaultSARLContext.defaultSpace as OpenEventSpace
 		
 		// No need to send boidBodies
-		this.myGUI = new EnvironmentGui(^space, height, width, this.fileName, posList)
+		this.myGUI = new EnvironmentGui(^space, this.fileName, posList)
 
 		//Registering to receive GUIRepaint events
 		^space.register(this)

@@ -1,8 +1,5 @@
 package io.sarl.demos.ants
 
-import java.util.UUID
-import java.util.concurrent.ConcurrentHashMap
-import org.eclipse.xtend.lib.annotations.Accessors
 import java.util.ArrayList
 
 /** 
@@ -11,11 +8,13 @@ import java.util.ArrayList
 event Die
 
 /** 
- * Event informing the environment from the real startup of the simulation with the corresponding boids inside
- * @author Nicolas Gaud
+ * Event informing the environment from the real startup of the simulation 
  */
 event StartEnvironment
 
+/**
+ * Event sent to reset ants
+ */
 event StartAnt {
 	val pheromons : double[][]
 
@@ -24,6 +23,9 @@ event StartAnt {
 	}
 }
 
+/**
+ * Event sent when a tour is found
+ */
 event TourFound {
 	val tour : ArrayList<Integer>
 	val length : double
@@ -35,8 +37,7 @@ event TourFound {
 }
 
 /** 
- * Event specifying when the GUI must be refresh according to the new environmental state embodied by the specified map
- * @author Nicolas Gaud
+ * Event specifying when the GUI must be refresh according to the newest tour found
  */
 event GuiRepaint 
 {
