@@ -54,9 +54,11 @@ public interface Settings {
   
   public static final int iteration = 5000;
   
+  public static final int nbIterationToConverge = 100;
+  
   public static final int alpha = 1;
   
-  public static final int beta = 3;
+  public static final int beta = 2;
   
   public static final double rho = 0.5;
 }

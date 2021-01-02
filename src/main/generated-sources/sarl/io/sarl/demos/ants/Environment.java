@@ -134,7 +134,7 @@ public class Environment extends Agent {
       if ((_size == this.numberAnts)) {
         double phero = 0;
         double min = ((this.tourArray.get(0).getValue()) == null ? 0 : (this.tourArray.get(0).getValue()).doubleValue());
-        int index = 0;
+        int indexBestTour = 0;
         int k = 0;
         for (int i = 0; (i < this.numberAnts); i++) {
           for (int j = 0; (j < this.numberAnts); j++) {
@@ -150,7 +150,7 @@ public class Environment extends Agent {
             Double _value = tA.getValue();
             if ((_value.doubleValue() < min)) {
               min = ((tA.getValue()) == null ? 0 : (tA.getValue()).doubleValue());
-              index = k;
+              indexBestTour = k;
             }
             k++;
             Double _value_1 = tA.getValue();
@@ -164,15 +164,15 @@ public class Environment extends Agent {
           }
         }
         Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
-        Double _value = this.tourArray.get(index).getValue();
+        Double _value = this.tourArray.get(indexBestTour).getValue();
         _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER.info(("Best tour : " + _value));
         ArrayList<Integer> tmpList = new ArrayList<Integer>();
-        for (int i = 0; (i < this.tourArray.get(index).getKey().size()); i++) {
-          Integer _get = this.tourArray.get(index).getKey().get(i);
+        for (int i = 0; (i < this.tourArray.get(indexBestTour).getKey().size()); i++) {
+          Integer _get = this.tourArray.get(indexBestTour).getKey().get(i);
           tmpList.add(Integer.valueOf((((_get) == null ? 0 : (_get).intValue()) + 1)));
         }
         DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER = this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER();
-        Double _value_1 = this.tourArray.get(index).getValue();
+        Double _value_1 = this.tourArray.get(indexBestTour).getValue();
         class $SerializableClosureProxy implements Scope<Address> {
           
           private final UUID $_id_1;
@@ -203,16 +203,16 @@ public class Environment extends Agent {
           Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
           _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1.info("KILL AGENTS");
           Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
-          ArrayList<Integer> _key = this.tourArray.get(index).getKey();
+          ArrayList<Integer> _key = this.tourArray.get(indexBestTour).getKey();
           _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2.info(("Tour : " + _key));
           DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_1 = this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER();
           _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_1.emit(new Die());
         } else {
           int size = this.lastTour.size();
-          if (((size - 10) >= 0)) {
+          if ((size >= Settings.nbIterationToConverge)) {
             int same = 0;
-            for (int i = (size - 10); (i < size); i++) {
-              Double _value_2 = this.tourArray.get(index).getValue();
+            for (int i = (size - Settings.nbIterationToConverge); (i < size); i++) {
+              Double _value_2 = this.tourArray.get(indexBestTour).getValue();
               Double _get = this.lastTour.get(i);
               double _minus = DoubleExtensions.operator_minus(_value_2, _get);
               double _abs = Math.abs(_minus);
@@ -220,13 +220,13 @@ public class Environment extends Agent {
                 same++;
               }
             }
-            if ((same == 10)) {
+            if ((same == Settings.nbIterationToConverge)) {
               Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_3 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
               _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_3.info(("Stopped at iteration : " + Integer.valueOf(this.iteration)));
               this.iteration = (Settings.iteration - 1);
             }
           }
-          this.lastTour.add(this.tourArray.get(index).getValue());
+          this.lastTour.add(this.tourArray.get(indexBestTour).getValue());
         }
         this.tourArray.clear();
         this.iteration++;
@@ -277,7 +277,7 @@ public class Environment extends Agent {
         tourLength = (tourLength + _get_1);
         currentCity = index;
         tour.add(Integer.valueOf(currentCity));
-        citiesToVisit.remove(currentCity);
+        citiesToVisit.remove(Integer.valueOf(currentCity));
       }
     }
     double _get = distMatrix[currentCity][0];

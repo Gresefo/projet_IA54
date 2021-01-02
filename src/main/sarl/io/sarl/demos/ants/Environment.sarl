@@ -104,7 +104,7 @@ agent Environment {
 			if (this.tourArray.size == this.numberAnts) {
 				var phero : double
 				var min : double = this.tourArray.get(0).getValue
-				var index = 0
+				var indexBestTour = 0
 				var k = 0
 				
 				// Pheromone evaporation
@@ -122,7 +122,7 @@ agent Environment {
 					// Gets shortest path
 					if (tA.getValue < min) {
 						min = tA.getValue
-						index = k
+						indexBestTour = k
 					}
 					k++
 					// Update the pheromons matrix, increase visited path depending on the path length
@@ -135,37 +135,40 @@ agent Environment {
 					}
 				}
 				
-				info("Best tour : " + this.tourArray.get(index).getValue)
+				info("Best tour : " + this.tourArray.get(indexBestTour).getValue)
+				
+				// Send event to repaint
 				var tmpList : ArrayList<Integer> = new ArrayList<Integer>()
-				for (var i = 0; i < this.tourArray.get(index).getKey.size; i++)
-					tmpList.add(this.tourArray.get(index).getKey.get(i) + 1)
-				new GuiRepaint(tmpList, this.tourArray.get(index).getValue, this.iteration).emit [
+				for (var i = 0; i < this.tourArray.get(indexBestTour).getKey.size; i++)
+					tmpList.add(this.tourArray.get(indexBestTour).getKey.get(i) + 1)
+				new GuiRepaint(tmpList, this.tourArray.get(indexBestTour).getValue, this.iteration).emit [
 					it.UUID == Simulation.id
 				]
 				
-				
+				// If last iteration, kill all
 				if (this.iteration == Settings::iteration) {
 					printDistMatrix(this.pheromons, 25)
 					
 					info("KILL AGENTS")
-					info("Tour : " + this.tourArray.get(index).getKey)
+					info("Tour : " + this.tourArray.get(indexBestTour).getKey)
 					new Die().emit
 				}
 				else {
 					var size = this.lastTour.size
-					if (size - 10 >= 0) {
+					// Check convergence
+					if (size >= Settings::nbIterationToConverge) {
 						var same = 0
-						for(var i = size - 10; i < size; i++){
-							if(Math.abs(this.tourArray.get(index).getValue - this.lastTour.get(i)) < 1.0) {
+						for (var i = size - Settings::nbIterationToConverge; i < size; i++) {
+							if(Math.abs(this.tourArray.get(indexBestTour).getValue - this.lastTour.get(i)) < 1.0) {
 								same++
 							}
 						}
-						if (same == 10) {
+						if (same == Settings::nbIterationToConverge) {
 							info("Stopped at iteration : " + this.iteration)
 							this.iteration = Settings::iteration - 1
 						}
 					}
-					this.lastTour.add(this.tourArray.get(index).getValue)
+					this.lastTour.add(this.tourArray.get(indexBestTour).getValue)
 				}
 
 				this.tourArray.clear
@@ -173,7 +176,6 @@ agent Environment {
 				new StartAnt(this.pheromons).emit
 			}
 		}
-
 	}
 
 	on Die {
@@ -217,7 +219,7 @@ agent Environment {
 			tourLength += distMatrix.get(currentCity, index)
 			currentCity = index
 			tour.add(currentCity)
-			citiesToVisit.remove(currentCity)
+			citiesToVisit.remove(currentCity as Integer)
 		}
 		tourLength += distMatrix.get(currentCity, 0)
 		return tourLength
