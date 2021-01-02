@@ -47,12 +47,6 @@ import org.eclipse.xtext.xbase.lib.Pure;
 @SuppressWarnings("all")
 public class Environment extends Agent {
   @Accessors
-  private int width;
-  
-  @Accessors
-  private int height;
-  
-  @Accessors
   private double[][] distMatrix;
   
   private int numberAnts;
@@ -84,24 +78,14 @@ public class Environment extends Agent {
     int _size = ((List<Object>)Conversions.doWrapArray(occurrence.parameters)).size();
     if ((_size > 1)) {
       Object _get = occurrence.parameters[0];
-      if ((_get instanceof Integer)) {
+      if ((_get instanceof double[][])) {
         Object _get_1 = occurrence.parameters[0];
-        this.height = ((((Integer) _get_1)) == null ? 0 : (((Integer) _get_1)).intValue());
+        this.distMatrix = ((double[][]) _get_1);
       }
       Object _get_2 = occurrence.parameters[1];
       if ((_get_2 instanceof Integer)) {
         Object _get_3 = occurrence.parameters[1];
-        this.width = ((((Integer) _get_3)) == null ? 0 : (((Integer) _get_3)).intValue());
-      }
-      Object _get_4 = occurrence.parameters[2];
-      if ((_get_4 instanceof double[][])) {
-        Object _get_5 = occurrence.parameters[2];
-        this.distMatrix = ((double[][]) _get_5);
-      }
-      Object _get_6 = occurrence.parameters[3];
-      if ((_get_6 instanceof Integer)) {
-        Object _get_7 = occurrence.parameters[3];
-        this.numberAnts = ((((Integer) _get_7)) == null ? 0 : (((Integer) _get_7)).intValue());
+        this.numberAnts = ((((Integer) _get_3)) == null ? 0 : (((Integer) _get_3)).intValue());
       }
     }
     if (Settings.isLogActivated) {
@@ -207,7 +191,7 @@ public class Environment extends Agent {
         };
         _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER.emit(new GuiRepaint(tmpList, ((_value_1) == null ? 0 : (_value_1).doubleValue()), this.iteration), _function);
         if ((this.iteration == Settings.iteration)) {
-          this.printDistMatrix(this.pheromons, 25);
+          this.printPheromoneMatrix(this.pheromons, 25);
           Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
           _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1.info("KILL AGENTS");
           Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
@@ -250,8 +234,9 @@ public class Environment extends Agent {
   }
   
   /**
-   * Calculate a tour using the nearest neighbor algo
-   * @param
+   * Calculate a tour using the nearest neighbor algorithm
+   * @param distMatrix : double[][], the matrix distance
+   * @return double : the length of the path
    */
   protected double nearestNeighbour(final double[][] distMatrix) {
     double tourLength = 0.0;
@@ -293,7 +278,12 @@ public class Environment extends Agent {
     return tourLength;
   }
   
-  protected void printDistMatrix(final double[][] distMatrix, final int maxSize) {
+  /**
+   * Prints the pheromone matrix as double
+   * @param distMatrix : double [][], the distance matrix to print
+   * @param maxSize : int, the maximum size of value to print. If maxSize = 5, it will only print the 5x5 matrix (the top left corner)
+   */
+  protected void printPheromoneMatrix(final double[][] distMatrix, final int maxSize) {
     int maxSize2 = maxSize;
     int _size = ((List<double[]>)Conversions.doWrapArray(distMatrix)).size();
     if ((maxSize > _size)) {
@@ -431,10 +421,6 @@ public class Environment extends Agent {
     if (getClass() != obj.getClass())
       return false;
     Environment other = (Environment) obj;
-    if (other.width != this.width)
-      return false;
-    if (other.height != this.height)
-      return false;
     if (other.numberAnts != this.numberAnts)
       return false;
     if (Double.doubleToLongBits(other.nnTourLength) != Double.doubleToLongBits(this.nnTourLength))
@@ -450,8 +436,6 @@ public class Environment extends Agent {
   public int hashCode() {
     int result = super.hashCode();
     final int prime = 31;
-    result = prime * result + Integer.hashCode(this.width);
-    result = prime * result + Integer.hashCode(this.height);
     result = prime * result + Integer.hashCode(this.numberAnts);
     result = prime * result + Double.hashCode(this.nnTourLength);
     result = prime * result + Integer.hashCode(this.iteration);
@@ -474,24 +458,6 @@ public class Environment extends Agent {
   @Inject
   public Environment(final UUID parentID, final UUID agentID, final DynamicSkillProvider skillProvider) {
     super(parentID, agentID, skillProvider);
-  }
-  
-  @Pure
-  protected int getWidth() {
-    return this.width;
-  }
-  
-  protected void setWidth(final int width) {
-    this.width = width;
-  }
-  
-  @Pure
-  protected int getHeight() {
-    return this.height;
-  }
-  
-  protected void setHeight(final int height) {
-    this.height = height;
   }
   
   @Pure

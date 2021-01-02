@@ -17,6 +17,7 @@ import java.awt.Shape
 import java.awt.Graphics2D
 import io.sarl.demos.ants.Settings
 import java.awt.Font
+import java.util.List
 
 /** 
  * Graphical user interface for ants.
@@ -145,7 +146,7 @@ package class EnvironmentGuiPanel extends Panel {
 			myCanvas.setColor(Color::BLACK)
 			myCanvas.drawRect(0, 0, Settings::EnvtWidth * 2 - 1, Settings::EnvtHeight * 2 - 1)
 			
-			var maxCoord : int = getMaxCoord(posList)
+			var maxCoord : List<Integer> = getMaxCoord(posList)
 			
 			//Draw the tour between towns and print the tour length
 			if (this.tour !== null) 
@@ -153,6 +154,7 @@ package class EnvironmentGuiPanel extends Panel {
 				var linePixelList : ArrayList<int[]> = getRectPixel(this.posList, this.tour, maxCoord)
 				for (line : linePixelList) 
 					myCanvas.drawLine(line.get(0), line.get(1), line.get(2), line.get(3))
+					
 				myCanvas.drawString("Tour length : " + tourLength as int, Settings.EnvtWidth - 300, Settings.EnvtHeight - 60)
 				myCanvas.drawString("Number of remaining iterations (over " + Settings.iteration + ") : " 
 					+ (Settings.iteration - iteration), 
@@ -186,13 +188,12 @@ package class EnvironmentGuiPanel extends Panel {
 	 * @param pos : double[], the list containing the town positions
 	 * @param maxCoord : int, the maximum coordinate to do the resizing
 	 */
-	def paintTown(g : Graphics2D, pos : double[], maxCoord : int) 
+	def paintTown(g : Graphics2D, pos : double[], maxCoord : List<Integer>)
 	{
 		var coord : double[] = newDoubleArrayOfSize(2)
 		coord.set(0, pos.get(1))
 		coord.set(1, pos.get(2))
 		var pixel : int[] = pixelResizing(coord, maxCoord)
-
 		var circle : Shape = new Ellipse2D.Double(pixel.get(0) - 8, pixel.get(1) - 8, 16, 16);
 
 		g.color = Color.RED
@@ -203,19 +204,36 @@ package class EnvironmentGuiPanel extends Panel {
 	/**
 	 * Return the maximum coordinate you can find in the position list
 	 * @param posList : ArrayList<double[]> the list of position of every town
-	 * @return int : the maximum coordinate
+	 * @return List<Integer> : - the min X coordinate
+	 * 						   - the min Y coordinate
+	 * 						   - the max(maxX - minX, maxY - minY)
 	 */
-	private def getMaxCoord(posList : ArrayList<double[]>) : int
+	private def getMaxCoord(posList : ArrayList<double[]>) : List<Integer>
 	{
-		var max : double = 0
+		var result : List<Integer> = new ArrayList<Integer>
+		var maxX : double = 0
+		var minX : double = 1000000000
+		var maxY : double = 0
+		var minY : double = 1000000000
+		
 		for(pos : posList)
 		{
-			if(pos.get(1) > max)
-				max = pos.get(1)
-			if(pos.get(2) > max)
-				max = pos.get(2)
+			if(pos.get(1) > maxX)
+				maxX = pos.get(1)
+			if(pos.get(2) > maxY)
+				maxY = pos.get(2)
+			if(pos.get(1) < minX)
+				minX = pos.get(1)
+			if(pos.get(2) < minY)
+				minY = pos.get(2)
 		}
-		return max as int
+		result.add(minX as int)
+		result.add(minY as int)
+		if(maxX - minX > maxY - minY)
+			result.add((maxX - minX) as int)
+		else
+			result.add((maxY - minY) as int)
+		return result
 	}
 	
 	/**
@@ -224,11 +242,11 @@ package class EnvironmentGuiPanel extends Panel {
 	 * @param maxCoord : int, the biggest coordinate in the list
 	 * @return int[2], the pixels to print 
 	 */
-	private def pixelResizing(coord : double[], maxCoord : int) : int[]
+	private def pixelResizing(coord : double[], maxCoord : List<Integer>) : int[]
 	{
 		var result : int[] = newIntArrayOfSize(2)
-		result.set(0, (coord.get(0) * (Settings.EnvtWidth - 100) / maxCoord + 25) as int)
-		result.set(1, (coord.get(1) * (Settings.EnvtHeight - 100) / maxCoord + 25) as int)
+		result.set(0, ((coord.get(0) - maxCoord.get(0)) * (Settings.EnvtWidth -150) / maxCoord.get(2) + 25) as int)
+		result.set(1, ((coord.get(1) - maxCoord.get(1)) * (Settings.EnvtHeight -150) / maxCoord.get(2) + 25) as int)
 		return result
 	}
 	
@@ -238,6 +256,7 @@ package class EnvironmentGuiPanel extends Panel {
 	 * @param id : int, the ID of the town to find
 	 * @return double[2], the town coordinates
 	 */
+	@SuppressWarnings("discouraged_reference")
 	private def getCoordFromTownId(posList : ArrayList<double[]>, id : int) : double[]
 	{
 		var result : double[] = newDoubleArrayOfSize(2)
@@ -264,7 +283,7 @@ package class EnvironmentGuiPanel extends Panel {
 	 * @param maxCoord : int, the max coordinate to do the resizing
 	 * @return ArrayList<int[]> : the pixel list of each corner of the rectangle to drawa
 	 */
-	 private def getRectPixel(posList : ArrayList<double[]>, travelOrder : ArrayList<Integer>, maxCoord : int) : ArrayList<int[]>
+	 private def getRectPixel(posList : ArrayList<double[]>, travelOrder : ArrayList<Integer>, maxCoord : List<Integer>) : ArrayList<int[]>
 	 {
 	 	var rectPixelList : ArrayList<int[]> = new ArrayList<int[]>()
 	 	var size : int = travelOrder.size
@@ -283,19 +302,6 @@ package class EnvironmentGuiPanel extends Panel {
 			intArray.set(3, pixel2.get(1))
 			rectPixelList.add(intArray)
 	 	}
-	 	
-	 	//Add the last line from the first to the last town in the list
-		var intArray : int[] = newIntArrayOfSize(4)
-		var coord1 : double[] = getCoordFromTownId(posList, travelOrder.get(size - 1))
-		var coord2 : double[] = getCoordFromTownId(posList, travelOrder.get(0))
-
-		var pixel1 : int[] = pixelResizing(coord1, maxCoord)
-		var pixel2 : int[] = pixelResizing(coord2, maxCoord)
-		intArray.set(0, pixel1.get(0))
-		intArray.set(1, pixel1.get(1))
-		intArray.set(2, pixel2.get(0))
-		intArray.set(3, pixel2.get(1))
-		rectPixelList.add(intArray)
 		
 	 	return rectPixelList
 	 }

@@ -7,7 +7,6 @@ import io.sarl.core.OpenEventSpace;
 import io.sarl.demos.ants.Ant;
 import io.sarl.demos.ants.Environment;
 import io.sarl.demos.ants.GuiRepaint;
-import io.sarl.demos.ants.Settings;
 import io.sarl.demos.ants.StartEnvironment;
 import io.sarl.demos.ants.gui.EnvironmentGui;
 import io.sarl.lang.annotation.SarlElementType;
@@ -30,9 +29,9 @@ import org.eclipse.xtext.xbase.lib.Pure;
 /**
  * The simulation launching the SARL environment with the corresponding agent and ensuring the communication between agents and the GUI
  */
+@SuppressWarnings("discouraged_reference")
 @SarlSpecification("0.11")
 @SarlElementType(10)
-@SuppressWarnings("all")
 public class Simulation implements EventListener {
   public static final UUID id = UUID.randomUUID();
   
@@ -66,16 +65,10 @@ public class Simulation implements EventListener {
    */
   private UUID environment;
   
-  private int width = Settings.EnvtWidth;
-  
-  private int height = Settings.EnvtHeight;
-  
-  private int antsCount;
-  
   /**
-   * Boolean specifying id the simulation is started or not.
+   * THe number of ants
    */
-  private boolean isSimulationStarted = false;
+  private int antsCount;
   
   /**
    * the vent space used to establish communication between GUI and agents,
@@ -102,25 +95,35 @@ public class Simulation implements EventListener {
     this.fileName = fileName;
   }
   
+  /**
+   * Starts everything
+   */
   public void start() {
     this.posList = this.parsor(this.getPath(this.fileName));
     this.antsCount = ((Object[])Conversions.unwrapArray(this.posList, Object.class)).length;
     this.distMatrix = this.getDistMatrix(this.posList);
     this.launchAllAgents();
-    this.isSimulationStarted = true;
   }
   
+  /**
+   * Stop the simulation by killing all agents
+   */
   public void stop() {
     this.killAllAgents();
-    this.isSimulationStarted = false;
   }
   
+  private void killAllAgents() {
+  }
+  
+  /**
+   * Launch agents
+   */
   private void launchAllAgents() {
     try {
       this.kernel = SRE.getBootstrap();
       this.defaultSARLContext = this.kernel.startWithoutAgent();
       this.environment = UUID.randomUUID();
-      this.kernel.startAgentWithID(Environment.class, this.environment, Integer.valueOf(this.height), Integer.valueOf(this.width), this.distMatrix, Integer.valueOf(this.antsCount));
+      this.kernel.startAgentWithID(Environment.class, this.environment, this.distMatrix, Integer.valueOf(this.antsCount));
       this.launchAllAnts();
       EventSpace _defaultSpace = this.defaultSARLContext.getDefaultSpace();
       this.space = ((OpenEventSpace) _defaultSpace);
@@ -134,6 +137,9 @@ public class Simulation implements EventListener {
     }
   }
   
+  /**
+   * Launch all ants
+   */
   private void launchAllAnts() {
     int antNum = 0;
     for (int i = 0; (i < this.antsCount); i++) {
@@ -144,6 +150,9 @@ public class Simulation implements EventListener {
     }
   }
   
+  /**
+   * Launch one ant
+   */
   @SuppressWarnings({ "constant_condition", "discouraged_reference" })
   private void launchAnt(final String antName) {
     try {
@@ -152,9 +161,6 @@ public class Simulation implements EventListener {
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);
     }
-  }
-  
-  private void killAllAgents() {
   }
   
   @Override
@@ -194,7 +200,8 @@ public class Simulation implements EventListener {
    * @param path : String, the file path to parse
    * @return ArrayList<double[]> : the coordonates of each town
    */
-  public ArrayList<double[]> parsor(final String path) {
+  @SuppressWarnings("potential_inefficient_value_conversion")
+  private ArrayList<double[]> parsor(final String path) {
     try {
       File file = new File(path);
       Scanner sc = new Scanner(file);
@@ -332,13 +339,7 @@ public class Simulation implements EventListener {
       return false;
     if (!java.util.Objects.equals(this.environment, other.environment))
       return false;
-    if (other.width != this.width)
-      return false;
-    if (other.height != this.height)
-      return false;
     if (other.antsCount != this.antsCount)
-      return false;
-    if (other.isSimulationStarted != this.isSimulationStarted)
       return false;
     return super.equals(obj);
   }
@@ -351,10 +352,7 @@ public class Simulation implements EventListener {
     final int prime = 31;
     result = prime * result + java.util.Objects.hashCode(this.fileName);
     result = prime * result + java.util.Objects.hashCode(this.environment);
-    result = prime * result + Integer.hashCode(this.width);
-    result = prime * result + Integer.hashCode(this.height);
     result = prime * result + Integer.hashCode(this.antsCount);
-    result = prime * result + Boolean.hashCode(this.isSimulationStarted);
     return result;
   }
 }

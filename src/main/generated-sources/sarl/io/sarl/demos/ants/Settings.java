@@ -33,17 +33,17 @@ public interface Settings {
   /**
    * The number of iteration the ants should do
    */
-  public static final int iteration = 5000;
+  public static final int iteration = 10;
   
   /**
    * The limit number of iteration without changes
    * If there was more than nbIterationToConverge iterations without changes, we stop the program and kill all agents
    */
-  public static final int nbIterationToConverge = 100;
+  public static final int nbIterationToConverge = 8;
   
   public static final int alpha = 1;
   
-  public static final int beta = 2;
+  public static final int beta = 3;
   
   /**
    * Pheromone evaporation rate

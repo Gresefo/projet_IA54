@@ -23,7 +23,7 @@ agent Ant {
 	var distance : double[][]
 
 	on Initialize {
-		// 3 Boids init parameters : UUID envt, String boidName, double[][] distanceMatrix
+		// 3 Boids init parameters : UUID envt, String Name, double[][] distanceMatrix
 		if (occurrence.parameters.size > 2) {
 			if (occurrence.parameters.get(0) instanceof UUID) {
 				environment = occurrence.parameters.get(0) as UUID

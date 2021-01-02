@@ -20,12 +20,6 @@ agent Environment {
 
 	uses Logging, DefaultContextInteractions, Schedules, Lifecycle
 
-	@Accessors
-	var width : int
-
-	@Accessors
-	var height : int
-
 	// @Accessors
 	// var ants : ConcurrentHashMap<UUID, PerceivedAntBody>
 
@@ -60,18 +54,11 @@ agent Environment {
 		loggingName = "Environment"
 		// Environment init parameters : An Integer the grid's height, An integer the grid's width
 		if (occurrence.parameters.size > 1) {
-			if (occurrence.parameters.get(0) instanceof Integer) {
-				height = occurrence.parameters.get(0) as Integer
+			if (occurrence.parameters.get(0) instanceof double[][]) {
+				distMatrix = occurrence.parameters.get(0) as double[][]
 			}
-
 			if (occurrence.parameters.get(1) instanceof Integer) {
-				width = occurrence.parameters.get(1) as Integer
-			}
-			if (occurrence.parameters.get(2) instanceof double[][]) {
-				distMatrix = occurrence.parameters.get(2) as double[][]
-			}
-			if (occurrence.parameters.get(3) instanceof Integer) {
-				numberAnts = occurrence.parameters.get(3) as Integer
+				numberAnts = occurrence.parameters.get(1) as Integer
 			}
 		}
 		if (Settings::isLogActivated) {
@@ -152,7 +139,7 @@ agent Environment {
 				
 				// If last iteration, kill all
 				if (this.iteration == Settings::iteration) {
-					printDistMatrix(this.pheromons, 25)
+					printPheromoneMatrix(this.pheromons, 25)
 					
 					info("KILL AGENTS")
 					info("Tour : " + this.tourArray.get(indexBestTour).getKey)
@@ -188,9 +175,9 @@ agent Environment {
 	}
 
 	/**
-	 * Calculate a tour using the nearest neighbor algo
-	 * @param
-	 * 
+	 * Calculate a tour using the nearest neighbor algorithm
+	 * @param distMatrix : double[][], the matrix distance
+	 * @return double : the length of the path
 	 */
 	def nearestNeighbour(distMatrix : double[][]) : double {
 		var tourLength = 0.0
@@ -230,7 +217,12 @@ agent Environment {
 		return tourLength
 	}
 
-	def printDistMatrix(distMatrix : double[][], maxSize : int) : void {
+	/** 
+	 * Prints the pheromone matrix as double
+	 * @param distMatrix : double [][], the distance matrix to print
+	 * @param maxSize : int, the maximum size of value to print. If maxSize = 5, it will only print the 5x5 matrix (the top left corner)
+	 */
+	def printPheromoneMatrix(distMatrix : double[][], maxSize : int) : void {
 		var maxSize2 : int = maxSize
 		if (maxSize > distMatrix.size)
 			maxSize2 = distMatrix.size

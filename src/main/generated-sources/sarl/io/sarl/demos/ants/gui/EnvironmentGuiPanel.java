@@ -13,6 +13,7 @@ import java.awt.Panel;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.xtext.xbase.lib.Pure;
 
 /**
@@ -83,7 +84,7 @@ class EnvironmentGuiPanel extends Panel {
       this.myCanvas.fillRect(0, 0, ((Settings.EnvtWidth * 2) - 1), ((Settings.EnvtHeight * 2) - 1));
       this.myCanvas.setColor(Color.BLACK);
       this.myCanvas.drawRect(0, 0, ((Settings.EnvtWidth * 2) - 1), ((Settings.EnvtHeight * 2) - 1));
-      int maxCoord = this.getMaxCoord(this.posList);
+      List<Integer> maxCoord = this.getMaxCoord(this.posList);
       if ((this.tour != null)) {
         ArrayList<int[]> linePixelList = this.getRectPixel(this.posList, this.tour, maxCoord);
         for (final int[] line : linePixelList) {
@@ -122,7 +123,7 @@ class EnvironmentGuiPanel extends Panel {
    * @param pos : double[], the list containing the town positions
    * @param maxCoord : int, the maximum coordinate to do the resizing
    */
-  public void paintTown(final Graphics2D g, final double[] pos, final int maxCoord) {
+  public void paintTown(final Graphics2D g, final double[] pos, final List<Integer> maxCoord) {
     double[] coord = new double[2];
     coord[0] = pos[1];
     coord[1] = pos[2];
@@ -138,24 +139,45 @@ class EnvironmentGuiPanel extends Panel {
   /**
    * Return the maximum coordinate you can find in the position list
    * @param posList : ArrayList<double[]> the list of position of every town
-   * @return int : the maximum coordinate
+   * @return List<Integer> : - the min X coordinate
+   * 						   - the min Y coordinate
+   * 						   - the max(maxX - minX, maxY - minY)
    */
   @Pure
-  private int getMaxCoord(final ArrayList<double[]> posList) {
-    double max = 0;
+  private List<Integer> getMaxCoord(final ArrayList<double[]> posList) {
+    List<Integer> result = new ArrayList<Integer>();
+    double maxX = 0;
+    double minX = 1000000000;
+    double maxY = 0;
+    double minY = 1000000000;
     for (final double[] pos : posList) {
       {
         double _get = pos[1];
-        if ((_get > max)) {
-          max = pos[1];
+        if ((_get > maxX)) {
+          maxX = pos[1];
         }
         double _get_1 = pos[2];
-        if ((_get_1 > max)) {
-          max = pos[2];
+        if ((_get_1 > maxY)) {
+          maxY = pos[2];
+        }
+        double _get_2 = pos[1];
+        if ((_get_2 < minX)) {
+          minX = pos[1];
+        }
+        double _get_3 = pos[2];
+        if ((_get_3 < minY)) {
+          minY = pos[2];
         }
       }
     }
-    return ((int) max);
+    result.add(Integer.valueOf(((int) minX)));
+    result.add(Integer.valueOf(((int) minY)));
+    if (((maxX - minX) > (maxY - minY))) {
+      result.add(Integer.valueOf(((int) (maxX - minX))));
+    } else {
+      result.add(Integer.valueOf(((int) (maxY - minY))));
+    }
+    return result;
   }
   
   /**
@@ -164,12 +186,16 @@ class EnvironmentGuiPanel extends Panel {
    * @param maxCoord : int, the biggest coordinate in the list
    * @return int[2], the pixels to print
    */
-  private int[] pixelResizing(final double[] coord, final int maxCoord) {
+  private int[] pixelResizing(final double[] coord, final List<Integer> maxCoord) {
     int[] result = new int[2];
     double _get = coord[0];
-    result[0] = ((int) (((_get * (Settings.EnvtWidth - 100)) / maxCoord) + 25));
-    double _get_1 = coord[1];
-    result[1] = ((int) (((_get_1 * (Settings.EnvtHeight - 100)) / maxCoord) + 25));
+    Integer _get_1 = maxCoord.get(0);
+    Integer _get_2 = maxCoord.get(2);
+    result[0] = ((int) ((((_get - ((_get_1) == null ? 0 : (_get_1).intValue())) * (Settings.EnvtWidth - 150)) / ((_get_2) == null ? 0 : (_get_2).intValue())) + 25));
+    double _get_3 = coord[1];
+    Integer _get_4 = maxCoord.get(1);
+    Integer _get_5 = maxCoord.get(2);
+    result[1] = ((int) ((((_get_3 - ((_get_4) == null ? 0 : (_get_4).intValue())) * (Settings.EnvtHeight - 150)) / ((_get_5) == null ? 0 : (_get_5).intValue())) + 25));
     return result;
   }
   
@@ -179,6 +205,7 @@ class EnvironmentGuiPanel extends Panel {
    * @param id : int, the ID of the town to find
    * @return double[2], the town coordinates
    */
+  @SuppressWarnings("discouraged_reference")
   @Pure
   private double[] getCoordFromTownId(final ArrayList<double[]> posList, final int id) {
     double[] result = new double[2];
@@ -204,7 +231,7 @@ class EnvironmentGuiPanel extends Panel {
    * @return ArrayList<int[]> : the pixel list of each corner of the rectangle to drawa
    */
   @Pure
-  private ArrayList<int[]> getRectPixel(final ArrayList<double[]> posList, final ArrayList<Integer> travelOrder, final int maxCoord) {
+  private ArrayList<int[]> getRectPixel(final ArrayList<double[]> posList, final ArrayList<Integer> travelOrder, final List<Integer> maxCoord) {
     ArrayList<int[]> rectPixelList = new ArrayList<int[]>();
     int size = travelOrder.size();
     for (int i = 0; (i < (size - 1)); i++) {
@@ -221,16 +248,6 @@ class EnvironmentGuiPanel extends Panel {
         rectPixelList.add(intArray);
       }
     }
-    int[] intArray = new int[4];
-    double[] coord1 = this.getCoordFromTownId(posList, ((travelOrder.get((size - 1))) == null ? 0 : (travelOrder.get((size - 1))).intValue()));
-    double[] coord2 = this.getCoordFromTownId(posList, ((travelOrder.get(0)) == null ? 0 : (travelOrder.get(0)).intValue()));
-    int[] pixel1 = this.pixelResizing(coord1, maxCoord);
-    int[] pixel2 = this.pixelResizing(coord2, maxCoord);
-    intArray[0] = pixel1[0];
-    intArray[1] = pixel1[1];
-    intArray[2] = pixel2[0];
-    intArray[3] = pixel2[1];
-    rectPixelList.add(intArray);
     return rectPixelList;
   }
   
@@ -264,5 +281,5 @@ class EnvironmentGuiPanel extends Panel {
   }
   
   @SyntheticMember
-  private static final long serialVersionUID = -13840437333L;
+  private static final long serialVersionUID = -14133619198L;
 }

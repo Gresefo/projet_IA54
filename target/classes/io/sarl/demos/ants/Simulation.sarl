@@ -17,6 +17,7 @@ import java.util.Scanner
 /** 
  * The simulation launching the SARL environment with the corresponding agent and ensuring the communication between agents and the GUI
  */
+@SuppressWarnings("discouraged_reference")
 class Simulation implements EventListener {
 
 	public static val id = UUID::randomUUID
@@ -51,16 +52,10 @@ class Simulation implements EventListener {
 	 */
 	var environment : UUID
 
-	var width = Settings::EnvtWidth
-
-	var height = Settings::EnvtHeight
-
-	var antsCount : int
-
-	/** 
-	 * Boolean specifying id the simulation is started or not.
+	/**
+	 * THe number of ants
 	 */
-	var isSimulationStarted = false
+	var antsCount : int
 
 	/**
 	 * the vent space used to establish communication between GUI and agents,
@@ -88,24 +83,32 @@ class Simulation implements EventListener {
 		this.fileName = fileName
 	}
 
+	/**
+	 * Starts everything
+	 */
 	def start : void 
 	{
 		this.posList = parsor(getPath(fileName))
 		this.antsCount = this.posList.length
-		 
-//		printCoord(this.posList)
 		this.distMatrix = getDistMatrix(this.posList)
-//		printDistMatrix(this.distMatrix, 20)
 
 		launchAllAgents
-		isSimulationStarted = true
 	}
 
+	/**
+	 * Stop the simulation by killing all agents
+	 */
 	def stop : void {
 		killAllAgents
-		isSimulationStarted = false
 	}
 
+	private def killAllAgents : void {
+		// do something if you want to
+	}
+
+	/**
+	 * Launch agents
+	 */
 	private def launchAllAgents : void {
 
 		kernel = SRE::getBootstrap
@@ -113,7 +116,7 @@ class Simulation implements EventListener {
 		defaultSARLContext = kernel.startWithoutAgent
 
 		environment = UUID::randomUUID
-		kernel.startAgentWithID(typeof(Environment), environment, height, width, distMatrix, antsCount)
+		kernel.startAgentWithID(typeof(Environment), environment, distMatrix, antsCount)
 
 		//
 		launchAllAnts
@@ -128,6 +131,9 @@ class Simulation implements EventListener {
 		^space.emit(id, new StartEnvironment)
 	}
 
+	/**
+	 * Launch all ants
+	 */
 	private def launchAllAnts : void {
 		var antNum = 0
 		for (var i = 0; i < antsCount; i++) {
@@ -136,20 +142,14 @@ class Simulation implements EventListener {
 		}
 	}
 
+	/**
+	 * Launch one ant
+	 */
 	@SuppressWarnings("constant_condition", "discouraged_reference")
 	private def launchAnt(antName : String) : void {
 
 		var id_a = UUID::randomUUID
 		kernel.startAgentWithID(typeof(Ant), id_a, environment, antName, distMatrix)
-
-		/*if (Settings::isLogActivated) {
-			System.out.println("Lancement d'un boid à la position " + initialPosition + " et avec une vitesse de " +
-				initialVitesse)
-		}*/
-	}
-
-	private def killAllAgents : void {
-		// do something if you want to
 	}
 
 	override getID : UUID {
@@ -173,7 +173,7 @@ class Simulation implements EventListener {
 	 * @param file : String, the file to get
 	 * @return String : the complete path to get this file
 	 */
-	 public def getPath(file : String) : String
+	 def getPath(file : String) : String
 	 {
 		var fileSep : String = System.getProperty("file.separator")
 		var path : String = System.getProperty("user.dir") + fileSep + "TSP" + fileSep + file
@@ -185,7 +185,8 @@ class Simulation implements EventListener {
 	 * @param path : String, the file path to parse
 	 * @return ArrayList<double[]> : the coordonates of each town
 	 */
-	public def parsor(path : String) : ArrayList<double[]>
+	@SuppressWarnings("potential_inefficient_value_conversion")
+	private def parsor(path : String) : ArrayList<double[]>
 	{
 		var file : File = new File(path)
 		var sc : Scanner = new Scanner(file)
@@ -217,7 +218,7 @@ class Simulation implements EventListener {
 	 * Prints the coordinates of each town
 	 * @param coord : ArrayList<Double[]> the list of coordinates
 	 */
-	public def printCoord(coord : ArrayList<double[]>) : void
+	def printCoord(coord : ArrayList<double[]>) : void
 	{
 		for(f : coord)
 		{	
@@ -230,7 +231,7 @@ class Simulation implements EventListener {
 	 * @param coord : ArrayList<double[]>, the list of coordinates
 	 * @return double[][], the distance matrix
 	 */
-	 public def getDistMatrix(coordList : ArrayList<double[]>) : double[][]
+	 def getDistMatrix(coordList : ArrayList<double[]>) : double[][]
 	 {
 	 	var size : int = coordList.size
 	 	var distMatrix : double[][] = newDoubleArrayOfSize(size, size)
@@ -254,7 +255,7 @@ class Simulation implements EventListener {
 	  * @param distMatrix : the distance matrix to print
 	  * @param maxSize : the maximum size of value to print. If maxSize = 5, it will only print the 5x5 matrix (the top left corner)
 	  */
-	 public def printDistMatrix(distMatrix : double[][], maxSize : int) : void
+	 def printDistMatrix(distMatrix : double[][], maxSize : int) : void
 	 {
 	 	var maxSize2 : int = maxSize
 	 	if(maxSize > distMatrix.size)
