@@ -203,26 +203,60 @@ public class Environment extends Agent {
           }
         };
         _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER.emit(new GuiRepaint(tmpList, ((_value_1) == null ? 0 : (_value_1).doubleValue()), this.iteration), _function);
-        if (((this.tourArray.get(indexBestTour).getValue() != null && (this.tourArray.get(indexBestTour).getValue().doubleValue() == (-1))) || (this.tourArray.get(indexBestTour).getValue().doubleValue() < 
+        if (((this.saveBestTour.getValue() != null && (this.saveBestTour.getValue().doubleValue() == (-1))) || (this.tourArray.get(indexBestTour).getValue().doubleValue() < 
           this.saveBestTour.getValue().doubleValue()))) {
+          Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
+          _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1.info("yaaaaa");
+          ArrayList<Integer> _key = this.tourArray.get(indexBestTour).getKey();
           Double _value_2 = this.tourArray.get(indexBestTour).getValue();
-          Double _value_3 = this.tourArray.get(indexBestTour).getValue();
-          Pair _pair_1 = new Pair(_value_2, _value_3);
+          Pair<ArrayList<Integer>, Double> _pair_1 = new Pair<ArrayList<Integer>, Double>(_key, _value_2);
           this.saveBestTour = _pair_1;
         }
         if ((this.iteration == Settings.iteration)) {
           this.printPheromoneMatrix(this.pheromones, 25);
-          Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
-          _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1.info("KILL AGENTS");
           Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
-          ArrayList<Integer> _key = this.tourArray.get(indexBestTour).getKey();
-          _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2.info(("Tour : " + _key));
+          _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2.info("KILL AGENTS");
+          Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_3 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
+          ArrayList<Integer> _key_1 = this.tourArray.get(indexBestTour).getKey();
+          _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_3.info(("Tour : " + _key_1));
+          tmpList.clear();
+          for (int i = 0; (i < this.saveBestTour.getKey().size()); i++) {
+            Integer _get = this.saveBestTour.getKey().get(i);
+            tmpList.add(Integer.valueOf((((_get) == null ? 0 : (_get).intValue()) + 1)));
+          }
           DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_1 = this.$castSkill(DefaultContextInteractions.class, (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = this.$getSkill(DefaultContextInteractions.class)) : this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS);
-          _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_1.emit(new Die());
+          Double _value_3 = this.saveBestTour.getValue();
+          class $SerializableClosureProxy_1 implements Scope<Address> {
+            
+            private final UUID $_id_1;
+            
+            public $SerializableClosureProxy_1(final UUID $_id_1) {
+              this.$_id_1 = $_id_1;
+            }
+            
+            @Override
+            public boolean matches(final Address it) {
+              UUID _uUID = it.getUUID();
+              return Objects.equal(_uUID, $_id_1);
+            }
+          }
+          final Scope<Address> _function_1 = new Scope<Address>() {
+            @Override
+            public boolean matches(final Address it) {
+              UUID _uUID = it.getUUID();
+              return Objects.equal(_uUID, Simulation.id);
+            }
+            private Object writeReplace() throws ObjectStreamException {
+              return new SerializableProxy($SerializableClosureProxy_1.class, Simulation.id);
+            }
+          };
+          _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_1.emit(new GuiRepaint(tmpList, ((_value_3) == null ? 0 : (_value_3).doubleValue()), this.iteration), _function_1);
+          DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_2 = this.$castSkill(DefaultContextInteractions.class, (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = this.$getSkill(DefaultContextInteractions.class)) : this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS);
+          _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_2.emit(new Die());
         } else {
           int size = this.lastTour.size();
+          int same = 0;
           if ((size >= Settings.nbIterationToConverge)) {
-            int same = 0;
             for (int i = (size - Settings.nbIterationToConverge); (i < size); i++) {
               Double _value_4 = this.tourArray.get(indexBestTour).getValue();
               Double _get = this.lastTour.get(i);
@@ -233,12 +267,18 @@ public class Environment extends Agent {
               }
             }
           }
-          this.lastTour.add(this.tourArray.get(indexBestTour).getValue());
+          if ((same == Settings.nbIterationToConverge)) {
+            Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_4 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
+            _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_4.info(("Stopped at iteration : " + Integer.valueOf(this.iteration)));
+            this.iteration = (Settings.iteration - 1);
+          } else {
+            this.lastTour.add(this.tourArray.get(indexBestTour).getValue());
+            this.tourArray.clear();
+            this.iteration++;
+            DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_3 = this.$castSkill(DefaultContextInteractions.class, (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = this.$getSkill(DefaultContextInteractions.class)) : this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS);
+            _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_3.emit(new StartAnt(this.pheromones));
+          }
         }
-        this.tourArray.clear();
-        this.iteration++;
-        DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_2 = this.$castSkill(DefaultContextInteractions.class, (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = this.$getSkill(DefaultContextInteractions.class)) : this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS);
-        _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_2.emit(new StartAnt(this.pheromones));
       }
     }
   }
