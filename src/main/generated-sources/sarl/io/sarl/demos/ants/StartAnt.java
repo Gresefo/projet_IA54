@@ -10,14 +10,14 @@ import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
 /**
  * Event sent to reset ants
  */
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(15)
 @SuppressWarnings("all")
 public class StartAnt extends Event {
-  public final double[][] pheromons;
+  public final double[][] pheromones;
   
-  public StartAnt(final double[][] pheromons) {
-    this.pheromons = pheromons;
+  public StartAnt(final double[][] pheromones) {
+    this.pheromones = pheromones;
   }
   
   @Override
@@ -42,9 +42,9 @@ public class StartAnt extends Event {
   @Pure
   protected void toString(final ToStringBuilder builder) {
     super.toString(builder);
-    builder.add("pheromons", this.pheromons);
+    builder.add("pheromones", this.pheromones);
   }
   
   @SyntheticMember
-  private static final long serialVersionUID = -1444407402L;
+  private static final long serialVersionUID = 1522123733L;
 }

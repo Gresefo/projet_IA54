@@ -8,7 +8,7 @@ import io.sarl.lang.annotation.SyntheticMember;
 /**
  * The main class launching the simulation
  */
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(10)
 @SuppressWarnings("all")
 public class BoidsSimulationLauncher {

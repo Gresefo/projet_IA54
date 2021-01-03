@@ -11,7 +11,7 @@ import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
 /**
  * Event specifying when the GUI must be refresh according to the newest tour found
  */
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(15)
 @SuppressWarnings("all")
 public class GuiRepaint extends Event {
@@ -51,8 +51,8 @@ public class GuiRepaint extends Event {
   public int hashCode() {
     int result = super.hashCode();
     final int prime = 31;
-    result = prime * result + Double.hashCode(this.length);
-    result = prime * result + Integer.hashCode(this.iteration);
+    result = prime * result + (int) (Double.doubleToLongBits(this.length) ^ (Double.doubleToLongBits(this.length) >>> 32));
+    result = prime * result + this.iteration;
     return result;
   }
   

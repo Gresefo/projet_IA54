@@ -10,20 +10,25 @@ import io.sarl.core.Lifecycle
 import java.util.ArrayList
 
 /** 
- * 
+ * Ant agent, ants will try to find the shortest tour
  */
 @SuppressWarnings("potential_field_synchronization_problem")
 agent Ant {
 
 	uses Logging, DefaultContextInteractions, Schedules, Lifecycle
 
-	// ID of the environmental agent
+	/**
+	 * ID of the environment agent
+	 */
 	var environment : UUID
 
+	/** 
+	 * Matrix of the distance between cities
+	 */
 	var distance : double[][]
 
 	on Initialize {
-		// 3 Boids init parameters : UUID envt, String Name, double[][] distanceMatrix
+		// 3 Ant init parameters : UUID envt, String Name, double[][] distanceMatrix
 		if (occurrence.parameters.size > 2) {
 			if (occurrence.parameters.get(0) instanceof UUID) {
 				environment = occurrence.parameters.get(0) as UUID
@@ -37,27 +42,44 @@ agent Ant {
 
 		}
 		if (Settings::isLogActivated) {
-			// info(this.distance.get(0, 0))
 			"Ants activated".info
 		}
 	}
 
 	on StartAnt {
-		// Matrix of pheromons
-		var pheromons = occurrence.pheromons
+		/** 
+		* Pheromones matrix
+	 	*/
+		var pheromones = occurrence.pheromones
 
+		/** 
+		 * Number of city / size of the pheromones matrix and the distance matrix
+		 */
 		var size = this.distance.length
 
+		/** 
+		 * Length of a tour
+		 */
 		var tourLength = 0.0
 
-		// Memory of visited cities
+		/** 
+		 * Memory of visited cities
+		 */
+		
 		var memory : ArrayList<Integer> = new ArrayList<Integer>
 		var citiesToVisit : ArrayList<Integer> = new ArrayList<Integer>
 		for (var i = 1; i < size; i++) {
 			citiesToVisit.add(i)
 		}
 
+		/** 
+		 * Probability to visit a city
+		 */
 		var prob : ArrayList<Double> = new ArrayList<Double>
+
+		/** 
+		 * Temporary variable to compute the probability of one city to be visited
+		 */
 		var probability : double
 
 		// Every ant start in the first city
@@ -65,23 +87,22 @@ agent Ant {
 		var currentCity = 0
 
 		while (memory.size != size) {
-			// Determinateur de la proba
+			// Compute the sum for each neighbor
 			var sum = 0.0
 			for (i : citiesToVisit) {
-				sum = sum + Math.pow(pheromons.get(currentCity, i), Settings::alpha) *
+				sum = sum + Math.pow(pheromones.get(currentCity, i), Settings::alpha) *
 					Math.pow(1 / this.distance.get(currentCity, i), Settings::beta)
 			}
-			// Calcul de la proba
+			// Compute the probabilty
 			for (i : citiesToVisit) {
-				probability = Math.pow(pheromons.get(currentCity, i), Settings::alpha) *
+				probability = Math.pow(pheromones.get(currentCity, i), Settings::alpha) *
 					Math.pow(1 / this.distance.get(currentCity, i), Settings::beta) / sum
 				prob.add(probability)
 			}
 
 			// Choice of town, depending on its probability
-			// Choix de la proba en fonction de la pondération
 			var cityChosen = Math.random()
-			var cumul = 0.0 // prob.get(0)
+			var cumul = 0.0
 			var i = 0
 			while (cumul < cityChosen) {
 				cumul = cumul + prob.get(i)

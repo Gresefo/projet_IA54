@@ -17,10 +17,11 @@ import io.sarl.lang.annotation.SarlSpecification;
 import io.sarl.lang.annotation.SyntheticMember;
 import io.sarl.lang.core.Address;
 import io.sarl.lang.core.Agent;
-import io.sarl.lang.core.AtomicSkillReference;
 import io.sarl.lang.core.BuiltinCapacitiesProvider;
 import io.sarl.lang.core.DynamicSkillProvider;
 import io.sarl.lang.core.Scope;
+import io.sarl.lang.core.Skill;
+import io.sarl.lang.util.ClearableReference;
 import io.sarl.lang.util.SerializableProxy;
 import java.io.ObjectStreamException;
 import java.util.ArrayList;
@@ -30,14 +31,24 @@ import java.util.UUID;
 import javax.inject.Inject;
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Extension;
+import org.eclipse.xtext.xbase.lib.Inline;
 import org.eclipse.xtext.xbase.lib.Pure;
 
+/**
+ * Ant agent, ants will try to find the shortest tour
+ */
 @SuppressWarnings("potential_field_synchronization_problem")
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(19)
 public class Ant extends Agent {
+  /**
+   * ID of the environment agent
+   */
   private UUID environment;
   
+  /**
+   * Matrix of the distance between cities
+   */
   private double[][] distance;
   
   private void $behaviorUnit$Initialize$0(final Initialize occurrence) {
@@ -50,7 +61,7 @@ public class Ant extends Agent {
       }
       Object _get_2 = occurrence.parameters[1];
       if ((_get_2 instanceof String)) {
-        Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
+        Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
         Object _get_3 = occurrence.parameters[1];
         _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER.setLoggingName((_get_3 == null ? null : _get_3.toString()));
       }
@@ -61,13 +72,13 @@ public class Ant extends Agent {
       }
     }
     if (Settings.isLogActivated) {
-      Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
+      Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
       _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1.info("Ants activated");
     }
   }
   
   private void $behaviorUnit$StartAnt$1(final StartAnt occurrence) {
-    double[][] pheromons = occurrence.pheromons;
+    double[][] pheromones = occurrence.pheromones;
     int size = this.distance.length;
     double tourLength = 0.0;
     ArrayList<Integer> memory = new ArrayList<Integer>();
@@ -83,14 +94,14 @@ public class Ant extends Agent {
       {
         double sum = 0.0;
         for (final Integer i : citiesToVisit) {
-          double _pow = Math.pow(pheromons[currentCity][((i) == null ? 0 : (i).intValue())], Settings.alpha);
+          double _pow = Math.pow(pheromones[currentCity][((i) == null ? 0 : (i).intValue())], Settings.alpha);
           double _get = this.distance[currentCity][((i) == null ? 0 : (i).intValue())];
           double _pow_1 = Math.pow((1 / _get), Settings.beta);
           sum = (sum + (_pow * _pow_1));
         }
         for (final Integer i_1 : citiesToVisit) {
           {
-            double _pow_2 = Math.pow(pheromons[currentCity][((i_1) == null ? 0 : (i_1).intValue())], Settings.alpha);
+            double _pow_2 = Math.pow(pheromones[currentCity][((i_1) == null ? 0 : (i_1).intValue())], Settings.alpha);
             double _get_1 = this.distance[currentCity][((i_1) == null ? 0 : (i_1).intValue())];
             double _pow_3 = Math.pow((1 / _get_1), Settings.beta);
             probability = ((_pow_2 * _pow_3) / sum);
@@ -118,7 +129,7 @@ public class Ant extends Agent {
     double _get = this.distance[currentCity][0];
     tourLength = (tourLength + _get);
     memory.add(Integer.valueOf(0));
-    DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER = this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER();
+    DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER = this.$castSkill(DefaultContextInteractions.class, (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = this.$getSkill(DefaultContextInteractions.class)) : this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS);
     class $SerializableClosureProxy implements Scope<Address> {
       
       private final UUID $_environment;
@@ -147,17 +158,18 @@ public class Ant extends Agent {
   }
   
   private void $behaviorUnit$Die$2(final Die occurrence) {
-    Lifecycle _$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER = this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER();
+    Lifecycle _$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER = this.$castSkill(Lifecycle.class, (this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE == null || this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE = this.$getSkill(Lifecycle.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE);
     _$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER.killMe();
   }
   
   @Extension
   @ImportedCapacityFeature(Logging.class)
   @SyntheticMember
-  private transient AtomicSkillReference $CAPACITY_USE$IO_SARL_CORE_LOGGING;
+  private transient ClearableReference<Skill> $CAPACITY_USE$IO_SARL_CORE_LOGGING;
   
   @SyntheticMember
   @Pure
+  @Inline(value = "$castSkill(Logging.class, ($0$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || $0$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? ($0$CAPACITY_USE$IO_SARL_CORE_LOGGING = $0$getSkill(Logging.class)) : $0$CAPACITY_USE$IO_SARL_CORE_LOGGING)", imported = Logging.class)
   private Logging $CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER() {
     if (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) {
       this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = $getSkill(Logging.class);
@@ -168,10 +180,11 @@ public class Ant extends Agent {
   @Extension
   @ImportedCapacityFeature(DefaultContextInteractions.class)
   @SyntheticMember
-  private transient AtomicSkillReference $CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS;
+  private transient ClearableReference<Skill> $CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS;
   
   @SyntheticMember
   @Pure
+  @Inline(value = "$castSkill(DefaultContextInteractions.class, ($0$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || $0$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? ($0$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = $0$getSkill(DefaultContextInteractions.class)) : $0$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS)", imported = DefaultContextInteractions.class)
   private DefaultContextInteractions $CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER() {
     if (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) {
       this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = $getSkill(DefaultContextInteractions.class);
@@ -182,10 +195,11 @@ public class Ant extends Agent {
   @Extension
   @ImportedCapacityFeature(Schedules.class)
   @SyntheticMember
-  private transient AtomicSkillReference $CAPACITY_USE$IO_SARL_CORE_SCHEDULES;
+  private transient ClearableReference<Skill> $CAPACITY_USE$IO_SARL_CORE_SCHEDULES;
   
   @SyntheticMember
   @Pure
+  @Inline(value = "$castSkill(Schedules.class, ($0$CAPACITY_USE$IO_SARL_CORE_SCHEDULES == null || $0$CAPACITY_USE$IO_SARL_CORE_SCHEDULES.get() == null) ? ($0$CAPACITY_USE$IO_SARL_CORE_SCHEDULES = $0$getSkill(Schedules.class)) : $0$CAPACITY_USE$IO_SARL_CORE_SCHEDULES)", imported = Schedules.class)
   private Schedules $CAPACITY_USE$IO_SARL_CORE_SCHEDULES$CALLER() {
     if (this.$CAPACITY_USE$IO_SARL_CORE_SCHEDULES == null || this.$CAPACITY_USE$IO_SARL_CORE_SCHEDULES.get() == null) {
       this.$CAPACITY_USE$IO_SARL_CORE_SCHEDULES = $getSkill(Schedules.class);
@@ -196,10 +210,11 @@ public class Ant extends Agent {
   @Extension
   @ImportedCapacityFeature(Lifecycle.class)
   @SyntheticMember
-  private transient AtomicSkillReference $CAPACITY_USE$IO_SARL_CORE_LIFECYCLE;
+  private transient ClearableReference<Skill> $CAPACITY_USE$IO_SARL_CORE_LIFECYCLE;
   
   @SyntheticMember
   @Pure
+  @Inline(value = "$castSkill(Lifecycle.class, ($0$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE == null || $0$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE.get() == null) ? ($0$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE = $0$getSkill(Lifecycle.class)) : $0$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE)", imported = Lifecycle.class)
   private Lifecycle $CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER() {
     if (this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE == null || this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE.get() == null) {
       this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE = $getSkill(Lifecycle.class);
@@ -242,8 +257,9 @@ public class Ant extends Agent {
     if (getClass() != obj.getClass())
       return false;
     Ant other = (Ant) obj;
-    if (!java.util.Objects.equals(this.environment, other.environment))
+    if (!java.util.Objects.equals(this.environment, other.environment)) {
       return false;
+    }
     return super.equals(obj);
   }
   

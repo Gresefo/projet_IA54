@@ -9,7 +9,7 @@ import io.sarl.lang.core.Event;
 /**
  * Event informing the environment from the real startup of the simulation
  */
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(15)
 @SuppressWarnings("all")
 public class StartEnvironment extends Event {

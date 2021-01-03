@@ -20,18 +20,20 @@ agent Environment {
 
 	uses Logging, DefaultContextInteractions, Schedules, Lifecycle
 
-	// @Accessors
-	// var ants : ConcurrentHashMap<UUID, PerceivedAntBody>
-
-	// Set of ants ID who has sent their influence in the current time step
-	@Accessors
+	/** 
+	 * Matrix of distance between cities
+	 */
 	var distMatrix : double[][]
 
+	/** 
+	 * Number of ants searching a tour
+	 */
 	var numberAnts : int
 
-	var pheromons : double[][]
-
-	var nnTourLength : double
+	/** 
+	 * Pheromones matrix for each edge
+	 */
+	var pheromones : double[][]
 
 	/**
 	 * A thread safe List<Pair> to store the list of :
@@ -49,6 +51,8 @@ agent Environment {
 	 * Used to check if the result converged
 	 */
 	var lastTour : ArrayList<Double>
+	
+	var saveBestTour : Pair<ArrayList<Integer>, Double>
 
 	on Initialize {
 		loggingName = "Environment"
@@ -70,23 +74,24 @@ agent Environment {
 		info("ENV STARTED")
 		this.tourArray = new CopyOnWriteArrayList<Pair<ArrayList<Integer>, Double>>
 		this.lastTour = new ArrayList<Double>
+		this.saveBestTour = new Pair<ArrayList<Integer>, Double>(new ArrayList<Integer>, new Double(-1))
 		
 		this.iteration = 0
-		this.nnTourLength = nearestNeighbour(this.distMatrix)
+		var nnTourLength = nearestNeighbour(this.distMatrix)
 
 		var size = this.distMatrix.length
-		pheromons = newDoubleArrayOfSize(size, size)
+		pheromones = newDoubleArrayOfSize(size, size)
 		for (var i = 0; i < size; i++) {
 			for (var j = 0; j < size; j++) {
 				if (i == j) {
-					this.pheromons.set(i, j, 0.0)
+					this.pheromones.set(i, j, 0.0)
 				} else {
-					this.pheromons.set(i, j, this.numberAnts / this.nnTourLength)
+					this.pheromones.set(i, j, this.numberAnts / nnTourLength)
 				}
 			}
 		}
 
-		new StartAnt(this.pheromons).emit
+		new StartAnt(this.pheromones).emit
 	}
 
 	on TourFound {
@@ -103,13 +108,13 @@ agent Environment {
 				for (var i = 0; i < this.numberAnts; i++) {
 					for (var j = 0; j < this.numberAnts; j++) {
 						if (i != j) {
-							phero = this.pheromons.get(i, j) * (1 - Settings::rho)
-							this.pheromons.set(i, j, phero)
+							phero = this.pheromones.get(i, j) * (1 - Settings::rho)
+							this.pheromones.set(i, j, phero)
 						}
 					}
 				}
 				
-				// Get shortest path and update pheromons
+				// Get shortest path and update pheromones
 				for (tA : this.tourArray) {
 					// Gets shortest path
 					if (tA.getValue < min) {
@@ -120,9 +125,9 @@ agent Environment {
 					// Update the pheromons matrix, increase visited path depending on the path length
 					phero = 1 / tA.getValue
 					for (var i = 0; i < this.numberAnts - 1; i++) {
-						this.pheromons.set(tA.getKey.get(i), 
+						this.pheromones.set(tA.getKey.get(i), 
 											tA.getKey.get(i + 1), 
-											this.pheromons.get(tA.getKey.get(i), tA.getKey.get(i + 1)) + phero
+											this.pheromones.get(tA.getKey.get(i), tA.getKey.get(i + 1)) + phero
 						)
 					}
 				}
@@ -137,9 +142,15 @@ agent Environment {
 					it.UUID == Simulation.id
 				]
 				
+				// Save the best tour
+				if (this.tourArray.get(indexBestTour).getValue == -1 || this.tourArray.get(indexBestTour).getValue <
+					this.saveBestTour.getValue) {
+					this.saveBestTour = new Pair(this.tourArray.get(indexBestTour).getValue, this.tourArray.get(indexBestTour).getValue)
+				}
+				
 				// If last iteration, kill all
 				if (this.iteration == Settings::iteration) {
-					printPheromoneMatrix(this.pheromons, 25)
+					printPheromoneMatrix(this.pheromones, 25)
 					
 					info("KILL AGENTS")
 					info("Tour : " + this.tourArray.get(indexBestTour).getKey)
@@ -155,17 +166,13 @@ agent Environment {
 								same++
 							}
 						}
-						if (same == Settings::nbIterationToConverge) {
-							info("Stopped at iteration : " + this.iteration)
-							this.iteration = Settings::iteration - 1
-						}
 					}
 					this.lastTour.add(this.tourArray.get(indexBestTour).getValue)
 				}
 
 				this.tourArray.clear
 				this.iteration++
-				new StartAnt(this.pheromons).emit
+				new StartAnt(this.pheromones).emit
 			}
 		}
 	}

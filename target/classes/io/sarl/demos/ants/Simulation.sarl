@@ -161,7 +161,7 @@ class Simulation implements EventListener {
 	 */
 	override receiveEvent(^event : Event) {
 		if (^event instanceof GuiRepaint) { // event from the environment, GUI must be refreshed
-			this.myGUI.tour = ^event.tour // arrayList //^event.TourFound
+			this.myGUI.tour = ^event.tour
 			this.myGUI.tourLength = ^event.length
 			this.myGUI.iteration = ^event.iteration
 			this.myGUI.repaint

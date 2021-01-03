@@ -16,10 +16,10 @@ event StartEnvironment
  * Event sent to reset ants
  */
 event StartAnt {
-	val pheromons : double[][]
+	val pheromones : double[][]
 
-	new (pheromons : double[][]) {
-		this.pheromons = pheromons
+	new (pheromones : double[][]) {
+		this.pheromones = pheromones
 	}
 }
 

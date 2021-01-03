@@ -6,7 +6,7 @@ import io.sarl.lang.annotation.SarlSpecification;
 /**
  * General configuration of the ants simulation
  */
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(11)
 @SuppressWarnings("all")
 public interface Settings {

@@ -30,7 +30,7 @@ import org.eclipse.xtext.xbase.lib.Pure;
  * The simulation launching the SARL environment with the corresponding agent and ensuring the communication between agents and the GUI
  */
 @SuppressWarnings("discouraged_reference")
-@SarlSpecification("0.11")
+@SarlSpecification("0.10")
 @SarlElementType(10)
 public class Simulation implements EventListener {
   public static final UUID id = UUID.randomUUID();
@@ -108,10 +108,12 @@ public class Simulation implements EventListener {
   /**
    * Stop the simulation by killing all agents
    */
+  @Pure
   public void stop() {
     this.killAllAgents();
   }
   
+  @Pure
   private void killAllAgents() {
   }
   
@@ -335,10 +337,12 @@ public class Simulation implements EventListener {
     if (getClass() != obj.getClass())
       return false;
     Simulation other = (Simulation) obj;
-    if (!java.util.Objects.equals(this.fileName, other.fileName))
+    if (!java.util.Objects.equals(this.fileName, other.fileName)) {
       return false;
-    if (!java.util.Objects.equals(this.environment, other.environment))
+    }
+    if (!java.util.Objects.equals(this.environment, other.environment)) {
       return false;
+    }
     if (other.antsCount != this.antsCount)
       return false;
     return super.equals(obj);
@@ -352,7 +356,7 @@ public class Simulation implements EventListener {
     final int prime = 31;
     result = prime * result + java.util.Objects.hashCode(this.fileName);
     result = prime * result + java.util.Objects.hashCode(this.environment);
-    result = prime * result + Integer.hashCode(this.antsCount);
+    result = prime * result + this.antsCount;
     return result;
   }
 }
