@@ -1,0 +1,281 @@
+
+package io.sarl.demos.ants
+
+import io.sarl.bootstrap.SRE
+import io.sarl.bootstrap.SREBootstrap
+import io.sarl.demos.ants.gui.EnvironmentGui
+import io.sarl.lang.core.AgentContext
+import io.sarl.lang.core.Event
+import io.sarl.lang.core.EventListener
+import io.sarl.core.OpenEventSpace
+import java.util.UUID
+
+import java.util.ArrayList
+import java.io.File
+import java.util.Scanner
+
+/** 
+ * The simulation launching the SARL environment with the corresponding agent and ensuring the communication between agents and the GUI
+ */
+@SuppressWarnings("discouraged_reference")
+class Simulation implements EventListener {
+
+	public static val id = UUID::randomUUID
+
+	/** 
+	 * SRE Kernel instance
+	 */
+	var kernel : SREBootstrap
+
+	/** 
+	 * The default SARL context where environment and ants are spawned
+	 */
+	var defaultSARLContext : AgentContext
+
+	/** 
+	 * The list with the position of every town
+	 */
+	var posList : ArrayList<double[]>
+
+	/** 
+	 * The distance matrix
+	 */
+	var distMatrix : double[][]
+
+	/** 
+	 * The name of the file to open
+	 */
+	var fileName : String
+
+	/** 
+	 * Identifier of the environment
+	 */
+	var environment : UUID
+
+	/**
+	 * THe number of ants
+	 */
+	var antsCount : int
+
+	/**
+	 * the vent space used to establish communication between GUI and agents,
+	 * Especially enabling GUI to forward start event to the environment, 
+	 * respectively the environment to send GUIRepain at each simulation step to the GUI
+	 */
+	var ^space : OpenEventSpace
+
+	/** 
+	 * The Graphical user interface
+	 */
+	var myGUI : EnvironmentGui
+
+	new (fileName : String) {
+		antsCount = 0
+		
+		this.fileName = fileName 
+	}
+
+	/** 
+	 * Sets the file name to open
+	 * @param _fileName : String, the file name to open
+	 */
+	def setFileName(fileName : String) : void {
+		this.fileName = fileName
+	}
+
+	/**
+	 * Starts everything
+	 */
+	def start : void 
+	{
+		this.posList = parsor(getPath(fileName))
+		this.antsCount = this.posList.length
+		this.distMatrix = getDistMatrix(this.posList)
+
+		launchAllAgents
+	}
+
+	/**
+	 * Stop the simulation by killing all agents
+	 */
+	def stop : void {
+		killAllAgents
+	}
+
+	private def killAllAgents : void {
+		// do something if you want to
+	}
+
+	/**
+	 * Launch agents
+	 */
+	private def launchAllAgents : void {
+
+		kernel = SRE::getBootstrap
+
+		defaultSARLContext = kernel.startWithoutAgent
+
+		environment = UUID::randomUUID
+		kernel.startAgentWithID(typeof(Environment), environment, distMatrix, antsCount)
+
+		//
+		launchAllAnts
+		^space = defaultSARLContext.defaultSpace as OpenEventSpace
+		
+		this.myGUI = new EnvironmentGui(^space, this.fileName, posList)
+
+		//Registering to receive GUIRepaint events
+		^space.register(this)
+		// Sending start to Environment
+		^space.emit(id, new StartEnvironment)
+	}
+
+	/**
+	 * Launch all ants
+	 */
+	private def launchAllAnts : void {
+		var antNum = 0
+		for (var i = 0; i < antsCount; i++) {
+			antNum++
+			launchAnt("Ant" + antNum)
+		}
+	}
+
+	/**
+	 * Launch one ant
+	 */
+	@SuppressWarnings("constant_condition", "discouraged_reference")
+	private def launchAnt(antName : String) : void {
+
+		var id_a = UUID::randomUUID
+		kernel.startAgentWithID(typeof(Ant), id_a, environment, antName, distMatrix)
+	}
+
+	override getID : UUID {
+		id
+	}
+
+	/** 
+	 * Methods managing event coming from agents 
+	 */
+	override receiveEvent(^event : Event) {
+		if (^event instanceof GuiRepaint) { // event from the environment, GUI must be refreshed
+			this.myGUI.tour = ^event.tour
+			this.myGUI.tourLength = ^event.length
+			this.myGUI.iteration = ^event.iteration
+			this.myGUI.repaint
+		}
+	}
+	
+	/**
+	 * Returns the path to get the file
+	 * @param file : String, the file to get
+	 * @return String : the complete path to get this file
+	 */
+	 def getPath(file : String) : String
+	 {
+		var fileSep : String = System.getProperty("file.separator")
+		var path : String = System.getProperty("user.dir") + fileSep + "TSP" + fileSep + file
+	 	return path
+	 }
+	
+	/**
+	 * TSP parsor
+	 * @param path : String, the file path to parse
+	 * @return ArrayList<double[]> : the coordonates of each town
+	 */
+	@SuppressWarnings("potential_inefficient_value_conversion")
+	private def parsor(path : String) : ArrayList<double[]>
+	{
+		var file : File = new File(path)
+		var sc : Scanner = new Scanner(file)
+		var storing : ArrayList<double[]> = new ArrayList <double[]> ()
+		while (sc.hasNextLine())
+		{
+			var line : String = sc.nextLine();
+			if ("NODE_COORD_SECTION".equals(line)) 
+			{
+                while (sc.hasNextLine()) 
+                {
+                	var next : String = sc.next()
+                	if(next != "EOF")
+                	{
+						var list : double[] = newDoubleArrayOfSize(3)
+						list.set(0, next as double)
+						list.set(1, sc.next() as double)
+						list.set(2, sc.next() as double)
+						storing.add(list);
+                	}
+				}
+			}
+		}
+        sc.close();
+        return storing;
+	}
+	
+	/**
+	 * Prints the coordinates of each town
+	 * @param coord : ArrayList<Double[]> the list of coordinates
+	 */
+	def printCoord(coord : ArrayList<double[]>) : void
+	{
+		for(f : coord)
+		{	
+			System.out.println("Town n°: " + f.get(0) + " | x=" + f.get(1) + " | y=" + f.get(2))
+		}
+	}
+	
+	/**
+	 * Return the distance matrix computed from the coordinates list
+	 * @param coord : ArrayList<double[]>, the list of coordinates
+	 * @return double[][], the distance matrix
+	 */
+	 def getDistMatrix(coordList : ArrayList<double[]>) : double[][]
+	 {
+	 	var size : int = coordList.size
+	 	var distMatrix : double[][] = newDoubleArrayOfSize(size, size)
+	 	for(var i = 0; i < size; i++)
+	 	{
+	 		var distLine : double[] = newDoubleArrayOfSize(size)
+	 		for(var j = 0; j < size; j++)
+	 		{
+	 			var dist : double = Math.pow((coordList.get(i).get(1) - coordList.get(j).get(1)), 2) 
+	 			dist += Math.pow((coordList.get(i).get(2) - coordList.get(j).get(2)), 2) 
+	 			dist = Math.pow(dist, 0.5)
+	 			distLine.set(j, dist)
+	 		}
+	 		distMatrix.set(i, distLine)
+	 	}
+	 	return distMatrix
+	 }
+	 
+	 /**
+	  * Prints the distance matrix
+	  * @param distMatrix : the distance matrix to print
+	  * @param maxSize : the maximum size of value to print. If maxSize = 5, it will only print the 5x5 matrix (the top left corner)
+	  */
+	 def printDistMatrix(distMatrix : double[][], maxSize : int) : void
+	 {
+	 	var maxSize2 : int = maxSize
+	 	if(maxSize > distMatrix.size)
+	 		maxSize2 = distMatrix.size
+	 		
+		System.out.println("Distance Matrix (size printed: " + maxSize2 + "):")
+		for (var i : int = 0; i < maxSize2; i++) 
+		{
+			for (var j : int = 0; j < maxSize2; j++)
+			{
+				System.out.print(" " + distMatrix.get(i).get(j) as int)
+				if (distMatrix.get(i).get(j) < 10)
+					System.out.print("    ")
+				else if (distMatrix.get(i).get(j) < 100)
+					System.out.print("   ")
+				else if (distMatrix.get(i).get(j) < 1000)
+					System.out.print("  ")
+				else if (distMatrix.get(i).get(j) < 10000)
+					System.out.print(" ")
+			}
+			System.out.println()
+		}
+	}
+}

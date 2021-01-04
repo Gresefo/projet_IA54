@@ -1,0 +1,19 @@
+package io.sarl.demos.ants
+
+/**
+ * The main class launching the simulation
+ */
+class SimulationLauncher {
+
+	/**
+	 * @param args command line arguments
+	 */
+	static def main(args : String*) 
+	{
+		var fileName = args.get(0)
+		var simu = new Simulation(fileName)
+		
+		simu.start
+	}
+
+}

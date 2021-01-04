@@ -62,8 +62,8 @@ public class Environment extends Agent {
   
   /**
    * A thread safe List<Pair> to store the list of :
-   * 	- List<Integer> : the path with the town ID
-   *  - Double : the path length
+   * - List<Integer> : the path with the town ID
+   * - Double : the path length
    */
   private CopyOnWriteArrayList<Pair<ArrayList<Integer>, Double>> tourArray;
   
@@ -158,9 +158,10 @@ public class Environment extends Agent {
             k++;
             Double _value_1 = tA.getValue();
             phero = (1 / ((_value_1) == null ? 0 : (_value_1).doubleValue()));
-            for (int i = 0; (i < (tA.getKey().size() - 1)); i++) {
+            for (int i = 0; (i < (this.numberAnts - 1)); i++) {
               double _get = this.pheromones[((tA.getKey().get(i)) == null ? 0 : (tA.getKey().get(i)).intValue())][((tA.getKey().get((i + 1))) == null ? 0 : (tA.getKey().get((i + 1))).intValue())];
-              this.pheromones[((tA.getKey().get(i)) == null ? 0 : (tA.getKey().get(i)).intValue())][
+              this.pheromones[
+                ((tA.getKey().get(i)) == null ? 0 : (tA.getKey().get(i)).intValue())][
                 ((tA.getKey().get((i + 1))) == null ? 0 : (tA.getKey().get((i + 1))).intValue())] = 
                 (_get + phero);
             }
@@ -220,8 +221,11 @@ public class Environment extends Agent {
             Integer _get = this.saveBestTour.getKey().get(i);
             tmpList.add(Integer.valueOf((((_get) == null ? 0 : (_get).intValue()) + 1)));
           }
-          DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_1 = this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER();
+          Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_3 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
           Double _value_3 = this.saveBestTour.getValue();
+          _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_3.info(("BEST TOUR WHEN STOPPED : " + _value_3));
+          DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_1 = this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER();
+          Double _value_4 = this.saveBestTour.getValue();
           class $SerializableClosureProxy_1 implements Scope<Address> {
             
             private final UUID $_id_1;
@@ -246,7 +250,7 @@ public class Environment extends Agent {
               return new SerializableProxy($SerializableClosureProxy_1.class, Simulation.id);
             }
           };
-          _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_1.emit(new GuiRepaint(tmpList, ((_value_3) == null ? 0 : (_value_3).doubleValue()), this.iteration), _function_1);
+          _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_1.emit(new GuiRepaint(tmpList, ((_value_4) == null ? 0 : (_value_4).doubleValue()), this.iteration), _function_1);
           DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_2 = this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER();
           _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_2.emit(new Die());
         } else {
@@ -254,9 +258,9 @@ public class Environment extends Agent {
           int same = 0;
           if ((size >= Settings.nbIterationToConverge)) {
             for (int i = (size - Settings.nbIterationToConverge); (i < size); i++) {
-              Double _value_4 = this.tourArray.get(indexBestTour).getValue();
+              Double _value_5 = this.tourArray.get(indexBestTour).getValue();
               Double _get = this.lastTour.get(i);
-              double _minus = DoubleExtensions.operator_minus(_value_4, _get);
+              double _minus = DoubleExtensions.operator_minus(_value_5, _get);
               double _abs = Math.abs(_minus);
               if ((_abs < 1.0)) {
                 same++;
@@ -264,15 +268,57 @@ public class Environment extends Agent {
             }
           }
           if ((same == Settings.nbIterationToConverge)) {
-            Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_3 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
-            _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_3.info(("Stopped at iteration : " + Integer.valueOf(this.iteration)));
-            this.iteration = (Settings.iteration - 1);
+            Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_4 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
+            _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_4.info(("Stopped at iteration : " + Integer.valueOf(this.iteration)));
+            this.printPheromoneMatrix(this.pheromones, 25);
+            Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_5 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
+            _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_5.info("KILL AGENTS");
+            Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_6 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
+            ArrayList<Integer> _key_2 = this.tourArray.get(indexBestTour).getKey();
+            _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_6.info(("Tour : " + _key_2));
+            tmpList.clear();
+            for (int i = 0; (i < this.saveBestTour.getKey().size()); i++) {
+              Integer _get = this.saveBestTour.getKey().get(i);
+              tmpList.add(Integer.valueOf((((_get) == null ? 0 : (_get).intValue()) + 1)));
+            }
+            Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_7 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
+            Double _value_5 = this.saveBestTour.getValue();
+            _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_7.info(("BEST TOUR WHEN STOPPED : " + _value_5));
+            DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_3 = this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER();
+            Double _value_6 = this.saveBestTour.getValue();
+            class $SerializableClosureProxy_2 implements Scope<Address> {
+              
+              private final UUID $_id_1;
+              
+              public $SerializableClosureProxy_2(final UUID $_id_1) {
+                this.$_id_1 = $_id_1;
+              }
+              
+              @Override
+              public boolean matches(final Address it) {
+                UUID _uUID = it.getUUID();
+                return Objects.equal(_uUID, $_id_1);
+              }
+            }
+            final Scope<Address> _function_2 = new Scope<Address>() {
+              @Override
+              public boolean matches(final Address it) {
+                UUID _uUID = it.getUUID();
+                return Objects.equal(_uUID, Simulation.id);
+              }
+              private Object writeReplace() throws ObjectStreamException {
+                return new SerializableProxy($SerializableClosureProxy_2.class, Simulation.id);
+              }
+            };
+            _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_3.emit(new GuiRepaint(tmpList, ((_value_6) == null ? 0 : (_value_6).doubleValue()), this.iteration), _function_2);
+            DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_4 = this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER();
+            _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_4.emit(new Die());
           } else {
             this.lastTour.add(this.tourArray.get(indexBestTour).getValue());
             this.tourArray.clear();
             this.iteration++;
-            DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_3 = this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER();
-            _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_3.emit(new StartAnt(this.pheromones));
+            DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_5 = this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER();
+            _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_5.emit(new StartAnt(this.pheromones));
           }
         }
       }
@@ -346,8 +392,7 @@ public class Environment extends Agent {
         for (int j = 0; (j < maxSize2); j++) {
           {
             double _get = distMatrix[i][j];
-            String _format = String.format("%.2e", Double.valueOf(_get));
-            System.out.print((" " + _format));
+            System.out.print((" " + Double.valueOf(_get)));
             double _get_1 = distMatrix[i][j];
             if ((_get_1 < 10)) {
               System.out.print("    ");
@@ -492,20 +537,20 @@ public class Environment extends Agent {
   }
   
   @SyntheticMember
-  public Environment(final UUID arg0, final UUID arg1) {
-    super(arg0, arg1);
+  public Environment(final UUID parentID, final UUID agentID) {
+    super(parentID, agentID);
   }
   
   @SyntheticMember
+  @Inject
   @Deprecated
-  @Inject
-  public Environment(final BuiltinCapacitiesProvider arg0, final UUID arg1, final UUID arg2) {
-    super(arg0, arg1, arg2);
+  public Environment(final BuiltinCapacitiesProvider provider, final UUID parentID, final UUID agentID) {
+    super(provider, parentID, agentID);
   }
   
   @SyntheticMember
   @Inject
-  public Environment(final UUID arg0, final UUID arg1, final DynamicSkillProvider arg2) {
-    super(arg0, arg1, arg2);
+  public Environment(final UUID parentID, final UUID agentID, final DynamicSkillProvider skillProvider) {
+    super(parentID, agentID, skillProvider);
   }
 }
