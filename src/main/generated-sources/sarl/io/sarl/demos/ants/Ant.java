@@ -267,20 +267,20 @@ public class Ant extends Agent {
   }
   
   @SyntheticMember
-  public Ant(final UUID parentID, final UUID agentID) {
-    super(parentID, agentID);
+  public Ant(final UUID arg0, final UUID arg1) {
+    super(arg0, arg1);
   }
   
   @SyntheticMember
-  @Inject
   @Deprecated
-  public Ant(final BuiltinCapacitiesProvider provider, final UUID parentID, final UUID agentID) {
-    super(provider, parentID, agentID);
+  @Inject
+  public Ant(final BuiltinCapacitiesProvider arg0, final UUID arg1, final UUID arg2) {
+    super(arg0, arg1, arg2);
   }
   
   @SyntheticMember
   @Inject
-  public Ant(final UUID parentID, final UUID agentID, final DynamicSkillProvider skillProvider) {
-    super(parentID, agentID, skillProvider);
+  public Ant(final UUID arg0, final UUID arg1, final DynamicSkillProvider arg2) {
+    super(arg0, arg1, arg2);
   }
 }

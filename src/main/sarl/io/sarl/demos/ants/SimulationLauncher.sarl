@@ -3,7 +3,7 @@ package io.sarl.demos.ants
 /**
  * The main class launching the simulation
  */
-class BoidsSimulationLauncher {
+class SimulationLauncher {
 
 	/**
 	 * @param args command line arguments

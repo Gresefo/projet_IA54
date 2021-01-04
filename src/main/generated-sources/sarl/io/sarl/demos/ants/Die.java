@@ -19,8 +19,8 @@ public class Die extends Event {
   }
   
   @SyntheticMember
-  public Die(final Address source) {
-    super(source);
+  public Die(final Address arg0) {
+    super(arg0);
   }
   
   @SyntheticMember

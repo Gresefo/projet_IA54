@@ -28,7 +28,7 @@ class Simulation implements EventListener {
 	var kernel : SREBootstrap
 
 	/** 
-	 * The default SARL context where environment and boids are spawned
+	 * The default SARL context where environment and ants are spawned
 	 */
 	var defaultSARLContext : AgentContext
 
@@ -122,7 +122,6 @@ class Simulation implements EventListener {
 		launchAllAnts
 		^space = defaultSARLContext.defaultSpace as OpenEventSpace
 		
-		// No need to send boidBodies
 		this.myGUI = new EnvironmentGui(^space, this.fileName, posList)
 
 		//Registering to receive GUIRepaint events

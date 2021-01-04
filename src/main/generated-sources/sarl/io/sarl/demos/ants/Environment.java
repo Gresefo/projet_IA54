@@ -203,8 +203,6 @@ public class Environment extends Agent {
         _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER.emit(new GuiRepaint(tmpList, ((_value_1) == null ? 0 : (_value_1).doubleValue()), this.iteration), _function);
         if (((this.saveBestTour.getValue() != null && (this.saveBestTour.getValue().doubleValue() == (-1))) || (this.tourArray.get(indexBestTour).getValue().doubleValue() < 
           this.saveBestTour.getValue().doubleValue()))) {
-          Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
-          _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1.info("yaaaaa");
           ArrayList<Integer> _key = this.tourArray.get(indexBestTour).getKey();
           Double _value_2 = this.tourArray.get(indexBestTour).getValue();
           Pair<ArrayList<Integer>, Double> _pair_1 = new Pair<ArrayList<Integer>, Double>(_key, _value_2);
@@ -212,11 +210,11 @@ public class Environment extends Agent {
         }
         if ((this.iteration == Settings.iteration)) {
           this.printPheromoneMatrix(this.pheromones, 25);
+          Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
+          _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1.info("KILL AGENTS");
           Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
-          _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2.info("KILL AGENTS");
-          Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_3 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
           ArrayList<Integer> _key_1 = this.tourArray.get(indexBestTour).getKey();
-          _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_3.info(("Tour : " + _key_1));
+          _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2.info(("Tour : " + _key_1));
           tmpList.clear();
           for (int i = 0; (i < this.saveBestTour.getKey().size()); i++) {
             Integer _get = this.saveBestTour.getKey().get(i);
@@ -266,8 +264,8 @@ public class Environment extends Agent {
             }
           }
           if ((same == Settings.nbIterationToConverge)) {
-            Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_4 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
-            _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_4.info(("Stopped at iteration : " + Integer.valueOf(this.iteration)));
+            Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_3 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
+            _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_3.info(("Stopped at iteration : " + Integer.valueOf(this.iteration)));
             this.iteration = (Settings.iteration - 1);
           } else {
             this.lastTour.add(this.tourArray.get(indexBestTour).getValue());
@@ -494,20 +492,20 @@ public class Environment extends Agent {
   }
   
   @SyntheticMember
-  public Environment(final UUID parentID, final UUID agentID) {
-    super(parentID, agentID);
+  public Environment(final UUID arg0, final UUID arg1) {
+    super(arg0, arg1);
   }
   
   @SyntheticMember
-  @Inject
   @Deprecated
-  public Environment(final BuiltinCapacitiesProvider provider, final UUID parentID, final UUID agentID) {
-    super(provider, parentID, agentID);
+  @Inject
+  public Environment(final BuiltinCapacitiesProvider arg0, final UUID arg1, final UUID arg2) {
+    super(arg0, arg1, arg2);
   }
   
   @SyntheticMember
   @Inject
-  public Environment(final UUID parentID, final UUID agentID, final DynamicSkillProvider skillProvider) {
-    super(parentID, agentID, skillProvider);
+  public Environment(final UUID arg0, final UUID arg1, final DynamicSkillProvider arg2) {
+    super(arg0, arg1, arg2);
   }
 }

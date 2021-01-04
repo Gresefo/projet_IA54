@@ -11,7 +11,7 @@ import io.sarl.lang.annotation.SyntheticMember;
 @SarlSpecification("0.11")
 @SarlElementType(10)
 @SuppressWarnings("all")
-public class BoidsSimulationLauncher {
+public class SimulationLauncher {
   /**
    * @param args command line arguments
    */
@@ -22,7 +22,7 @@ public class BoidsSimulationLauncher {
   }
   
   @SyntheticMember
-  public BoidsSimulationLauncher() {
+  public SimulationLauncher() {
     super();
   }
 }

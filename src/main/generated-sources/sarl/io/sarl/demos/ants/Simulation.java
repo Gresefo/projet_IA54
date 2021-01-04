@@ -41,7 +41,7 @@ public class Simulation implements EventListener {
   private SREBootstrap kernel;
   
   /**
-   * The default SARL context where environment and boids are spawned
+   * The default SARL context where environment and ants are spawned
    */
   private AgentContext defaultSARLContext;
   

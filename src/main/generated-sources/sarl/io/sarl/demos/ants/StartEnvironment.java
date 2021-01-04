@@ -19,8 +19,8 @@ public class StartEnvironment extends Event {
   }
   
   @SyntheticMember
-  public StartEnvironment(final Address source) {
-    super(source);
+  public StartEnvironment(final Address arg0) {
+    super(arg0);
   }
   
   @SyntheticMember
