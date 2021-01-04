@@ -145,7 +145,6 @@ agent Environment {
 				// Save the best tour
 				if (this.saveBestTour.getValue == -1 || this.tourArray.get(indexBestTour).getValue <
 					this.saveBestTour.getValue) {
-					info("yaaaaa")
 					this.saveBestTour = new Pair(this.tourArray.get(indexBestTour).getKey, this.tourArray.get(indexBestTour).getValue)
 				}
 				
