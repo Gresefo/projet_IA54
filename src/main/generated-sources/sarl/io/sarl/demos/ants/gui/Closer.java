@@ -11,7 +11,7 @@ import java.awt.event.WindowEvent;
 import java.util.UUID;
 import org.eclipse.xtext.xbase.lib.Pure;
 
-@SarlSpecification("0.10")
+@SarlSpecification("0.11")
 @SarlElementType(10)
 @SuppressWarnings("all")
 class Closer extends WindowAdapter {

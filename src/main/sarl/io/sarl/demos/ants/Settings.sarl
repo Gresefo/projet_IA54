@@ -30,21 +30,21 @@ interface Settings {
     /**
      * The number of iteration the ants should do
      */
-    public static val iteration = 10
+    public static val iteration = 1000
     
     /**
      * The limit number of iteration without changes
      * If there was more than nbIterationToConverge iterations without changes, we stop the program and kill all agents
      */
-    public static val nbIterationToConverge = 8
+    public static val nbIterationToConverge = 20
 	
 	/**
 	 * 
 	 */
-	public static val alpha = 1
+	public static val alpha = 0.93
 
 	// 2-5
-	public static val beta = 3
+	public static val beta = 2
 
 	/**
 	 * Pheromone evaporation rate

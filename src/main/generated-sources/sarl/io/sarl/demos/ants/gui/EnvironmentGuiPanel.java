@@ -19,7 +19,7 @@ import org.eclipse.xtext.xbase.lib.Pure;
 /**
  * The GUI of the Simulation
  */
-@SarlSpecification("0.10")
+@SarlSpecification("0.11")
 @SarlElementType(10)
 @SuppressWarnings("all")
 class EnvironmentGuiPanel extends Panel {
@@ -275,8 +275,8 @@ class EnvironmentGuiPanel extends Panel {
   public int hashCode() {
     int result = super.hashCode();
     final int prime = 31;
-    result = prime * result + (int) (Double.doubleToLongBits(this.tourLength) ^ (Double.doubleToLongBits(this.tourLength) >>> 32));
-    result = prime * result + this.iteration;
+    result = prime * result + Double.hashCode(this.tourLength);
+    result = prime * result + Integer.hashCode(this.iteration);
     return result;
   }
   

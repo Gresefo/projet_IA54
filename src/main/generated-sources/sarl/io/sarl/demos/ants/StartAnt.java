@@ -10,7 +10,7 @@ import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
 /**
  * Event sent to reset ants
  */
-@SarlSpecification("0.10")
+@SarlSpecification("0.11")
 @SarlElementType(15)
 @SuppressWarnings("all")
 public class StartAnt extends Event {

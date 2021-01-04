@@ -20,11 +20,10 @@ import io.sarl.lang.annotation.SarlSpecification;
 import io.sarl.lang.annotation.SyntheticMember;
 import io.sarl.lang.core.Address;
 import io.sarl.lang.core.Agent;
+import io.sarl.lang.core.AtomicSkillReference;
 import io.sarl.lang.core.BuiltinCapacitiesProvider;
 import io.sarl.lang.core.DynamicSkillProvider;
 import io.sarl.lang.core.Scope;
-import io.sarl.lang.core.Skill;
-import io.sarl.lang.util.ClearableReference;
 import io.sarl.lang.util.SerializableProxy;
 import java.io.ObjectStreamException;
 import java.util.ArrayList;
@@ -36,14 +35,13 @@ import javax.inject.Inject;
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.DoubleExtensions;
 import org.eclipse.xtext.xbase.lib.Extension;
-import org.eclipse.xtext.xbase.lib.Inline;
 import org.eclipse.xtext.xbase.lib.Pair;
 import org.eclipse.xtext.xbase.lib.Pure;
 
 /**
  * The environmental agent in charge of collecting ants influences and computing the new state of the virtual world
  */
-@SarlSpecification("0.10")
+@SarlSpecification("0.11")
 @SarlElementType(19)
 @SuppressWarnings("all")
 public class Environment extends Agent {
@@ -82,7 +80,7 @@ public class Environment extends Agent {
   private Pair<ArrayList<Integer>, Double> saveBestTour;
   
   private void $behaviorUnit$Initialize$0(final Initialize occurrence) {
-    Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
+    Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
     _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER.setLoggingName("Environment");
     int _size = ((List<Object>)Conversions.doWrapArray(occurrence.parameters)).size();
     if ((_size > 1)) {
@@ -98,13 +96,13 @@ public class Environment extends Agent {
       }
     }
     if (Settings.isLogActivated) {
-      Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
+      Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
       _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1.info("Environment activated");
     }
   }
   
   private void $behaviorUnit$StartEnvironment$1(final StartEnvironment occurrence) {
-    Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
+    Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
     _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER.info("ENV STARTED");
     CopyOnWriteArrayList<Pair<ArrayList<Integer>, Double>> _copyOnWriteArrayList = new CopyOnWriteArrayList<Pair<ArrayList<Integer>, Double>>();
     this.tourArray = _copyOnWriteArrayList;
@@ -127,7 +125,7 @@ public class Environment extends Agent {
         }
       }
     }
-    DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER = this.$castSkill(DefaultContextInteractions.class, (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = this.$getSkill(DefaultContextInteractions.class)) : this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS);
+    DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER = this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER();
     _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER.emit(new StartAnt(this.pheromones));
   }
   
@@ -160,7 +158,7 @@ public class Environment extends Agent {
             k++;
             Double _value_1 = tA.getValue();
             phero = (1 / ((_value_1) == null ? 0 : (_value_1).doubleValue()));
-            for (int i = 0; (i < (this.numberAnts - 1)); i++) {
+            for (int i = 0; (i < (tA.getKey().size() - 1)); i++) {
               double _get = this.pheromones[((tA.getKey().get(i)) == null ? 0 : (tA.getKey().get(i)).intValue())][((tA.getKey().get((i + 1))) == null ? 0 : (tA.getKey().get((i + 1))).intValue())];
               this.pheromones[((tA.getKey().get(i)) == null ? 0 : (tA.getKey().get(i)).intValue())][
                 ((tA.getKey().get((i + 1))) == null ? 0 : (tA.getKey().get((i + 1))).intValue())] = 
@@ -168,7 +166,7 @@ public class Environment extends Agent {
             }
           }
         }
-        Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
+        Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
         Double _value = this.tourArray.get(indexBestTour).getValue();
         _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER.info(("Best tour : " + _value));
         ArrayList<Integer> tmpList = new ArrayList<Integer>();
@@ -176,7 +174,7 @@ public class Environment extends Agent {
           Integer _get = this.tourArray.get(indexBestTour).getKey().get(i);
           tmpList.add(Integer.valueOf((((_get) == null ? 0 : (_get).intValue()) + 1)));
         }
-        DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER = this.$castSkill(DefaultContextInteractions.class, (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = this.$getSkill(DefaultContextInteractions.class)) : this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS);
+        DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER = this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER();
         Double _value_1 = this.tourArray.get(indexBestTour).getValue();
         class $SerializableClosureProxy implements Scope<Address> {
           
@@ -205,7 +203,7 @@ public class Environment extends Agent {
         _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER.emit(new GuiRepaint(tmpList, ((_value_1) == null ? 0 : (_value_1).doubleValue()), this.iteration), _function);
         if (((this.saveBestTour.getValue() != null && (this.saveBestTour.getValue().doubleValue() == (-1))) || (this.tourArray.get(indexBestTour).getValue().doubleValue() < 
           this.saveBestTour.getValue().doubleValue()))) {
-          Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
+          Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
           _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_1.info("yaaaaa");
           ArrayList<Integer> _key = this.tourArray.get(indexBestTour).getKey();
           Double _value_2 = this.tourArray.get(indexBestTour).getValue();
@@ -214,9 +212,9 @@ public class Environment extends Agent {
         }
         if ((this.iteration == Settings.iteration)) {
           this.printPheromoneMatrix(this.pheromones, 25);
-          Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
+          Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
           _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_2.info("KILL AGENTS");
-          Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_3 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
+          Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_3 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
           ArrayList<Integer> _key_1 = this.tourArray.get(indexBestTour).getKey();
           _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_3.info(("Tour : " + _key_1));
           tmpList.clear();
@@ -224,7 +222,7 @@ public class Environment extends Agent {
             Integer _get = this.saveBestTour.getKey().get(i);
             tmpList.add(Integer.valueOf((((_get) == null ? 0 : (_get).intValue()) + 1)));
           }
-          DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_1 = this.$castSkill(DefaultContextInteractions.class, (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = this.$getSkill(DefaultContextInteractions.class)) : this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS);
+          DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_1 = this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER();
           Double _value_3 = this.saveBestTour.getValue();
           class $SerializableClosureProxy_1 implements Scope<Address> {
             
@@ -251,7 +249,7 @@ public class Environment extends Agent {
             }
           };
           _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_1.emit(new GuiRepaint(tmpList, ((_value_3) == null ? 0 : (_value_3).doubleValue()), this.iteration), _function_1);
-          DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_2 = this.$castSkill(DefaultContextInteractions.class, (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = this.$getSkill(DefaultContextInteractions.class)) : this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS);
+          DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_2 = this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER();
           _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_2.emit(new Die());
         } else {
           int size = this.lastTour.size();
@@ -268,14 +266,14 @@ public class Environment extends Agent {
             }
           }
           if ((same == Settings.nbIterationToConverge)) {
-            Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_4 = this.$castSkill(Logging.class, (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = this.$getSkill(Logging.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LOGGING);
+            Logging _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_4 = this.$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER();
             _$CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER_4.info(("Stopped at iteration : " + Integer.valueOf(this.iteration)));
             this.iteration = (Settings.iteration - 1);
           } else {
             this.lastTour.add(this.tourArray.get(indexBestTour).getValue());
             this.tourArray.clear();
             this.iteration++;
-            DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_3 = this.$castSkill(DefaultContextInteractions.class, (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = this.$getSkill(DefaultContextInteractions.class)) : this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS);
+            DefaultContextInteractions _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_3 = this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER();
             _$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER_3.emit(new StartAnt(this.pheromones));
           }
         }
@@ -284,7 +282,7 @@ public class Environment extends Agent {
   }
   
   private void $behaviorUnit$Die$3(final Die occurrence) {
-    Lifecycle _$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER = this.$castSkill(Lifecycle.class, (this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE == null || this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE.get() == null) ? (this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE = this.$getSkill(Lifecycle.class)) : this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE);
+    Lifecycle _$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER = this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER();
     _$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER.killMe();
   }
   
@@ -350,7 +348,8 @@ public class Environment extends Agent {
         for (int j = 0; (j < maxSize2); j++) {
           {
             double _get = distMatrix[i][j];
-            System.out.print((" " + Double.valueOf(_get)));
+            String _format = String.format("%.2e", Double.valueOf(_get));
+            System.out.print((" " + _format));
             double _get_1 = distMatrix[i][j];
             if ((_get_1 < 10)) {
               System.out.print("    ");
@@ -380,11 +379,10 @@ public class Environment extends Agent {
   @Extension
   @ImportedCapacityFeature(Logging.class)
   @SyntheticMember
-  private transient ClearableReference<Skill> $CAPACITY_USE$IO_SARL_CORE_LOGGING;
+  private transient AtomicSkillReference $CAPACITY_USE$IO_SARL_CORE_LOGGING;
   
   @SyntheticMember
   @Pure
-  @Inline(value = "$castSkill(Logging.class, ($0$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || $0$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) ? ($0$CAPACITY_USE$IO_SARL_CORE_LOGGING = $0$getSkill(Logging.class)) : $0$CAPACITY_USE$IO_SARL_CORE_LOGGING)", imported = Logging.class)
   private Logging $CAPACITY_USE$IO_SARL_CORE_LOGGING$CALLER() {
     if (this.$CAPACITY_USE$IO_SARL_CORE_LOGGING == null || this.$CAPACITY_USE$IO_SARL_CORE_LOGGING.get() == null) {
       this.$CAPACITY_USE$IO_SARL_CORE_LOGGING = $getSkill(Logging.class);
@@ -395,11 +393,10 @@ public class Environment extends Agent {
   @Extension
   @ImportedCapacityFeature(DefaultContextInteractions.class)
   @SyntheticMember
-  private transient ClearableReference<Skill> $CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS;
+  private transient AtomicSkillReference $CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS;
   
   @SyntheticMember
   @Pure
-  @Inline(value = "$castSkill(DefaultContextInteractions.class, ($0$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || $0$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) ? ($0$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = $0$getSkill(DefaultContextInteractions.class)) : $0$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS)", imported = DefaultContextInteractions.class)
   private DefaultContextInteractions $CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS$CALLER() {
     if (this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS == null || this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS.get() == null) {
       this.$CAPACITY_USE$IO_SARL_CORE_DEFAULTCONTEXTINTERACTIONS = $getSkill(DefaultContextInteractions.class);
@@ -410,11 +407,10 @@ public class Environment extends Agent {
   @Extension
   @ImportedCapacityFeature(Schedules.class)
   @SyntheticMember
-  private transient ClearableReference<Skill> $CAPACITY_USE$IO_SARL_CORE_SCHEDULES;
+  private transient AtomicSkillReference $CAPACITY_USE$IO_SARL_CORE_SCHEDULES;
   
   @SyntheticMember
   @Pure
-  @Inline(value = "$castSkill(Schedules.class, ($0$CAPACITY_USE$IO_SARL_CORE_SCHEDULES == null || $0$CAPACITY_USE$IO_SARL_CORE_SCHEDULES.get() == null) ? ($0$CAPACITY_USE$IO_SARL_CORE_SCHEDULES = $0$getSkill(Schedules.class)) : $0$CAPACITY_USE$IO_SARL_CORE_SCHEDULES)", imported = Schedules.class)
   private Schedules $CAPACITY_USE$IO_SARL_CORE_SCHEDULES$CALLER() {
     if (this.$CAPACITY_USE$IO_SARL_CORE_SCHEDULES == null || this.$CAPACITY_USE$IO_SARL_CORE_SCHEDULES.get() == null) {
       this.$CAPACITY_USE$IO_SARL_CORE_SCHEDULES = $getSkill(Schedules.class);
@@ -425,11 +421,10 @@ public class Environment extends Agent {
   @Extension
   @ImportedCapacityFeature(Lifecycle.class)
   @SyntheticMember
-  private transient ClearableReference<Skill> $CAPACITY_USE$IO_SARL_CORE_LIFECYCLE;
+  private transient AtomicSkillReference $CAPACITY_USE$IO_SARL_CORE_LIFECYCLE;
   
   @SyntheticMember
   @Pure
-  @Inline(value = "$castSkill(Lifecycle.class, ($0$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE == null || $0$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE.get() == null) ? ($0$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE = $0$getSkill(Lifecycle.class)) : $0$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE)", imported = Lifecycle.class)
   private Lifecycle $CAPACITY_USE$IO_SARL_CORE_LIFECYCLE$CALLER() {
     if (this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE == null || this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE.get() == null) {
       this.$CAPACITY_USE$IO_SARL_CORE_LIFECYCLE = $getSkill(Lifecycle.class);
@@ -493,8 +488,8 @@ public class Environment extends Agent {
   public int hashCode() {
     int result = super.hashCode();
     final int prime = 31;
-    result = prime * result + this.numberAnts;
-    result = prime * result + this.iteration;
+    result = prime * result + Integer.hashCode(this.numberAnts);
+    result = prime * result + Integer.hashCode(this.iteration);
     return result;
   }
   

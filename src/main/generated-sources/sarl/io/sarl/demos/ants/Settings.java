@@ -6,7 +6,7 @@ import io.sarl.lang.annotation.SarlSpecification;
 /**
  * General configuration of the ants simulation
  */
-@SarlSpecification("0.10")
+@SarlSpecification("0.11")
 @SarlElementType(11)
 @SuppressWarnings("all")
 public interface Settings {
@@ -33,17 +33,17 @@ public interface Settings {
   /**
    * The number of iteration the ants should do
    */
-  public static final int iteration = 10;
+  public static final int iteration = 1000;
   
   /**
    * The limit number of iteration without changes
    * If there was more than nbIterationToConverge iterations without changes, we stop the program and kill all agents
    */
-  public static final int nbIterationToConverge = 8;
+  public static final int nbIterationToConverge = 20;
   
-  public static final int alpha = 1;
+  public static final double alpha = 0.93;
   
-  public static final int beta = 3;
+  public static final int beta = 2;
   
   /**
    * Pheromone evaporation rate

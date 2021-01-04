@@ -124,7 +124,7 @@ agent Environment {
 					k++
 					// Update the pheromons matrix, increase visited path depending on the path length
 					phero = 1 / tA.getValue
-					for (var i = 0; i < this.numberAnts - 1; i++) {
+					for (var i = 0; i < tA.getKey().size() - 1; i++) {
 						this.pheromones.set(tA.getKey.get(i), 
 											tA.getKey.get(i + 1), 
 											this.pheromones.get(tA.getKey.get(i), tA.getKey.get(i + 1)) + phero
@@ -255,7 +255,7 @@ agent Environment {
 		System.out.println("Pheromone Matrix (size printed: " + maxSize2 + "):")
 		for (var i : int = 0; i < maxSize2; i++) {
 			for (var j : int = 0; j < maxSize2; j++) {
-				System.out.print(" " + distMatrix.get(i).get(j) as double)
+				System.out.print(" " + String.format("%.2e", distMatrix.get(i).get(j) as double))
 				if (distMatrix.get(i).get(j) < 10)
 					System.out.print("    ")
 				else if (distMatrix.get(i).get(j) < 100)
